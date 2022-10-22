@@ -18,11 +18,11 @@ public class PlayerJoin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!player.hasPlayedBefore()) {
+        if (!player.hasPlayedBefore())
             PlayerDataUtil.setupPlayerData(player);
-        }
+
         PlayerDataUtil.loadAll(player);
-        PlayerDataBoard.registerPlayer(player, "FFS FIX THIS LATER");
+        PlayerDataBoard.updateBoard(player);
         SpellHandler.registerPlayer(player);
     }
 }

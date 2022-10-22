@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.playerdata;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.Maps;
@@ -23,11 +22,11 @@ public class DmgMods {
      */
     public static void loadDmgMods(@NotNull Player player) { //TODO test if this works
         if (!player.isOnline()) {
-            Bukkit.getLogger().warning(player.displayName() + " is not online when trying to load DmgMods, skipping loading!");
+            Bukkit.getLogger().warning(player.getName() + " is not online when trying to load DmgMods, skipping loading!");
             return;
         }
         if (PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " is already loaded when loading dmgMods, skipping loading!");
+            Bukkit.getLogger().warning(player.getName() + " is already loaded when loading dmgMods, skipping loading!");
             return;
         }
 
@@ -70,7 +69,7 @@ public class DmgMods {
      */
     public static float getDmgMod(@NotNull Player player, @Nullable Enums.DmgModType modType) {
         if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToDmgMods map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
             loadDmgMods(player);
         }
 
@@ -96,7 +95,7 @@ public class DmgMods {
      */
     public static void addDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToDmgMods map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
             loadDmgMods(player);
         }
 
@@ -113,7 +112,7 @@ public class DmgMods {
      */
     public static void removeDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToDmgMods map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
             loadDmgMods(player);
         }
 
@@ -131,7 +130,7 @@ public class DmgMods {
      */
     public static void extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToDmgMods map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
             loadDmgMods(player);
         }
 
@@ -152,7 +151,7 @@ public class DmgMods {
      */
     public static void setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToDmgMods map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
             loadDmgMods(player);
         }
 
@@ -167,7 +166,7 @@ public class DmgMods {
      */
     public static void saveDmgMods(@NotNull Player player) { //TODO test if this works
         if (PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToDmgMods map when saving, saving skipped!");
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map when saving, saving skipped!");
             return;
         }
 

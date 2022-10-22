@@ -38,49 +38,49 @@ public class PlayerDataUtil {
         /*try {
             Gems.loadGems(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getDisplayName() + "'s Gems generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Gems generated an exception!");
             e.printStackTrace();
         }
         try {
             Gold.loadGold(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getDisplayName() + "'s Gold generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Gold generated an exception!");
             e.printStackTrace();
         }
         try {
             SpellsOwned.loadSpellsOwned(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getDisplayName() + "'s SpellsOwned generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s SpellsOwned generated an exception!");
             e.printStackTrace();
         }
         try {
             Health.registerPlayer(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getDisplayName() + "'s Health generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Health generated an exception!");
             e.printStackTrace();
         }*/
         try {
             CoolDowns.loadCoolDowns(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.displayName() + "'s Cooldowns generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Cooldowns generated an exception!");
             e.printStackTrace();
         }
         try {
             DmgMods.loadDmgMods(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.displayName() + "'s DmgMods generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s DmgMods generated an exception!");
             e.printStackTrace();
         }
         /*try {
             Crystals.loadCrystals(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getDisplayName() + "'s Crystals generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Crystals generated an exception!");
             e.printStackTrace();
         }
         try {
             CrystalShards.loadCrystalShards(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getDisplayName() + "'s CrystalShards generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s CrystalShards generated an exception!");
             e.printStackTrace();
         }*/
     }
@@ -93,49 +93,49 @@ public class PlayerDataUtil {
         /*try{
             Gems.saveGems(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getDisplayName() + "'s Gems generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Gems generated an exception!");
             e.printStackTrace();
         }
         try {
             Gold.saveGold(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getDisplayName() + "'s Gold generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Gold generated an exception!");
             e.printStackTrace();
         }
         try {
             SpellsOwned.saveSpellsOwned(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getDisplayName() + "'s SpellsOwned generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s SpellsOwned generated an exception!");
             e.printStackTrace();
         }
         try {
             Health.deRegisterPlayer(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getDisplayName() + "'s Health generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Health generated an exception!");
             e.printStackTrace();
         }*/
         try {
             CoolDowns.saveCoolDowns(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.displayName() + "'s CoolDowns generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s CoolDowns generated an exception!");
             e.printStackTrace();
         }
         try {
             DmgMods.saveDmgMods(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.displayName() + "'s DmgMods generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s DmgMods generated an exception!");
             e.printStackTrace();
         }
         /*try {
             Crystals.saveCrystals(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getDisplayName() + "'s Crystals generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Crystals generated an exception!");
             e.printStackTrace();
         }
         try {
             CrystalShards.saveCrystalShards(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getDisplayName() + "'s CrystalShards generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s CrystalShards generated an exception!");
             e.printStackTrace();
         }*/
     }

@@ -33,14 +33,28 @@ public class PlayerDataBoard {
             @Override
             public void run() {
                 for (Map.Entry<Player, String> entry : playersHoldingCoolDownedItem.entrySet()) {
-                    Bukkit.getLogger().info("§b" + entry.getKey() + ": " + entry.getValue());
                     Player player = entry.getKey();
+                    String spellType = entry.getValue();
+
                     if (!player.isOnline()) {
                         playersHoldingCoolDownedItem.remove(player);
-                        Bukkit.getLogger().warning("UUID \"" + entry.getKey() + "\" registered in playersHoldingCoolDownedItems is offline, removing from Map!");
+                        Bukkit.getLogger().warning(player.getName() + "\" registered in playersHoldingCoolDownedItems is offline, removing from Map!");
                         return;
                     }
-                    updateBoard(player, entry.getValue());
+                    CoolDownEntry coolDownEntry = CoolDowns.getCoolDownEntry(player, spellType);
+
+                    if (coolDownEntry == null) {
+                        updateBoard(player, null);
+                        return;
+                    }
+
+                    if (coolDownEntry.getRemainingCoolDownTime() < 0.0001f) {
+                        playersHoldingCoolDownedItem.remove(player);
+                        updateBoard(player, null);
+                        return;
+                    }
+
+                    updateBoard(player, spellType);
                 }
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 2);
@@ -62,19 +76,19 @@ public class PlayerDataBoard {
      * @param player The player to remove
      */
     public static void deRegisterPlayer(@NotNull Player player) {
-        //debug
-        Bukkit.getLogger().info("§bBefore removing:");
-        for (Map.Entry<Player, String> entry : playersHoldingCoolDownedItem.entrySet())
-            Bukkit.getLogger().info("§b" + entry.getKey() + ": " + entry.getValue());
-
-        //code
         playersHoldingCoolDownedItem.remove(player);
         updateBoard(player, false);
+    }
 
-        //debug
-        Bukkit.getLogger().info("§bAfter removing:");
-        for (Map.Entry<Player, String> entry : playersHoldingCoolDownedItem.entrySet())
-            Bukkit.getLogger().info("§b" + entry.getKey() + ": " + entry.getValue());
+    /**
+     * Removes the player from the map of all players holding a coolDowned item.
+     *
+     * @param player The player to remove
+     * @param spellType The spellType to update the board with
+     */
+    public static void deRegisterPlayer(@NotNull Player player, @Nullable String spellType) {
+        playersHoldingCoolDownedItem.remove(player);
+        updateBoard(player, spellType, false);
     }
 
     /**
@@ -83,37 +97,47 @@ public class PlayerDataBoard {
      * @param player The player whose scoreboard to update
      */
     public static void updateBoard(@NotNull Player player) {
-        updateBoard(player, ItemData.getHeldSpellType(player));
+        String heldCoolDownedSpellType = null;
+        String heldSpellType = ItemData.getHeldSpellType(player);
+        if (CoolDowns.getCoolDowns(player).containsKey(heldSpellType))
+            heldCoolDownedSpellType = heldSpellType;
+
+        updateBoard(player, heldCoolDownedSpellType);
     }
 
     /**
      * Updates the player's scoreboard and displays the spellTypes coolDown.
      *
      * @param player The player whose scoreboard to update
-     * @param spellType The spellType of the current CoolDown
+     * @param heldCoolDownedSpellType The spellType of the currently held CoolDown
      */
-    public static void updateBoard(@NotNull Player player, @Nullable String spellType) {
-        updateBoard(player, spellType, true);
+    public static void updateBoard(@NotNull Player player, @Nullable String heldCoolDownedSpellType) {
+        updateBoard(player, heldCoolDownedSpellType, true);
     }
 
     /**
      * Updates the player's scoreboard and displays the spellTypes coolDown.
      *
      * @param player The player whose scoreboard to update
-     * @param deRegisterIfNull To deRegister the player if the spellType is null
+     * @param deRegister To deRegister the player in specific cases or not
      */
-    public static void updateBoard(@NotNull Player player, boolean deRegisterIfNull) {
-        updateBoard(player, ItemData.getHeldSpellType(player), deRegisterIfNull);
+    public static void updateBoard(@NotNull Player player, boolean deRegister) {
+        String heldCoolDownedSpellType = null;
+        String heldSpellType = ItemData.getHeldSpellType(player);
+        if (CoolDowns.getCoolDowns(player).containsKey(heldSpellType))
+            heldCoolDownedSpellType = heldSpellType;
+
+        updateBoard(player, heldCoolDownedSpellType, deRegister);
     }
 
     /**
      * Updates the player's scoreboard and displays the spellTypes coolDown.
      *
      * @param player The player whose scoreboard to update
-     * @param spellType The spellType of the current CoolDown
-     * @param deRegisterIfNull To deRegister the player if the spellType is null
+     * @param heldCoolDownedSpellType The spellType of the currently held CoolDown
+     * @param deRegister To deRegister the player in specific cases or not
      */
-    public static void updateBoard(@NotNull Player player, @Nullable String spellType, boolean deRegisterIfNull) {
+    public static void updateBoard(@NotNull Player player, @Nullable String heldCoolDownedSpellType, boolean deRegister) {
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective obj = board.registerNewObjective("playerDataBoard", "dummy", Component.text("WIP"/*PlayerDataUtil.constructDisplayString(player)*/)); //TODO use LuckPerms here
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -133,49 +157,64 @@ public class PlayerDataBoard {
         line = obj.getScore("  §b§nSpellBend§b.minehut.gg"); line.setScore(3);
         line = obj.getScore("§3§m-------------§r   "); line.setScore(2);
 
-        if (spellType != null) {
-            CoolDownEntry coolDownEntry = CoolDowns.getCoolDownEntry(player, spellType);
-
-            if (coolDownEntry != null && coolDownEntry.getRemainingCoolDownTime()>0.0001f) {
-                line = obj.getScore("§7" + spellType.charAt(0) + spellType.substring(1).toLowerCase()); line.setScore(1);
-
-                StringBuilder coolDownDisplay = new StringBuilder();
-
-                switch (coolDownEntry.coolDownStage()) {
-                    case WINDUP -> {
-                        int filled = Math.round((coolDownEntry.getRemainingCoolDownTime()/coolDownEntry.timeInS())*10);
-                        coolDownDisplay.append("§a").append(Math.round(coolDownEntry.getRemainingCoolDownTime()*10f)/10f).append("s §8▌▌▌▌▌▌▌▌▌▌")
-                                .insert(coolDownDisplay.length()-10+filled, "§e");
-                    }
-                    case ACTIVE -> {
-                        int filled = Math.round((coolDownEntry.getRemainingCoolDownTime()/coolDownEntry.timeInS())*10);
-                        coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownTime()*10f)/10f).append("s §b▌▌▌▌▌▌▌▌▌▌")
-                                .insert(coolDownDisplay.length()-10+filled, "§8");
-                    }
-                    case COOLDOWN -> {
-                        int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownTime()/coolDownEntry.timeInS())*10);
-                        coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownTime()*10f)/10f).append("s §a▌▌▌▌▌▌▌▌▌▌")
-                                .insert(coolDownDisplay.length()-10+filled, "§8");
-                    }
-                }
-
-                line = obj.getScore(coolDownDisplay.toString()); line.setScore(0);
-            } else {
-                Bukkit.getLogger().warning("When updating " + player.displayName() + "'s scoreboard, " + spellType + " was given as the coolDowned spellType, however no such CoolDownEntry exists!");
-
-                line = obj.getScore(""); line.setScore(1);
-                line = obj.getScore(" "); line.setScore(0);
-
-                deRegisterPlayer(player);
-            }
-        } else {
+        if (heldCoolDownedSpellType == null) {
             line = obj.getScore(""); line.setScore(1);
             line = obj.getScore(" "); line.setScore(0);
+            player.setScoreboard(board);
+
+            //iason was here
+            //makes it not recall itself infinitely if used correctly
+            if (deRegister)
+                deRegisterPlayer(player);
+            return;
+        }
+        CoolDownEntry coolDownEntry = CoolDowns.getCoolDownEntry(player, heldCoolDownedSpellType);
+
+        if (coolDownEntry == null) {
+            Bukkit.getLogger().warning("When updating " + player.getName() + "'s scoreboard, " + heldCoolDownedSpellType + " was given as the coolDowned spellType, however no such CoolDownEntry exists!");
+
+            line = obj.getScore(""); line.setScore(1);
+            line = obj.getScore(" "); line.setScore(0);
+            player.setScoreboard(board);
 
             //makes it not recall itself infinitely if used correctly
-            if (deRegisterIfNull)
+            if (deRegister)
                 deRegisterPlayer(player);
+            return;
         }
+
+        if (coolDownEntry.getRemainingCoolDownTime()<0.0001f) {
+            line = obj.getScore(""); line.setScore(1);
+            line = obj.getScore(" "); line.setScore(0);
+            player.setScoreboard(board);
+
+            //makes it not recall itself infinitely if used correctly
+            if (deRegister)
+                deRegisterPlayer(player);
+            return;
+        }
+
+        line = obj.getScore("§7" + heldCoolDownedSpellType.charAt(0) + heldCoolDownedSpellType.substring(1).toLowerCase()); line.setScore(1);
+        StringBuilder coolDownDisplay = new StringBuilder();
+
+        switch (coolDownEntry.coolDownStage()) {
+            case WINDUP -> {
+                int filled = Math.round((coolDownEntry.getRemainingCoolDownTime()/coolDownEntry.timeInS())*10);
+                coolDownDisplay.append("§a").append(Math.round(coolDownEntry.getRemainingCoolDownTime()*10f)/10f).append("s §8▌▌▌▌▌▌▌▌▌▌")
+                        .insert(coolDownDisplay.length()-10+filled, "§e");
+            }
+            case ACTIVE -> {
+                int filled = Math.round((coolDownEntry.getRemainingCoolDownTime()/coolDownEntry.timeInS())*10);
+                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownTime()*10f)/10f).append("s §b▌▌▌▌▌▌▌▌▌▌")
+                        .insert(coolDownDisplay.length()-10+filled, "§8");
+            }
+            case COOLDOWN -> {
+                int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownTime()/coolDownEntry.timeInS())*10);
+                coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownTime()*10f)/10f).append("s §a▌▌▌▌▌▌▌▌▌▌")
+                        .insert(coolDownDisplay.length()-10+filled, "§8");
+            }
+        }
+        line = obj.getScore(coolDownDisplay.toString()); line.setScore(0);
 
         player.setScoreboard(board);
     }

@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class SpellHandler {
      * @param spellItem The item used (doesn't HAVE to be a spell)
      */
     public static void letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem) {
-        Spell spell = nameToSpellBuilderMap.get(spellName.toLowerCase()).createSpell(player, spellItem);
+        Spell spell = nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellItem);
         playerToActiveSpellListMap.get(player).add(spell);
     }
 
@@ -49,14 +50,18 @@ public class SpellHandler {
      * @param spellItem The item used (HAS to be a spell)
      */
     public static void letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem) {
-        String spellName = spellItem.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING);
-        Spell spell = nameToSpellBuilderMap.get(spellName).createSpell(player, spellItem);
-        playerToActiveSpellListMap.get(player).add(spell);
+        if (!itemIsRegisteredSpell(spellItem)) {
+            Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a spell, casting skipped!");
+            return;
+        }
+
+        //noinspection ConstantConditions
+        letPlayerCastSpell(player, spellItem.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING).toUpperCase(), spellItem);
     }
 
     public static ArrayList<Spell> getActivePlayerSpells(@NotNull Player player) {
         if (!playerToActiveSpellListMap.containsKey(player)) {
-            Bukkit.getLogger().warning("Player " + player.getName() + " was not contained in playerToActiveSpellListMap! Registering manually.\n(This probably won't affect the program, it just shouldn't have happened.)");
+            Bukkit.getLogger().warning("Player " + player.getName() + " was not contained in playerToActiveSpellListMap! Registering manually.\n(This probably won't affect the program directly, it just shouldn't have happened and is probably a bug that could cause other problems.)");
             playerToActiveSpellListMap.put(player, new ArrayList<>());
         }
 
@@ -111,7 +116,7 @@ public class SpellHandler {
      * @param item The item to be checked
      * @return If it is a spell
      */
-    public static boolean itemIsSpell(ItemStack item) {
+    public static boolean itemIsSpell(@Nullable ItemStack item) {
         if (item == null)
             return false;
 
@@ -129,11 +134,9 @@ public class SpellHandler {
      * @param item The item to be checked
      * @return If it is a registered spell
      */
-    public static boolean itemIsRegisteredSpell(ItemStack item) {
+    public static boolean itemIsRegisteredSpell(@Nullable ItemStack item) {
         if (item == null)
             return false;
-        //noinspection ConstantConditions
-        Bukkit.getLogger().info("item isn't null, is spell: " + itemIsSpell(item) + " and is registered: " + spellBuilderIsRegistered(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING)));
 
         //noinspection ConstantConditions
         return itemIsSpell(item) && spellBuilderIsRegistered(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING));

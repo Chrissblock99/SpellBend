@@ -17,7 +17,10 @@ public class GeneralRegisterUtil {
         new PlayerInteractBlock();
         new PlayerInteractEntity();
         new PlayerJoin();
-        new PlayerLeave();
+        new PlayerQuit();
+        new FoodLevelChange();
+        new PlayerSwitchHeldItem();
+        new InventoryClick();
     }
 
     public static void registerAllSpells() {

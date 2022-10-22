@@ -14,7 +14,7 @@ public class PlayerInteractEntity implements Listener {
     }
 
     @EventHandler
-    public void onEntityInteract(PlayerInteractEntityEvent event) {
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (GameMode.ADVENTURE.equals(event.getPlayer().getGameMode())) {
             event.setCancelled(true);  //basically noInteract for normal players
             //noinspection ConstantConditions

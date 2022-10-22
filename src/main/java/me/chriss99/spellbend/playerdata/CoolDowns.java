@@ -29,11 +29,11 @@ public class CoolDowns {
      */
     public static void loadCoolDowns(@NotNull Player player) { //ToDo test if this works
         if (!player.isOnline()) {
-            Bukkit.getLogger().warning(player.displayName() + " is not online when trying to load CoolDowns, skipping loading!");
+            Bukkit.getLogger().warning(player.getName() + " is not online when trying to load CoolDowns, skipping loading!");
             return;
         }
         if (PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " is already loaded when loading coolDowns, skipping loading!");
+            Bukkit.getLogger().warning(player.getName() + " is already loaded when loading coolDowns, skipping loading!");
             return;
         }
 
@@ -93,7 +93,7 @@ public class CoolDowns {
      */
     public static void setCoolDown(@NotNull Player player, @NotNull String spellType, float timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
             loadCoolDowns(player);
         }
 
@@ -109,7 +109,7 @@ public class CoolDowns {
      */
     public static void removeCoolDown(@NotNull Player player, @NotNull String spellType) {
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
             loadCoolDowns(player);
         }
 
@@ -126,7 +126,7 @@ public class CoolDowns {
      */
     public static void extendCoolDown(@NotNull Player player, @NotNull String spellType, float timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
             loadCoolDowns(player);
         }
 
@@ -153,13 +153,13 @@ public class CoolDowns {
      */
     public static void addCoolDown(@NotNull Player player, @NotNull String spellType, float timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
             loadCoolDowns(player);
         }
 
         if (PlayerSessionStorage.coolDowns.get(player).containsKey(spellType))
             Bukkit.getLogger().warning("CoolDown " + spellType + " is already present (" + PlayerSessionStorage.coolDowns.get(player).get(spellType) + ") " +
-                    "when trying to add (" + timeInSeconds + ", " + coolDownStage + ") to " + player.displayName() + ", assigning larger coolDown!");
+                    "when trying to add (" + timeInSeconds + ", " + coolDownStage + ") to " + player.getName() + ", assigning larger coolDown!");
         extendCoolDown(player, spellType, timeInSeconds, coolDownStage);
     }
 
@@ -172,7 +172,7 @@ public class CoolDowns {
      */
     public static @Nullable CoolDownEntry getCoolDownEntry(@NotNull Player player, @NotNull String spellType) {
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
             loadCoolDowns(player);
         }
 
@@ -194,7 +194,7 @@ public class CoolDowns {
      */
     public static HashMap<String, CoolDownEntry> getCoolDowns(@NotNull Player player) {
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
+            Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerToCoolDowns map, now fixing!");
             loadCoolDowns(player);
         }
 
@@ -213,7 +213,7 @@ public class CoolDowns {
      */
     public static void saveCoolDowns(@NotNull Player player) { //ToDo test if this works
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToCoolDowns map when saving, saving skipped!");
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToCoolDowns map when saving, saving skipped!");
             return;
         }
 
