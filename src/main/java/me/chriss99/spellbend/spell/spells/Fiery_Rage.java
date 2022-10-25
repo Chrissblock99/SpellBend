@@ -12,6 +12,7 @@ import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -19,6 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Fiery_Rage extends Spell implements Killable {
     BukkitTask windupTask;
@@ -109,9 +111,8 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     @Override
-    public void casterDeath(Player killer) {
+    public void casterDeath(@Nullable Entity killer) {
         CoolDowns.setCoolDown(super.caster, spellType, 30f, Enums.CoolDownStage.COOLDOWN);
-        cancelSpell();
     }
 
     @Override

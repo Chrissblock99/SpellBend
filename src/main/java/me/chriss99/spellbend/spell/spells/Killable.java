@@ -1,7 +1,8 @@
 package me.chriss99.spellbend.spell.spells;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 public interface Killable {
-    void casterDeath(Player killer);
+    void casterDeath(@Nullable Entity killer);
 }

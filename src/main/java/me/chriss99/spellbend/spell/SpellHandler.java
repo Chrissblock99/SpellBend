@@ -1,9 +1,11 @@
 package me.chriss99.spellbend.spell;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.spell.spells.Killable;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.spellsubclassbuilder.SpellSubClassBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -66,6 +68,16 @@ public class SpellHandler {
         }
 
         return playerToActiveSpellListMap.get(player);
+    }
+
+    public static void killPlayer(@NotNull Player player, @Nullable Entity killer) {
+        ArrayList<Spell> activeSpells = playerToActiveSpellListMap.get(player);
+        for (int i = activeSpells.size()-1;i>=0;i--) {
+            Spell spell = activeSpells.get(i);
+            if (spell instanceof Killable killable)
+                killable.casterDeath(killer);
+            spell.cancelSpell();
+        }
     }
 
     /**
