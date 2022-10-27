@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.events;
 
+import me.chriss99.spellbend.playerdata.Health;
 import me.chriss99.spellbend.playerdata.PlayerDataBoard;
 import me.chriss99.spellbend.playerdata.PlayerDataUtil;
 import me.chriss99.spellbend.spell.SpellHandler;
@@ -21,5 +22,6 @@ public class PlayerQuit implements Listener {
         PlayerDataBoard.deRegisterPlayer(player);
         SpellHandler.deRegisterPlayer(player);
         PlayerDataUtil.saveAll(player);
+        Health.deRegisterPlayer(player);
     }
 }

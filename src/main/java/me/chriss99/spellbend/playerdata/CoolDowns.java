@@ -27,7 +27,7 @@ public class CoolDowns {
      *
      * @param player The player whose CoolDowns to load
      */
-    public static void loadCoolDowns(@NotNull Player player) { //ToDo test if this works
+    public static void loadCoolDowns(@NotNull Player player) {
         if (!player.isOnline()) {
             Bukkit.getLogger().warning(player.getName() + " is not online when trying to load CoolDowns, skipping loading!");
             return;
@@ -211,7 +211,7 @@ public class CoolDowns {
      *
      * @param player The player whose CoolDowns to save
      */
-    public static void saveCoolDowns(@NotNull Player player) { //ToDo test if this works
+    public static void saveCoolDowns(@NotNull Player player) {
         if (!PlayerSessionStorage.coolDowns.containsKey(player)) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToCoolDowns map when saving, saving skipped!");
             return;
