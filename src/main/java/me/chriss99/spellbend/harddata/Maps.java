@@ -13,7 +13,8 @@ public class Maps {
 
         map.put(Enums.CoolDownStage.WINDUP, 0);
         map.put(Enums.CoolDownStage.ACTIVE, 1);
-        map.put(Enums.CoolDownStage.COOLDOWN, 2);
+        map.put(Enums.CoolDownStage.PASSIVE, 2);
+        map.put(Enums.CoolDownStage.COOLDOWN, 3);
 
         return map;
     }

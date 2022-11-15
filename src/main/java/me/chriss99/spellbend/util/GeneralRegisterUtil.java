@@ -5,6 +5,7 @@ import me.chriss99.spellbend.commands.Test;
 import me.chriss99.spellbend.events.*;
 import me.chriss99.spellbend.spell.spellsubclassbuilder.Ember_BlastBuilder;
 import me.chriss99.spellbend.spell.spellsubclassbuilder.Fiery_RageBuilder;
+import me.chriss99.spellbend.spell.spellsubclassbuilder.Test_SpellBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
@@ -24,6 +25,8 @@ public class GeneralRegisterUtil {
     }
 
     public static void registerAllSpells() {
+        new Test_SpellBuilder();
+
         new Fiery_RageBuilder();
         new Ember_BlastBuilder();
     }

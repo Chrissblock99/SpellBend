@@ -8,6 +8,11 @@ public abstract class Spell {
     protected final Player caster;
     protected final ItemStack item;
 
+    /**
+     *
+     * @param caster The player that is casting the spell
+     * @param item The item used (name will appear in kill message)
+     */
     public Spell(@NotNull Player caster, @NotNull ItemStack item) {
         this.caster = caster;
         this.item = item;
