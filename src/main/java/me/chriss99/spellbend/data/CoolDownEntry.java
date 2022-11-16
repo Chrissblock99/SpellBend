@@ -80,10 +80,12 @@ public class CoolDownEntry {
      *
      * @return If the coolDown is finished or not
      */
-    public boolean skipCurrentStage() { //TODO this is not reflected in the rest of the data structure IMPORTANT
+    public boolean skipCurrentStage() {
         float timeSinceStartInS = (new Date().getTime() - startDate.getTime()) / 1000f;
 
-        //TODO edit array here
+        int currentStageIndex = Maps.coolDownStageToIndexMap.get(coolDownStage);
+        //                            time to end of this stage          minus        time Since start       equals the remaining time of this Stage
+        timeInS[currentStageIndex] -= getTimeToStageInS(currentStageIndex+1) - (new Date().getTime() - startDate.getTime()) / 1000f;
 
         //we just assume the stage is updated WHICH CAN LEAD TO PROBLEMS, but I haven't found a fix yet
         int newIndex = Maps.coolDownStageToIndexMap.get(coolDownStage) + 1;
@@ -203,6 +205,8 @@ public class CoolDownEntry {
     }
 
     /**
+     * Independent of the stage being updated.
+     *
      * @throws IllegalArgumentException If the given index is not between or equal to 0 and 4
      *
      * @param index The index in the timeInS array to get the time it takes to reach from start of <br>
