@@ -78,22 +78,22 @@ public class CoolDownEntry {
      * It doesn't update because it could be that the code checks in a millisecond just before it gets to the next stage <br>
      * and if the code then updates the coolDownStage and THEN skips, it will skip a stage that wasn't intended to be skipped.
      *
-     * @return If the coolDown is finished or not
+     * @return How much time was skipped
      */
-    public boolean skipCurrentStage() {
+    public float skipCurrentStage() {
         float timeSinceStartInS = (new Date().getTime() - startDate.getTime()) / 1000f;
 
         int currentStageIndex = Maps.coolDownStageToIndexMap.get(coolDownStage);
-        //                            time to end of this stage          minus        time Since start       equals the remaining time of this Stage
-        timeInS[currentStageIndex] -= getTimeToStageInS(currentStageIndex+1) - (new Date().getTime() - startDate.getTime()) / 1000f;
+        //                  time to end of this stage          minus        time Since start       equals the remaining time of this Stage
+        float timeToSkip = getTimeToStageInS(currentStageIndex+1) - (new Date().getTime() - startDate.getTime()) / 1000f;
+        timeInS[currentStageIndex] -= timeToSkip;
 
         //we just assume the stage is updated WHICH CAN LEAD TO PROBLEMS, but I haven't found a fix yet
         int newIndex = Maps.coolDownStageToIndexMap.get(coolDownStage) + 1;
-        if (newIndex == 4)
-            return true;
+        if (newIndex != 4)
+            coolDownStage = Enums.CoolDownStage.values()[newIndex];
 
-        coolDownStage = Enums.CoolDownStage.values()[newIndex];
-        return false;
+        return timeToSkip;
     }
 
     /**
@@ -126,18 +126,14 @@ public class CoolDownEntry {
         if (Maps.coolDownStageToIndexMap.get(coolDownStage)<Maps.coolDownStageToIndexMap.get(this.coolDownStage) || coolDownStage.equals(this.coolDownStage))
             throw new IllegalArgumentException("The CoolDownStage to skip to cannot be older than or the same as the current one!");
 
+        //TODO test this
+        float timeSkipped = skipCurrentStage();
         int stageToSkipToIndex = Maps.coolDownStageToIndexMap.get(coolDownStage);
-        float skippedStagesTimeInS = 0;
-        for (int i = Maps.coolDownStageToIndexMap.get(this.coolDownStage)+1;i<stageToSkipToIndex;i++)
-            skippedStagesTimeInS += timeInS[i];
-
-        float remainingStagesTimeInS = skippedStagesTimeInS;
-        for (int i = stageToSkipToIndex;i<4;i++)
-            skippedStagesTimeInS += timeInS[i];
-
-        //TODO actually skip stuff here (that means editing the array)
-
-        return skippedStagesTimeInS + (getRemainingCoolDownTimeInS() - remainingStagesTimeInS);
+        for(int i = Maps.coolDownStageToIndexMap.get(this.coolDownStage)+1;i<stageToSkipToIndex;i++) {
+            timeSkipped += timeInS[i];
+            timeInS[i] = 0;
+        }
+        return timeSkipped;
     }
 
     /**
