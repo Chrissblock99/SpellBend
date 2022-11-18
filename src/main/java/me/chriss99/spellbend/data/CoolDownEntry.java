@@ -9,8 +9,7 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * This data structure is not mutable, except for the coolDownStage!
- * To edit things like the timeInS array replace the instance.
+ * This data structure is not mutable, except for the coolDownStage and timeInS array!
  */
 public class CoolDownEntry {
     private final String spellType;
