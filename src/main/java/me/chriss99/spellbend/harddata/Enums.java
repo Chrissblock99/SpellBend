@@ -4,6 +4,7 @@ public class Enums {
     public enum CoolDownStage {
         WINDUP,
         ACTIVE,
+        PASSIVE,
         COOLDOWN
     }
 

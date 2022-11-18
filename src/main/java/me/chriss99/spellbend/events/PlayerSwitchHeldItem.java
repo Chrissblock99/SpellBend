@@ -24,7 +24,7 @@ public class PlayerSwitchHeldItem implements Listener {
         if (SpellHandler.itemIsSpell(player.getInventory().getItemInMainHand()) || SpellHandler.itemIsSpell(newItem)) {
             String spellType = ItemData.getSpellType(newItem);
             //noinspection ConstantConditions
-            if (spellType != null && CoolDowns.getCoolDownEntry(player, spellType) != null && CoolDowns.getCoolDownEntry(player, spellType).getRemainingCoolDownTime() > 0.1f)
+            if (spellType != null && CoolDowns.getCoolDownEntry(player, spellType) != null && CoolDowns.getCoolDownEntry(player, spellType).getRemainingCoolDownStageTimeInS() > 0.1f) //TODO redo this in context of the CoolDownEntry change
                 PlayerDataBoard.registerPlayer(player, spellType);
             else PlayerDataBoard.deRegisterPlayer(player, null); //have to pass null here as the event isn't finished yet. therefore the item the player is currently holding is still the old one
         }

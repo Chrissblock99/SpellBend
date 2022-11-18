@@ -1,9 +1,11 @@
 package me.chriss99.spellbend.spell;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.playerdata.PlayerSessionStorage;
 import me.chriss99.spellbend.spell.spells.Killable;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.spellsubclassbuilder.SpellSubClassBuilder;
+import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,15 +36,26 @@ public class SpellHandler {
     }
 
     /**
+     * Creates a spell of item's named type and adds it to the players activeSpellList.
+     *
+     * @param player The player casting the spell
+     * @param spellItem The item used (HAS to be a spell)
+     * @return If the spell was cast or not
+     */
+    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem) {
+        return letPlayerCastSpell(player, spellItem, false);
+    }
+
+    /**
      * Creates a spell of named type and adds it to the players activeSpellList.
      *
      * @param player The player casting the spell
      * @param spellName The name of the spell
      * @param spellItem The item used (doesn't HAVE to be a spell)
+     * @return If the spell was cast or not
      */
-    public static void letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem) {
-        Spell spell = nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellItem);
-        playerToActiveSpellListMap.get(player).add(spell);
+    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem) {
+        return letPlayerCastSpell(player, spellName, spellItem, false);
     }
 
     /**
@@ -50,15 +63,35 @@ public class SpellHandler {
      *
      * @param player The player casting the spell
      * @param spellItem The item used (HAS to be a spell)
+     * @param force To force the spell even if coolDowned
+     * @return If the spell was cast or not
      */
-    public static void letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem) {
+    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem, boolean force) {
         if (!itemIsRegisteredSpell(spellItem)) {
             Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a spell, casting skipped!");
-            return;
+            return false;
         }
 
         //noinspection ConstantConditions
-        letPlayerCastSpell(player, spellItem.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING).toUpperCase(), spellItem);
+        return letPlayerCastSpell(player, spellItem.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING).toUpperCase(), spellItem, force);
+    }
+
+    /**
+     * Creates a spell of named type and adds it to the players activeSpellList.
+     *
+     * @param player The player casting the spell
+     * @param spellName The name of the spell
+     * @param spellItem The item used (doesn't HAVE to be a spell)
+     * @param force To force the spell even if coolDowned
+     * @return If the spell was cast or not
+     */
+    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem, boolean force) {
+        //TODO enforce spellTypes being given
+        if (!force && PlayerSessionStorage.coolDowns.get(player).containsKey(ItemData.getSpellType(spellItem)))
+            return false;
+
+        playerToActiveSpellListMap.get(player).add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellItem));
+        return true;
     }
 
     public static ArrayList<Spell> getActivePlayerSpells(@NotNull Player player) {
@@ -107,9 +140,9 @@ public class SpellHandler {
             return;
         }
 
-        for (Spell spell : playerToActiveSpellListMap.get(player)) {
-            spell.casterLeave();
-        }
+        ArrayList<Spell> activeSpells = playerToActiveSpellListMap.get(player);
+        for (int i = activeSpells.size()-1;i>=0;i--)
+            activeSpells.get(i).casterLeave();
 
         playerToActiveSpellListMap.remove(player);
     }
