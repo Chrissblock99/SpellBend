@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * This data structure is not mutable, except for the coolDownStage and timeInS array!
+ * Stores the startDate, spellType, coolDownStage and coolDownTime for each stage.
+ * This data structure is static and therefore doesn't require constant updates.
+ * It is not mutable, except for the coolDownStage and timeInS array!
  */
 public class CoolDownEntry {
     private final String spellType;
