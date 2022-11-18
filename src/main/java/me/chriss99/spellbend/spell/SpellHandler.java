@@ -1,9 +1,11 @@
 package me.chriss99.spellbend.spell;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.playerdata.PlayerSessionStorage;
 import me.chriss99.spellbend.spell.spells.Killable;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.spellsubclassbuilder.SpellSubClassBuilder;
+import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -84,7 +86,9 @@ public class SpellHandler {
      * @return If the spell was cast or not
      */
     public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem, boolean force) {
-        //TODO add cooldown return false here
+        //TODO enforce spellTypes being given
+        if (!force && PlayerSessionStorage.coolDowns.get(player).containsKey(ItemData.getSpellType(spellItem)))
+            return false;
 
         playerToActiveSpellListMap.get(player).add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellItem));
         return true;

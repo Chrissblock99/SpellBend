@@ -111,7 +111,13 @@ public class Fiery_Rage extends Spell implements Killable {
 
     @Override
     public void casterDeath(@Nullable Entity killer) {
-        CoolDowns.setCoolDown(caster, spellType, new float[]{0, 0, 0, 30}, Enums.CoolDownStage.COOLDOWN);
+        CoolDownEntry entry = CoolDowns.getCoolDownEntry(caster, spellType);
+        if (entry == null) {
+            Bukkit.getLogger().warning(caster.getName() + " had Fiery Rage active under the type \"" + spellType + "\" while dieing, but no CoolDownEntry was found, skipping it's removal!");
+            return;
+        }
+
+        entry.skipToStage(Enums.CoolDownStage.COOLDOWN);
         cancelSpell();
     }
 
@@ -123,10 +129,7 @@ public class Fiery_Rage extends Spell implements Killable {
             return;
         }
 
-        switch (entry.getCoolDownStage()) {
-            case WINDUP, ACTIVE -> CoolDowns.setCoolDown(caster, spellType, new float[]{0, 0, 0, entry.getRemainingCoolDownStageTimeInS()+40}, Enums.CoolDownStage.COOLDOWN);
-            case PASSIVE -> CoolDowns.setCoolDown(caster, spellType, new float[]{0, 0, 0, entry.getRemainingCoolDownStageTimeInS()+30f}, Enums.CoolDownStage.COOLDOWN);
-        }
+        entry.transformToStage(Enums.CoolDownStage.COOLDOWN);
         cancelSpell();
     }
 

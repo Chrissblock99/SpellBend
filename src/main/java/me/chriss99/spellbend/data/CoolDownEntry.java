@@ -126,14 +126,40 @@ public class CoolDownEntry {
         if (Maps.coolDownStageToIndexMap.get(coolDownStage)<Maps.coolDownStageToIndexMap.get(this.coolDownStage) || coolDownStage.equals(this.coolDownStage))
             throw new IllegalArgumentException("The CoolDownStage to skip to cannot be older than or the same as the current one!");
 
-        //TODO test this
         float timeSkipped = skipCurrentStage();
         int stageToSkipToIndex = Maps.coolDownStageToIndexMap.get(coolDownStage);
         for(int i = Maps.coolDownStageToIndexMap.get(this.coolDownStage)+1;i<stageToSkipToIndex;i++) {
             timeSkipped += timeInS[i];
             timeInS[i] = 0;
         }
+        this.coolDownStage = coolDownStage;
+
         return timeSkipped;
+    }
+
+    /**
+     * Skips to the given Stage and adds all the time skipped to it
+     *
+     * @param index The CoolDownStage to transform to
+     * @return The skipped time
+     */
+    public float transformToStage(int index) {
+        if (index < 0 || index > 3)
+            throw new IllegalArgumentException("There are only four coolDownStages!");
+
+        return transformToStage(Enums.CoolDownStage.values()[index]);
+    }
+
+    /**
+     * Skips to the given Stage and adds all the time skipped to it
+     *
+     * @param coolDownStage The CoolDownStage to transform to
+     * @return The skipped time
+     */
+    public float transformToStage(@NotNull Enums.CoolDownStage coolDownStage) {
+        float transformedTime = skipToStage(coolDownStage);
+        timeInS[Maps.coolDownStageToIndexMap.get(coolDownStage)] += transformedTime;
+        return  transformedTime;
     }
 
     /**

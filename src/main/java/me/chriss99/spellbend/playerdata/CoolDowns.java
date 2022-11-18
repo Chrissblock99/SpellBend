@@ -45,10 +45,7 @@ public class CoolDowns {
      * @param player The player to clear coolDowns of
      */
     public static void removeExpiredCoolDowns(@NotNull Player player) {
-        HashMap<String, CoolDownEntry> coolDowns = PlayerSessionStorage.coolDowns.get(player);
-        for (Map.Entry<String, CoolDownEntry> entry : coolDowns.entrySet())
-            if (entry.getValue().getRemainingCoolDownTimeInS() <= 0.01f)
-                coolDowns.remove(entry.getKey());
+        PlayerSessionStorage.coolDowns.get(player).entrySet().removeIf(entry -> entry.getValue().getRemainingCoolDownTimeInS() <= 0.01f);
     }
 
     /**
