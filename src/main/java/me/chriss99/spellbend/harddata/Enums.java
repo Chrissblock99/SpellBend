@@ -13,4 +13,9 @@ public class Enums {
         HANDICAP,
         FORCE
     }
+
+    public enum DmgMod {
+        DEALT,
+        TAKEN
+    }
 }

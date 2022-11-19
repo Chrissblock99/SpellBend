@@ -1,6 +1,8 @@
 package me.chriss99.spellbend.commands;
 
+import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.playerdata.DmgMods;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.Item;
@@ -103,23 +105,34 @@ public class Test {
             }
         });
 
-        /*subCommands.put("value dmgMod get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"dmgMod", "player"}) {
+        subCommands.put("value dmgMod get", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, String.class, Player.class}, new String[]{"dmgMod", "dmgModType", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                String dmgMod = (String) arguments.get(0);
-                Player player = (Player) arguments.get(1);
+                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                String dmgModTypeString = ((String) arguments.get(1)).toUpperCase();
+                Player player = (Player) arguments.get(2);
 
-                if (Lists.getDmgModTypeByName(dmgMod) == null && !dmgMod.equals("all")) {
-                    sender.sendMessage("§4" + dmgMod + " is not a valid DmgModifier!");
+                Enums.DmgModType[] dmgModTypes = Enums.DmgModType.values();
+                ArrayList<String> dmgModTypeStrings = new ArrayList<>(3);
+                for (Enums.DmgModType modType : dmgModTypes)
+                    dmgModTypeStrings.add(modType.toString().toUpperCase());
+
+                if (!dmgModTypeStrings.contains(dmgModTypeString) && !dmgModTypeString.equals("ALL")) {
+                    sender.sendMessage("§4" + dmgModTypeString + " is not a valid DmgModifier!");
                     return true;
                 }
 
-                sender.sendMessage("DmgModifier " + dmgMod + " of " + player.getDisplayName() + ": " + DmgMods.getDmgMod(player, dmgMod));
+                DmgMods.setDmgMod(dmgMod);
+                StringBuilder stringBuilder = new StringBuilder().append(DmgMods.getCurrentName());
+                stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "").append("ifier ")
+                        .append(dmgModTypeString).append(" of ").append(player.getName()).append(": ")
+                        .append(DmgMods.getDmgMod(player, (dmgModTypeString.equals("ALL")) ? null : Enums.DmgModType.valueOf(dmgModTypeString)));
+                sender.sendMessage(stringBuilder.toString());
                 return true;
             }
         });
 
-        subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class}, new String[]{"dmgMod", "player", "number"}) {
+        /*subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class}, new String[]{"dmgMod", "player", "number"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
                 String dmgMod = (String) arguments.get(0);

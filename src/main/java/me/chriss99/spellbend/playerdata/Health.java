@@ -2,6 +2,7 @@ package me.chriss99.spellbend.playerdata;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.DamageEntry;
+import me.chriss99.spellbend.harddata.Enums;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
@@ -70,7 +71,12 @@ public class Health {
             registerPlayer(victim);
         }
 
-        double dmg = rawDamage * ((attacker instanceof Player player) ? DmgMods.getDmgMod(player, null) : 1);
+        double dmg = rawDamage;
+        DmgMods.setDmgMod(Enums.DmgMod.DEALT);
+        dmg *= (attacker instanceof Player player) ? DmgMods.getDmgMod(player, null) : 1;
+        DmgMods.setDmgMod(Enums.DmgMod.TAKEN);
+        dmg *= DmgMods.getDmgMod(victim, null);
+
         double healthBefore = getHealth(victim);
         PlayerSessionStorage.health.get(victim).add(0, new DamageEntry(attacker,
                 (getHealth(victim)-dmg <= 0) ? healthBefore : dmg)); //if the health before dmg is smaller than health needed to kill use dmg as value
