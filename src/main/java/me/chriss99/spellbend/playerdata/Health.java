@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Health {
     private final static SpellBend plugin = SpellBend.getInstance();
@@ -22,18 +23,21 @@ public class Health {
      *
      * @param player The player to register in health
      */
-    public static void registerPlayer(@NotNull Player player) {
+    public static ArrayList<DamageEntry> registerPlayer(@NotNull Player player) {
         if (!player.isOnline()) {
             Bukkit.getLogger().warning(player.getName() + " is not online when trying to register health, skipping it!");
-            return;
+            return null;
         }
-        if (PlayerSessionStorage.health.containsKey(player)) {
+        ArrayList<DamageEntry> damageEntries = PlayerSessionStorage.health.get(player);
+        if (damageEntries != null) {
             Bukkit.getLogger().warning(player.getName() + " is already registered when registering health, skipping it!");
-            return;
+            return damageEntries;
         }
 
-        PlayerSessionStorage.health.put(player, new ArrayList<>());
+        damageEntries = new ArrayList<>();
+        PlayerSessionStorage.health.put(player, damageEntries);
         player.setHealth(20d);
+        return damageEntries;
     }
 
     /**
@@ -43,13 +47,14 @@ public class Health {
      * @return The health of the player
      */
     public static double getHealth(@NotNull Player player) {
-        if (!PlayerSessionStorage.health.containsKey(player)) {
+        ArrayList<DamageEntry> damageEntries = PlayerSessionStorage.health.get(player);
+        if (damageEntries == null) {
             Bukkit.getLogger().warning(player.getName() + " was not registered in healthMap, now fixing!");
-            registerPlayer(player);
+            damageEntries = Objects.requireNonNull(registerPlayer(player));
         }
 
         double health = 20d;
-        for (DamageEntry entry : PlayerSessionStorage.health.get(player))
+        for (DamageEntry entry : damageEntries)
             health -= entry.getDamage();
         return health;
     }
@@ -66,9 +71,10 @@ public class Health {
     public static double dmgPlayer(@NotNull Player victim, @NotNull Entity attacker, double rawDamage, @NotNull ItemStack item) {
         if (rawDamage < 0)
             throw new IllegalArgumentException("Damage cannot be negative!");
-        if (!PlayerSessionStorage.health.containsKey(victim)) {
+        ArrayList<DamageEntry> damageEntries = PlayerSessionStorage.health.get(victim);
+        if (damageEntries == null) {
             Bukkit.getLogger().warning(victim.getName() + " was not registered in healthMap, now fixing!");
-            registerPlayer(victim);
+            damageEntries = Objects.requireNonNull(registerPlayer(victim));
         }
 
         double dmg = rawDamage;
@@ -78,7 +84,7 @@ public class Health {
         dmg *= DmgMods.getDmgMod(victim, null);
 
         double healthBefore = getHealth(victim);
-        PlayerSessionStorage.health.get(victim).add(0, new DamageEntry(attacker,
+        damageEntries.add(0, new DamageEntry(attacker,
                 (getHealth(victim)-dmg <= 0) ? healthBefore : dmg)); //if the health before dmg is smaller than health needed to kill use dmg as value
         double health = getHealth(victim);
 
@@ -103,11 +109,11 @@ public class Health {
     public static double healPlayer(@NotNull Player player, double heal) {
         if (heal <= 0)
             throw new IllegalArgumentException("Healing amount cannot be negative or zero!");
-        if (!PlayerSessionStorage.health.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " was not registered in healthMap, now fixing!");
-            registerPlayer(player);
-        }
         ArrayList<DamageEntry> damageEntries = PlayerSessionStorage.health.get(player);
+        if (damageEntries == null) {
+            Bukkit.getLogger().warning(player.getName() + " was not registered in healthMap, now fixing!");
+            damageEntries = Objects.requireNonNull(registerPlayer(player));
+        }
 
         int lastIndex;
         while (true) {
@@ -136,13 +142,19 @@ public class Health {
      * @param item The item used
      */
     public static void onPlayerDeath(@NotNull Player victim, @NotNull Entity killer, @NotNull ItemStack item) {
+        ArrayList<DamageEntry> damageEntries = PlayerSessionStorage.health.get(victim);
+        if (damageEntries == null) {
+            Bukkit.getLogger().warning(victim.getName() + " was not registered in healthMap, now fixing!");
+            damageEntries = Objects.requireNonNull(registerPlayer(victim));
+        }
+
         String msg = victim.getName() + " was slain by " + killer.getName() + " using " + item.getItemMeta().getLocalizedName(); //TODO use LuckPerms here ALSO properly get the item name AND implement cosmetics at some point
         for (Player player : victim.getWorld().getPlayers())
             player.sendMessage(msg);
 
         ArrayList<DamageEntry> uniqueAttackers = new ArrayList<>();
 
-        for (DamageEntry damageEntry : PlayerSessionStorage.health.get(victim)) {
+        for (DamageEntry damageEntry : damageEntries) {
             Entity attacker = damageEntry.getAttacker();
             boolean foundAlreadyExistingEntry = false;
 
@@ -170,7 +182,7 @@ public class Health {
 
         victim.setGameMode(GameMode.SPECTATOR);
         victim.setSpectatorTarget(killer);
-        PlayerSessionStorage.health.get(victim).clear(); //basically setting health back to max
+        damageEntries.clear(); //basically setting health back to max
 
         new BukkitRunnable() {
             @Override
