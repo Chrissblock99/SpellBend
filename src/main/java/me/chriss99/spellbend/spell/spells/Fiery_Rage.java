@@ -84,6 +84,7 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     private void activate() {
+        DmgMods.setDmgMod(Enums.DmgMod.DEALT);
         DmgMods.addDmgMod(caster, Enums.DmgModType.SPELL, 1.5f);
         final Player player = caster;
 
@@ -99,6 +100,7 @@ public class Fiery_Rage extends Spell implements Killable {
                 player.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, player.getLocation().add(0d, 1d, 0d), 1, dustOptions);
 
                 if (time == 0) {
+                    DmgMods.setDmgMod(Enums.DmgMod.DEALT);
                     DmgMods.removeDmgMod(player, Enums.DmgModType.SPELL, 1.5f);
 
                     activeTask.cancel();
@@ -142,6 +144,7 @@ public class Fiery_Rage extends Spell implements Killable {
             return;
         }
         if (!activeTask.isCancelled()) {
+            DmgMods.setDmgMod(Enums.DmgMod.DEALT);
             DmgMods.removeDmgMod(caster, Enums.DmgModType.SPELL, 1.5f);
             activeTask.cancel();
         }

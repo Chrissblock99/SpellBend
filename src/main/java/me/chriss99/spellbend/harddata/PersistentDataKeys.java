@@ -9,5 +9,6 @@ public class PersistentDataKeys {
     public static final NamespacedKey spellNameKey = new NamespacedKey(plugin, "spellName");
     public static final NamespacedKey spellTypeKey = new NamespacedKey(plugin, "spellType");
     public static final NamespacedKey coolDownsKey = new NamespacedKey(plugin, "coolDowns");
-    public static final NamespacedKey dmgModsKey = new NamespacedKey(plugin, "dmgMods");
+    public static final NamespacedKey dmgDealtModsKey = new NamespacedKey(plugin, "dmgDealtMods");
+    public static final NamespacedKey dmgTakenModsKey = new NamespacedKey(plugin, "dmgTakenMods");
 }

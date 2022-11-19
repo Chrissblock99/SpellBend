@@ -6,74 +6,84 @@ import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.Maps;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Objects;
+
 public class DmgMods {
     private static final Gson gson = SpellBend.getGson();
+    private static HashMap<Player, float[]> currentMap = PlayerSessionStorage.dmgDealtMods;
+    private static NamespacedKey currentKey = PersistentDataKeys.dmgDealtModsKey;
+    private static String currentName = "DmgDealtMods";
+    private static Enums.DmgMod dmgMod = Enums.DmgMod.DEALT;
+
+    public static void setDmgMod(Enums.DmgMod newDmgMod) {
+        dmgMod = newDmgMod;
+        switch (dmgMod) {
+            case DEALT -> {
+                currentMap = PlayerSessionStorage.dmgDealtMods;
+                currentKey = PersistentDataKeys.dmgDealtModsKey;
+                currentName = "DmgDealtMods";
+            }
+            case TAKEN -> {
+                currentMap = PlayerSessionStorage.dmgTakenMods;
+                currentKey = PersistentDataKeys.dmgTakenModsKey;
+                currentName = "DmgTakenMods";
+            }
+        }
+    }
+
+    public static Enums.DmgMod getDmgMod() {
+        return dmgMod;
+    }
+
+    public static String getCurrentName() {
+        return currentName;
+    }
 
     /**
      * Loads the players DmgMods from its PersistentDataContainer into the PlayerSessionStorage.
      * <b>Intended to be used when the player joins.</b>
      *
      * @param player The player whose DmgMods to load
+     * @return The values loaded, null if loading failed
      */
-    public static void loadDmgMods(@NotNull Player player) { //TODO test if this works
+    public static float[] loadDmgMods(@NotNull Player player) {
         if (!player.isOnline()) {
-            Bukkit.getLogger().warning(player.getName() + " is not online when trying to load DmgMods, skipping loading!");
-            return;
+            Bukkit.getLogger().warning(player.getName() + " is not online when trying to load " + currentName + ", skipping loading!");
+            return null;
         }
-        if (PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " is already loaded when loading dmgMods, skipping loading!");
-            return;
+        float[] dmgMods = currentMap.get(player);
+        if (dmgMods != null) {
+            Bukkit.getLogger().warning(player.getName() + " is already loaded when loading " + currentName + ", skipping loading!");
+            return dmgMods;
         }
 
-        PlayerSessionStorage.dmgMods.put(player, gson.fromJson(player.getPersistentDataContainer().get(PersistentDataKeys.dmgModsKey, PersistentDataType.STRING), float[].class));
+        dmgMods = gson.fromJson(player.getPersistentDataContainer().get(currentKey, PersistentDataType.STRING), float[].class);
+        currentMap.put(player, dmgMods);
+        return dmgMods;
     }
-
-    /*public static void loadDmgMods(@NotNull Player player) {
-        if (!player.isOnline()) {
-            Bukkit.getLogger().warning(player.displayName() + " is not online when trying to load DmgMods, skipping loading!");
-            return;
-        }
-        if (PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " is already loaded when loading dmgMods, skipping loading!");
-            return;
-        }
-
-        PersistentDataContainer data = player.getPersistentDataContainer();
-        try {
-            float[] dmgMods = new float[3];
-            //noinspection ConstantConditions
-            String[] stringFloats = data.get(PersistentDataKeys.dmgModsKey, PersistentDataType.STRING).split(", ");
-
-            for (int i = 0;i<stringFloats.length;i++) dmgMods[i] = Float.parseFloat(stringFloats[i]);
-
-            PlayerSessionStorage.dmgMods.put(player, dmgMods);
-        } catch (NullPointerException exception) {
-            Bukkit.getLogger().warning(player.displayName() + " did not have dmgMods set up, setting dmgMods to 1, 1, 1");
-            data.set(PersistentDataKeys.dmgModsKey, PersistentDataType.STRING, "1, 1, 1");
-            PlayerSessionStorage.dmgMods.put(player, new float[]{1f, 1f, 1f});
-        }
-    }*/
 
     /**
      * Gets the specified Damage modifier of the player
      * returns all of them multiplied together if given null
      *
      * @param player The player to get DamageMods from
-     * @param modType The damageMod name "all" is possible
+     * @param modType The damageMod name, null returns all of them
      * @return The dmgMod
      */
     public static float getDmgMod(@NotNull Player player, @Nullable Enums.DmgModType modType) {
-        if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
-            loadDmgMods(player);
+        float[] dmgMods = currentMap.get(player);
+        if (dmgMods == null) {
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
+            dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        float[] dmgMods = PlayerSessionStorage.dmgMods.get(player);
         if (modType == null) {
             float result = 1;
             for (float num : dmgMods)
@@ -94,12 +104,13 @@ public class DmgMods {
      * @param modifier The damage modifier
      */
     public static void addDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
-        if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
-            loadDmgMods(player);
+        float[] dmgMods = currentMap.get(player);
+        if (dmgMods == null) {
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
+            dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        PlayerSessionStorage.dmgMods.get(player)[Maps.dmgModToIndexMap.get(modType)] *= modifier;
+        dmgMods[Maps.dmgModToIndexMap.get(modType)] *= modifier;
     }
 
     /**
@@ -111,12 +122,13 @@ public class DmgMods {
      * @param modifier The damage modifier
      */
     public static void removeDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
-        if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
-            loadDmgMods(player);
+        float[] dmgMods = currentMap.get(player);
+        if (dmgMods == null) {
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
+            dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        PlayerSessionStorage.dmgMods.get(player)[Maps.dmgModToIndexMap.get(modType)] /= modifier;
+        dmgMods[Maps.dmgModToIndexMap.get(modType)] /= modifier;
     }
 
     /**
@@ -129,12 +141,12 @@ public class DmgMods {
      * @param modifier The damage modifier
      */
     public static void extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
-        if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
-            loadDmgMods(player);
+        float[] dmgMods = currentMap.get(player);
+        if (dmgMods == null) {
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
+            dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        float[] dmgMods = PlayerSessionStorage.dmgMods.get(player);
         int index = Maps.dmgModToIndexMap.get(modType);
         if (dmgMods[index]<modifier)
             dmgMods[index] = modifier;
@@ -150,12 +162,13 @@ public class DmgMods {
      * @param modifier The damage modifier
      */
     public static void setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
-        if (!PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map, now fixing!");
-            loadDmgMods(player);
+        float[] dmgMods = currentMap.get(player);
+        if (dmgMods == null) {
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
+            dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        PlayerSessionStorage.dmgMods.get(player)[Maps.dmgModToIndexMap.get(modType)] = modifier;
+        dmgMods[Maps.dmgModToIndexMap.get(modType)] = modifier;
     }
 
     /**
@@ -164,29 +177,14 @@ public class DmgMods {
      *
      * @param player The player whose DmgMods to save
      */
-    public static void saveDmgMods(@NotNull Player player) { //TODO test if this works
-        if (PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerToDmgMods map when saving, saving skipped!");
-            return;
+    public static void saveDmgMods(@NotNull Player player) {
+        float[] dmgMods = currentMap.get(player);
+        if (dmgMods == null) {
+            Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map when saving, saving skipped!");
+            dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        player.getPersistentDataContainer().set(PersistentDataKeys.dmgModsKey, PersistentDataType.STRING, gson.toJson(PlayerSessionStorage.dmgMods.get(player)));
-        PlayerSessionStorage.dmgMods.remove(player);
+        player.getPersistentDataContainer().set(currentKey, PersistentDataType.STRING, gson.toJson(dmgMods));
+        currentMap.remove(player);
     }
-
-    /*public static void saveDmgMods(@NotNull Player player) {
-        if (PlayerSessionStorage.dmgMods.containsKey(player)) {
-            Bukkit.getLogger().warning(player.displayName() + " was not logged in PlayerToDmgMods map when saving, saving skipped!");
-            return;
-        }
-
-        float[] dmgMods = PlayerSessionStorage.dmgMods.get(player);
-        String[] stringFloats = new String[dmgMods.length];
-
-        for (int i = 0;i<dmgMods.length;i++)
-            stringFloats[i] = String.valueOf(dmgMods[i]);
-
-        player.getPersistentDataContainer().set(PersistentDataKeys.dmgModsKey, PersistentDataType.STRING, String.join(", ", stringFloats));
-        PlayerSessionStorage.dmgMods.remove(player);
-    }*/
 }

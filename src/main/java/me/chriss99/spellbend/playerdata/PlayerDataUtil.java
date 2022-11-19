@@ -3,6 +3,7 @@ package me.chriss99.spellbend.playerdata;
 import com.google.gson.Gson;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
+import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,7 +16,8 @@ import java.util.HashMap;
 public class PlayerDataUtil {
     private static final Gson gson = SpellBend.getGson();
 
-    /**Sets up all the PersistentData of the player
+    /**
+     * Sets up all the PersistentData of the player
      *
      * @param player The player who's PersistentData to set up
      */
@@ -25,12 +27,14 @@ public class PlayerDataUtil {
         //data.set(PersistentDataKeys.goldKey, PersistentDataType.INTEGER, 650);
         //data.set(PersistentDataKeys.spellsOwnedKey, PersistentDataType.INTEGER_ARRAY, new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0});
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
-        data.set(PersistentDataKeys.dmgModsKey, PersistentDataType.STRING, gson.toJson(new float[3]));
+        data.set(PersistentDataKeys.dmgDealtModsKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
+        data.set(PersistentDataKeys.dmgTakenModsKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
         //data.set(PersistentDataKeys.crystalsKey, PersistentDataType.INTEGER, 0);
         //data.set(PersistentDataKeys.crystalShardsKey, PersistentDataType.INTEGER, 0);
     }
 
-    /**Loads all the persistentData of the player
+    /**
+     * Loads all the persistentData of the player
      *
      * @param player The player to load the PersistentData of
      */
@@ -66,9 +70,17 @@ public class PlayerDataUtil {
             e.printStackTrace();
         }
         try {
+            DmgMods.setDmgMod(Enums.DmgMod.DEALT);
             DmgMods.loadDmgMods(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s DmgMods generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s DmgDealtMods generated an exception!");
+            e.printStackTrace();
+        }
+        try {
+            DmgMods.setDmgMod(Enums.DmgMod.TAKEN);
+            DmgMods.loadDmgMods(player);
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s DmgTakenMods generated an exception!");
             e.printStackTrace();
         }
         /*try {
@@ -85,7 +97,8 @@ public class PlayerDataUtil {
         }*/
     }
 
-    /**Saves all PersistentData of the player
+    /**
+     * Saves all PersistentData of the player
      *
      * @param player The player to save the PersistentData of
      */
@@ -121,9 +134,17 @@ public class PlayerDataUtil {
             e.printStackTrace();
         }
         try {
+            DmgMods.setDmgMod(Enums.DmgMod.DEALT);
             DmgMods.saveDmgMods(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s DmgMods generated an exception!");
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s DmgDealtMods generated an exception!");
+            e.printStackTrace();
+        }
+        try {
+            DmgMods.setDmgMod(Enums.DmgMod.TAKEN);
+            DmgMods.saveDmgMods(player);
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s DmgTakenMods generated an exception!");
             e.printStackTrace();
         }
         /*try {
