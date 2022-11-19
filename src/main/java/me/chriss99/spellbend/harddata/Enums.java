@@ -14,6 +14,12 @@ public class Enums {
         FORCE
     }
 
+    public enum Currency {
+        GEMS,
+        GOLD,
+        CRYSTALS
+    }
+
     public enum DmgMod {
         DEALT,
         TAKEN

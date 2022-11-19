@@ -23,14 +23,14 @@ public class PlayerDataUtil {
      */
     public static void setupPlayerData(@NotNull Player player) {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        //data.set(PersistentDataKeys.gemsKey, PersistentDataType.INTEGER, 150);
-        //data.set(PersistentDataKeys.goldKey, PersistentDataType.INTEGER, 650);
+        data.set(PersistentDataKeys.gemsKey, PersistentDataType.INTEGER, 150);
+        data.set(PersistentDataKeys.goldKey, PersistentDataType.INTEGER, 650);
+        data.set(PersistentDataKeys.crystalsKey, PersistentDataType.INTEGER, 0);
+        //data.set(PersistentDataKeys.crystalShardsKey, PersistentDataType.INTEGER, 0);
         //data.set(PersistentDataKeys.spellsOwnedKey, PersistentDataType.INTEGER_ARRAY, new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0});
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
         data.set(PersistentDataKeys.dmgDealtModsKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
         data.set(PersistentDataKeys.dmgTakenModsKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
-        //data.set(PersistentDataKeys.crystalsKey, PersistentDataType.INTEGER, 0);
-        //data.set(PersistentDataKeys.crystalShardsKey, PersistentDataType.INTEGER, 0);
     }
 
     /**
@@ -39,30 +39,39 @@ public class PlayerDataUtil {
      * @param player The player to load the PersistentData of
      */
     public static void loadAll(@NotNull Player player) {
-        /*try {
-            Gems.loadGems(player);
+        try {
+            Currency.setCurrency(Enums.Currency.GEMS);
+            Currency.loadCurrency(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Gems generated an exception!");
             e.printStackTrace();
         }
         try {
-            Gold.loadGold(player);
+            Currency.setCurrency(Enums.Currency.GOLD);
+            Currency.loadCurrency(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Gold generated an exception!");
             e.printStackTrace();
         }
         try {
+            Currency.setCurrency(Enums.Currency.CRYSTALS);
+            Currency.loadCurrency(player);
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Crystals generated an exception!");
+            e.printStackTrace();
+        }
+        /*try {
             SpellsOwned.loadSpellsOwned(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The loading of " + player.getName() + "'s SpellsOwned generated an exception!");
             e.printStackTrace();
-        }
+        }*/
         try {
             Health.registerPlayer(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Health generated an exception!");
             e.printStackTrace();
-        }*/
+        }
         try {
             CoolDowns.loadCoolDowns(player);
         } catch (Exception e) {
@@ -84,12 +93,6 @@ public class PlayerDataUtil {
             e.printStackTrace();
         }
         /*try {
-            Crystals.loadCrystals(player);
-        } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Crystals generated an exception!");
-            e.printStackTrace();
-        }
-        try {
             CrystalShards.loadCrystalShards(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The loading of " + player.getName() + "'s CrystalShards generated an exception!");
@@ -103,30 +106,39 @@ public class PlayerDataUtil {
      * @param player The player to save the PersistentData of
      */
     public static void saveAll(@NotNull Player player) {
-        /*try{
-            Gems.saveGems(player);
+        try{
+            Currency.setCurrency(Enums.Currency.GEMS);
+            Currency.saveCurrency(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Gems generated an exception!");
             e.printStackTrace();
         }
-        try {
-            Gold.saveGold(player);
+        try{
+            Currency.setCurrency(Enums.Currency.GOLD);
+            Currency.saveCurrency(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Gold generated an exception!");
             e.printStackTrace();
         }
-        try {
+        try{
+            Currency.setCurrency(Enums.Currency.CRYSTALS);
+            Currency.saveCurrency(player);
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Crystals generated an exception!");
+            e.printStackTrace();
+        }
+        /*try {
             SpellsOwned.saveSpellsOwned(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s SpellsOwned generated an exception!");
             e.printStackTrace();
-        }
+        }*/
         try {
             Health.deRegisterPlayer(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Health generated an exception!");
             e.printStackTrace();
-        }*/
+        }
         try {
             CoolDowns.saveCoolDowns(player);
         } catch (Exception e) {
@@ -147,13 +159,8 @@ public class PlayerDataUtil {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s DmgTakenMods generated an exception!");
             e.printStackTrace();
         }
+
         /*try {
-            Crystals.saveCrystals(player);
-        } catch (Exception e) {
-            Bukkit.getLogger().warning("The saving of " + player.getName() + "'s Crystals generated an exception!");
-            e.printStackTrace();
-        }
-        try {
             CrystalShards.saveCrystalShards(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s CrystalShards generated an exception!");

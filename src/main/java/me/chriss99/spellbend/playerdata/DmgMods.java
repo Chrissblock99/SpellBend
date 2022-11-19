@@ -181,7 +181,7 @@ public class DmgMods {
         float[] dmgMods = currentMap.get(player);
         if (dmgMods == null) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map when saving, saving skipped!");
-            dmgMods = Objects.requireNonNull(loadDmgMods(player));
+            return;
         }
 
         player.getPersistentDataContainer().set(currentKey, PersistentDataType.STRING, gson.toJson(dmgMods));

@@ -171,12 +171,14 @@ public class Health {
         for (DamageEntry entry : uniqueAttackers) {
             if (entry.getAttacker() instanceof Player uniqueAttacker) {
                 double percentage = entry.getDamage() / 20d;
-                int experience = (int) Math.ceil(10 * percentage);
-                int crystals = (int) Math.ceil(3 * percentage);
+                int gold = (int) Math.ceil(10 * percentage);
+                int gems = (int) Math.ceil(3 * percentage);
 
-                uniqueAttacker.sendMessage("§e" + ((killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + experience + " Experience §8| §b+" + crystals + " Crystals");
-                //Gems.addGems(uniqueAttacker, gems); TODO experience here
-                //Gold.addGold(uniqueAttacker, gold); TODO crystals here
+                uniqueAttacker.sendMessage("§e" + ((killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + gold + " Gold §8| §b+" + gems + " Gems");
+                Currency.setCurrency(Enums.Currency.GOLD);
+                Currency.addCurrency(uniqueAttacker, gold);
+                Currency.setCurrency(Enums.Currency.GEMS);
+                Currency.addCurrency(uniqueAttacker, gems);
             }
         }
 
