@@ -1,7 +1,10 @@
 package me.chriss99.spellbend.commands;
 
+import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.playerdata.CoolDowns;
+import me.chriss99.spellbend.playerdata.Currency;
 import me.chriss99.spellbend.playerdata.DmgMods;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.SpellHandler;
@@ -124,6 +127,7 @@ public class Test {
 
                 DmgMods.setDmgMod(dmgMod);
                 StringBuilder stringBuilder = new StringBuilder().append(DmgMods.getCurrentName());
+                //noinspection SpellCheckingInspection
                 stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "").append("ifier ")
                         .append(dmgModTypeString).append(" of ").append(player.getName()).append(": ")
                         .append(DmgMods.getDmgMod(player, (dmgModTypeString.equals("ALL")) ? null : Enums.DmgModType.valueOf(dmgModTypeString)));
@@ -150,39 +154,38 @@ public class Test {
             }
         });*/
 
-        /*subCommands.put("value cooldown get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"spellType", "player"}) {
+        subCommands.put("value cooldown get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"spellType", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                String type = ((String) arguments.get(0)).toUpperCase();
+                String spellType = ((String) arguments.get(0)).toUpperCase();
                 Player player = (Player) arguments.get(1);
 
-                if (type.equals("ALL")) {
-                    sender.sendMessage("active Cooldowns of " + player.getDisplayName() + ":");
-                    Set<Map.Entry<Enums.SpellType, CoolDownEntry>> entrySet = CoolDowns.getCoolDowns(player).entrySet();
+                if (spellType.equals("ALL")) {
+                    sender.sendMessage("active CoolDowns of " + player.getName() + ":");
+                    Set<Map.Entry<String, CoolDownEntry>> entrySet = CoolDowns.getCoolDowns(player).entrySet();
                     if (entrySet.size() == 0) {
                         sender.sendMessage("none");
                         return true;
                     }
-                    for (Map.Entry<Enums.SpellType, CoolDownEntry> entry : entrySet) {
+                    for (Map.Entry<String, CoolDownEntry> entry : entrySet) {
                         CoolDownEntry coolDownEntry = entry.getValue();
-                        sender.sendMessage(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTime() + ", " + coolDownEntry.timeInS + ", " + coolDownEntry.spellType);
+                        sender.sendMessage(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
                     }
                     return true;
                 }
-                try {
-                    CoolDownEntry coolDownEntry = CoolDowns.getCoolDownEntry(player, Enums.SpellType.valueOf(type));
-                    sender.sendMessage("Cooldown " + arguments.get(0) + " of " + player.getDisplayName() + ": "
-                            + coolDownEntry.getRemainingCoolDownTime() + ", " + coolDownEntry.timeInS + ", " + coolDownEntry.spellType);
-                } catch (IllegalArgumentException exception) {
-                    sender.sendMessage("§4" + arguments.get(0) + " is not a valid spellType!");
-                } catch (NullPointerException exception) {
-                    sender.sendMessage("§4A NullPointerException was thrown when parsing \"" + type + "\" to a SpellType!");
+                CoolDownEntry coolDownEntry = CoolDowns.getCoolDownEntry(player, spellType);
+                if (coolDownEntry == null) {
+                    sender.sendMessage(arguments.get(0) + " is not cooled down for " + player.getName());
+                    return true;
                 }
+
+                sender.sendMessage("CoolDown " + arguments.get(0) + " of " + player.getName() + ": "
+                        + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
                 return true;
             }
         });
 
-        subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{Enums.SpellType.class, Player.class, Integer.class, String.class},
+        /*subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{Enums.SpellType.class, Player.class, Integer.class, String.class},
                 new String[]{"spellType", "player", "timeInTicks", "coolDownStage"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
@@ -234,6 +237,44 @@ public class Test {
                 return true;
             }
         });*/
+
+        subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class}, new String[]{"currency", "player"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                Enums.Currency currency = (Enums.Currency) arguments.get(0);
+                Player player = (Player) arguments.get(1);
+
+                Currency.setCurrency(currency);
+                sender.sendMessage(player.getName() + "'s " + currency + " count is: " + Currency.getCurrency(player));
+                return true;
+            }
+        });
+
+        subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                Enums.Currency currency = (Enums.Currency) arguments.get(0);
+                Player player = (Player) arguments.get(1);
+                Float value = (Float) arguments.get(2);
+
+                Currency.setCurrency(currency);
+                Currency.addCurrency(player, value);
+                return true;
+            }
+        });
+
+        subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                Enums.Currency currency = (Enums.Currency) arguments.get(0);
+                Player player = (Player) arguments.get(1);
+                Float value = (Float) arguments.get(2);
+
+                Currency.setCurrency(currency);
+                Currency.setCurrency(player, value);
+                return true;
+            }
+        });
 
         new AdvancedCommandBase("test", "/test item or /test memory <spell|tasks [filter]> or /test value <dmgMod|cooldown> <valueName> <player>", subCommands){};
     }

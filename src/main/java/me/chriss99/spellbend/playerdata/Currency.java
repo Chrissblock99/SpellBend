@@ -1,7 +1,5 @@
 package me.chriss99.spellbend.playerdata;
 
-import com.google.gson.Gson;
-import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Bukkit;
@@ -18,8 +16,6 @@ import java.util.Objects;
  * NOT THREAD SAVE
  */
 public class Currency {
-    private static final Gson gson = SpellBend.getGson();
-
     private static HashMap<Player, Float> currentMap = PlayerSessionStorage.gems;
     private static NamespacedKey currentKey = PersistentDataKeys.gemsKey;
     private static String currentName = "Gems";
@@ -71,12 +67,20 @@ public class Currency {
             return currency;
         }
 
-        currency = gson.fromJson(player.getPersistentDataContainer().get(currentKey, PersistentDataType.STRING), Float.class);
+        currency = player.getPersistentDataContainer().get(currentKey, PersistentDataType.FLOAT);
+        if (currency == null) {
+            Bukkit.getLogger().warning(player.getName() + " did not have " + currentName + " set up, fixing!");
+            switch (currentCurrency) {
+                case GEMS -> currency = 150f;
+                case GOLD -> currency = 650f;
+                case CRYSTALS -> currency = 0f;
+            }
+        }
         currentMap.put(player, currency);
         return currency;
     }
 
-    public static void addCurrency(@NotNull Player player, int currency) {
+    public static void addCurrency(@NotNull Player player, float currency) {
         setCurrency(player, getCurrency(player) + currency);
     }
 
@@ -108,7 +112,7 @@ public class Currency {
             return;
         }
 
-        player.getPersistentDataContainer().set(currentKey, PersistentDataType.STRING, gson.toJson(currency));
+        player.getPersistentDataContainer().set(currentKey, PersistentDataType.FLOAT, currency);
         currentMap.remove(player);
     }
 }

@@ -23,9 +23,9 @@ public class PlayerDataUtil {
      */
     public static void setupPlayerData(@NotNull Player player) {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        data.set(PersistentDataKeys.gemsKey, PersistentDataType.INTEGER, 150);
-        data.set(PersistentDataKeys.goldKey, PersistentDataType.INTEGER, 650);
-        data.set(PersistentDataKeys.crystalsKey, PersistentDataType.INTEGER, 0);
+        data.set(PersistentDataKeys.gemsKey, PersistentDataType.FLOAT, 150f);
+        data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
+        data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
         //data.set(PersistentDataKeys.crystalShardsKey, PersistentDataType.INTEGER, 0);
         //data.set(PersistentDataKeys.spellsOwnedKey, PersistentDataType.INTEGER_ARRAY, new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0});
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
@@ -75,7 +75,7 @@ public class PlayerDataUtil {
         try {
             CoolDowns.loadCoolDowns(player);
         } catch (Exception e) {
-            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s Cooldowns generated an exception!");
+            Bukkit.getLogger().warning("The loading of " + player.getName() + "'s CoolDowns generated an exception!");
             e.printStackTrace();
         }
         try {

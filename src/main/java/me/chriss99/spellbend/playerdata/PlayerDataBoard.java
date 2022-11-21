@@ -5,6 +5,7 @@ import me.chriss99.spellbend.data.CoolDownEntry;
 //import game.spellbend.playerdata.Gold;
 //import game.spellbend.playerdata.PlayerDataUtil;
 import me.chriss99.spellbend.SpellBend;
+import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -137,8 +138,10 @@ public class PlayerDataBoard {
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score line = obj.getScore("§3§m-------------"); line.setScore(11);
-        line = obj.getScore("  §eGold: §b" + "WIP"/*Gold.getGold(player)*/); line.setScore(10);
-        line = obj.getScore("  §3Gems: §b" + "WIP"/*Gems.getGems(player)*/); line.setScore(9);
+        Currency.setCurrency(Enums.Currency.GOLD);
+        line = obj.getScore("  §eGold: §b" + Math.round(Currency.getCurrency(player))); line.setScore(10);
+        Currency.setCurrency(Enums.Currency.GEMS);
+        line = obj.getScore("  §3Gems: §b" + Math.round(Currency.getCurrency(player))); line.setScore(9);
         line = obj.getScore("§3§m-------------§r" + ""); line.setScore(8);
         line = obj.getScore("  §cKills: §b" + player.getStatistic(Statistic.PLAYER_KILLS)); line.setScore(7);
         line = obj.getScore("  §4Deaths: §b" + player.getStatistic(Statistic.DEATHS)); line.setScore(6);

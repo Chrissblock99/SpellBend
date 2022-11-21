@@ -1,6 +1,5 @@
 package me.chriss99.spellbend.events;
 
-import me.chriss99.spellbend.playerdata.Health;
 import me.chriss99.spellbend.playerdata.PlayerDataBoard;
 import me.chriss99.spellbend.playerdata.PlayerDataUtil;
 import me.chriss99.spellbend.spell.SpellHandler;
@@ -25,7 +24,6 @@ public class PlayerJoin implements Listener {
 
         PlayerDataUtil.loadAll(player);
         SpellHandler.registerPlayer(player);
-        Health.registerPlayer(player);
 
         String heldSpellType = ItemData.getHeldSpellType(player);
         if (heldSpellType != null)
