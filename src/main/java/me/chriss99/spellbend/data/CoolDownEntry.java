@@ -164,6 +164,15 @@ public class CoolDownEntry {
     }
 
     /**
+     * Checks if the coolDown is finished/expired
+     *
+     * @return If the coolDown is expired
+     */
+    public boolean isExpired() {
+        return getRemainingCoolDownTimeInS() <= 0.01f;
+    }
+
+    /**
      * Works independently of the stage being updated
      *
      * @return The remaining time for the current CoolDownStage and all following

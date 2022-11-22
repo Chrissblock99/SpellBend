@@ -48,7 +48,29 @@ public class CoolDowns {
      * @param player The player to clear coolDowns of
      */
     public static void removeExpiredCoolDowns(@NotNull Player player) {
-        PlayerSessionStorage.coolDowns.get(player).entrySet().removeIf(entry -> entry.getValue().getRemainingCoolDownTimeInS() <= 0.01f);
+        PlayerSessionStorage.coolDowns.get(player).entrySet().removeIf(entry -> entry.getValue().isExpired());
+    }
+
+    /**
+     * Checks if the type is cooled down <br>
+     * returns false if expired
+     *
+     * @param player The player to check the coolDowns of
+     * @param spellType The spellType to check if cooled down
+     * @return If the type is cooled down
+     */
+    public static boolean typeIsCooledDown(@NotNull Player player, @Nullable String spellType) {
+        if (spellType == null)
+            return false;
+        CoolDownEntry coolDownEntry = getCoolDownEntry(player, spellType);
+        if (coolDownEntry == null)
+            return false;
+
+        if (coolDownEntry.isExpired()) {
+            removeCoolDown(player, spellType);
+            return false;
+        }
+        return true;
     }
 
     /**
