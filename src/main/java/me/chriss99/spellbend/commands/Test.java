@@ -6,13 +6,10 @@ import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.playerdata.CoolDowns;
 import me.chriss99.spellbend.playerdata.Currency;
 import me.chriss99.spellbend.playerdata.DmgMods;
+import me.chriss99.spellbend.playerdata.PlayerDataBoard;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.Item;
-/*import game.spellbend.util.math.MathUtil;
-import game.spellbend.playerdata.CoolDowns;
-import game.spellbend.playerdata.DmgMods;
-import game.spellbend.util.PlayerDataBoard;*/
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -45,7 +42,7 @@ public class Test {
             }
         });
 
-        /*subCommands.put("sidebar", new AdvancedSubCommand(new Class[0]) {
+        subCommands.put("update sidebar", new AdvancedSubCommand(new Class[0]) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
                 if (!(sender instanceof Player)) {
@@ -56,7 +53,7 @@ public class Test {
                 PlayerDataBoard.updateBoard((Player) sender);
                 return true;
             }
-        });*/
+        });
 
         subCommands.put("memory spell", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
             @Override
@@ -136,23 +133,47 @@ public class Test {
             }
         });
 
-        /*subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class}, new String[]{"dmgMod", "player", "number"}) {
+        subCommands.put("value dmgMod add", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                String dmgMod = (String) arguments.get(0);
-                Player player = (Player) arguments.get(1);
-                Float num = (Float) arguments.get(2);
+                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
+                Player player = (Player) arguments.get(2);
+                Float num = (Float) arguments.get(3);
 
-                if (Lists.getDmgModTypeByName(dmgMod) == null) {
-                    sender.sendMessage("§4" + arguments.get(1) + " is not a settable DmgModifier!");
-                    return true;
-                }
-
-                DmgMods.setDmgMod(player, dmgMod, num);
-                sender.sendMessage("Chriss go implement some more info here and check if it actually has been set (or if setting was rejected)");
+                DmgMods.setDmgMod(dmgMod);
+                DmgMods.addDmgMod(player, dmgModType, num);
                 return true;
             }
-        });*/
+        });
+
+        subCommands.put("value dmgMod remove", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
+                Player player = (Player) arguments.get(2);
+                Float num = (Float) arguments.get(3);
+
+                DmgMods.setDmgMod(dmgMod);
+                DmgMods.removeDmgMod(player, dmgModType, num);
+                return true;
+            }
+        });
+
+        subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
+                Player player = (Player) arguments.get(2);
+                Float num = (Float) arguments.get(3);
+
+                DmgMods.setDmgMod(dmgMod);
+                DmgMods.setDmgMod(player, dmgModType, num);
+                return true;
+            }
+        });
 
         subCommands.put("value cooldown get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"spellType", "player"}) {
             @Override
