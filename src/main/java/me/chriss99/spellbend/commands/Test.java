@@ -206,58 +206,19 @@ public class Test {
             }
         });
 
-        /*subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{Enums.SpellType.class, Player.class, Integer.class, String.class},
-                new String[]{"spellType", "player", "timeInTicks", "coolDownStage"}) {
+        subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class, Float.class, Float.class, Float.class, Enums.CoolDownStage.class},
+                new String[]{"spellType", "player", "windupTime", "activeTime", "passiveTime", "coolDownTime", "coolDownStage"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.SpellType spellType = (Enums.SpellType) arguments.get(0);
+                String spellType = (String) arguments.get(0);
                 Player player = (Player) arguments.get(1);
-                Integer timeInTicks = (Integer) arguments.get(2);
-                String coolDownStage = (String) arguments.get(3);
+                float[] timeInS = new float[]{(Float) arguments.get(2), (Float) arguments.get(3), (Float) arguments.get(4), (Float) arguments.get(5)};
+                Enums.CoolDownStage coolDownStage = (Enums.CoolDownStage) arguments.get(6);
 
-                CoolDowns.setCoolDown(player, spellType, timeInTicks, CDType);
-                if (!CoolDowns.getCoolDownEntry(player, spellType).equals(new CoolDownEntry(timeInTicks, new Date(), CDType))) {
-                    sender.sendMessage("§4Something went wrong when setting " + player.getDisplayName() + "'s cooldown!");
-                    return true;
-                }
-                sender.sendMessage("Successfully set " + player.getDisplayName() + "'s cooldown.");
+                CoolDowns.setCoolDown(player, spellType, timeInS, coolDownStage);
                 return true;
             }
         });
-
-        subCommands.put("value cooldown add", new AdvancedSubCommand(new Class[]{Enums.SpellType.class, Player.class, Integer.class, String.class},
-                new String[]{"spellType", "player", "timeInTicks", "coolDownStage"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.SpellType spellType = (Enums.SpellType) arguments.get(0);
-                Player player = (Player) arguments.get(1);
-                Integer timeInSeconds = (Integer) arguments.get(2);
-                String coolDownStage = (String) arguments.get(3);
-
-                if (CoolDowns.getCoolDownEntry(player, spellType).timeInS != 0) {
-                    sender.sendMessage("§eWarning: This coolDown is already set, assigning the larger one!");
-                    CoolDownEntry oldValues = CoolDowns.getCoolDownEntry(player, spellType);
-                    if (MathUtil.ASmallerB(
-                            new long[]{Lists.getCoolDownTypeByName(oldValues.spellType).typeInt*(-1), (long) oldValues.timeInS*1000-(new Date().getTime()-oldValues.startDate.getTime())},
-                            new long[]{Lists.getCoolDownTypeByName(CDType).typeInt *(-1), (long) timeInSeconds*1000}))
-                        CoolDowns.setCoolDown(player, spellType, timeInSeconds, CDType);
-                    if (CoolDowns.getCoolDownEntry(player, spellType).equals(new CoolDownEntry(timeInSeconds, new Date(), CDType))) {
-                        sender.sendMessage("§4Something went wrong when setting " + player.getDisplayName() + "'s cooldown!");
-                        return true;
-                    }
-                    sender.sendMessage("The coolDown already set was larger so the new coolDown wasn't assigned.");
-                    return true;
-                }
-
-                CoolDowns.setCoolDown(player, spellType, timeInSeconds, CDType);
-                if (CoolDowns.getCoolDownEntry(player, spellType).equals(new CoolDownEntry(timeInSeconds, new Date(), CDType))) {
-                    sender.sendMessage("§4Something went wrong when setting " + player.getDisplayName() + "'s cooldown!");
-                    return true;
-                }
-                sender.sendMessage("Successfully added the coolDown to " + player.getDisplayName() + ".");
-                return true;
-            }
-        });*/
 
         subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class}, new String[]{"currency", "player"}) {
             @Override
