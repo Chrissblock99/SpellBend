@@ -7,6 +7,7 @@ import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.util.ItemData;
+import me.chriss99.spellbend.util.TextUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
@@ -180,44 +181,27 @@ public class PlayerDataBoard {
             return;
         }
 
-        line = obj.getScore("§7" + heldCoolDownedSpellType.charAt(0) + heldCoolDownedSpellType.substring(1).toLowerCase()); line.setScore(1);
+        line = obj.getScore("§7" + TextUtil.standardCapitalize(heldCoolDownedSpellType) + " - " + coolDownEntry.getCoolDownStage().toString().toLowerCase()); line.setScore(1);
         StringBuilder coolDownDisplay = new StringBuilder();
-
-        /*
-                int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
-                int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
-                int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
-                int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
-
-                coolDownDisplay.append("§a").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-
-                        .append("s §8▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§e");
-                        .append("s §b▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
-                        .append("s §b▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
-                        .append("s §a▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
-        */
 
         switch (coolDownEntry.getCoolDownStage()) {
             case WINDUP -> {
-                int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10); //TODO redo this in context of the CoolDownEntry change
-                coolDownDisplay.append("§a").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                        .append("s §8▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§e");
-            }
-            case ACTIVE -> {
-                int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10); //TODO redo this in context of the CoolDownEntry change
-                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
+                int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
+                coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
                         .append("s §8▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§b");
             }
+            case ACTIVE -> {
+                int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
+                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
+                        .append("s §8▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§a");
+            }
             case PASSIVE -> {
-                int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10); //TODO redo this in context of the CoolDownEntry change
+                int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
                 coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
                         .append("s §b▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
             }
             case COOLDOWN -> {
-                int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10); //TODO redo this in context of the CoolDownEntry change
+                int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
                 coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
                         .append("s §a▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
             }

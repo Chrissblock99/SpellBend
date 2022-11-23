@@ -42,6 +42,7 @@ public class SpellHandler {
      * @param spellItem The item used (HAS to be a spell)
      * @return If the spell was cast or not
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem) {
         return letPlayerCastSpell(player, spellItem, false);
     }
@@ -68,7 +69,7 @@ public class SpellHandler {
      */
     public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem, boolean force) {
         if (!itemIsRegisteredSpell(spellItem)) {
-            Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a spell, casting skipped!");
+            Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
             return false;
         }
 
@@ -81,16 +82,34 @@ public class SpellHandler {
      *
      * @param player The player casting the spell
      * @param spellName The name of the spell
-     * @param spellItem The item used (doesn't HAVE to be a spell)
+     * @param spellItem The item used (HAS to be a spell)
      * @param force To force the spell even if coolDowned
      * @return If the spell was cast or not
      */
     public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem, boolean force) {
-        //TODO enforce spellTypes being given
-        if (!force && PlayerSessionStorage.coolDowns.get(player).containsKey(ItemData.getSpellType(spellItem)))
+        if (!itemIsRegisteredSpell(spellItem)) {
+            Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
+            return false;
+        }
+
+        return letPlayerCastSpell(player, spellName, ItemData.getSpellType(spellItem), spellItem, force);
+    }
+
+    /**
+     * Creates a spell of named type and adds it to the players activeSpellList.
+     *
+     * @param player The player casting the spell
+     * @param spellName The name of the spell
+     * @param spellType The spellType it should be used under
+     * @param spellItem The item used (doesn't HAVE to be a spell)
+     * @param force To force the spell even if coolDowned
+     * @return If the spell was cast or not
+     */
+    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, boolean force) {
+        if (!force && PlayerSessionStorage.coolDowns.get(player).containsKey(spellType))
             return false;
 
-        playerToActiveSpellListMap.get(player).add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellItem));
+        playerToActiveSpellListMap.get(player).add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellType, spellItem));
         return true;
     }
 

@@ -6,6 +6,7 @@ import me.chriss99.spellbend.spell.spells.Ember_Blast;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Ember_BlastBuilder extends SpellSubClassBuilder {
     public Ember_BlastBuilder() {
@@ -13,7 +14,7 @@ public class Ember_BlastBuilder extends SpellSubClassBuilder {
     }
 
     @Override
-    public Spell createSpell(@NotNull Player caster, @NotNull ItemStack item) {
-        return new Ember_Blast(caster, item);
+    public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
+        return new Ember_Blast(caster, spellType, item);
     }
 }

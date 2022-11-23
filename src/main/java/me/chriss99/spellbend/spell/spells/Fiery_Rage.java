@@ -4,7 +4,6 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.spell.SpellHandler;
-import me.chriss99.spellbend.util.ItemData;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.playerdata.CoolDowns;
 import me.chriss99.spellbend.playerdata.DmgMods;
@@ -22,19 +21,15 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public class Fiery_Rage extends Spell implements Killable {
     BukkitTask windupTask;
     BukkitTask activeTask;
     Spell instance;
-    final String spellType;
 
-    public Fiery_Rage(@NotNull Player caster, @NotNull ItemStack item) {
-        super(caster, item);
+    public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
+        super(caster, spellType, "AURA", item);
         instance = this;
-        spellType = Objects.requireNonNullElse(ItemData.getSpellType(item), "AURA");
-        CoolDowns.setCoolDown(caster, spellType, new float[]{1, 0, 10, 30}, Enums.CoolDownStage.WINDUP);
+        CoolDowns.setCoolDown(caster, super.spellType, new float[]{1, 0, 10, 30}, Enums.CoolDownStage.WINDUP);
         windup();
     }
 
