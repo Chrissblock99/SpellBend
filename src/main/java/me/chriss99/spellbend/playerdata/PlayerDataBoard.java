@@ -192,18 +192,18 @@ public class PlayerDataBoard {
             }
             case ACTIVE -> {
                 int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
-                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
+                coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
                         .append("s §8▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§a");
             }
             case PASSIVE -> {
                 int filled = Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
                 coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                        .append("s §b▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
+                        .append("s §a▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
             }
             case COOLDOWN -> {
                 int filled = Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10);
-                coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                        .append("s §a▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
+                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
+                        .append("s §b▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
             }
         }
         line = obj.getScore(coolDownDisplay.toString()); line.setScore(0);
