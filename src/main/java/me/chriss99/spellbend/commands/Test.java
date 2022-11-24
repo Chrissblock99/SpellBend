@@ -10,6 +10,7 @@ import me.chriss99.spellbend.playerdata.PlayerDataBoard;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.Item;
+import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -101,6 +102,40 @@ public class Test {
                 if (printed == 0) {
                     sender.sendMessage("none");
                 }
+                return true;
+            }
+        });
+
+        subCommands.put("value item get spellName", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                Player player = (Player) arguments.get(0);
+                sender.sendMessage(player.getName() + "'s held item's spellName is " + ItemData.getHeldSpellName(player) + ".");
+                return true;
+            }
+        });
+
+        subCommands.put("value item get spellType", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                Player player = (Player) arguments.get(0);
+                sender.sendMessage(player.getName() + "'s held item's spellType is " + ItemData.getHeldSpellType(player) + ".");
+                return true;
+            }
+        });
+
+        subCommands.put("value item set spellName", new AdvancedSubCommand(new Class[]{Player.class, String.class}, new String[]{"player", "spellName"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                ItemData.setSpellName(ItemData.getHeldItem((Player) arguments.get(0)), (String) arguments.get(1));
+                return true;
+            }
+        });
+
+        subCommands.put("value item set spellType", new AdvancedSubCommand(new Class[]{Player.class, String.class}, new String[]{"player", "spellType"}) {
+            @Override
+            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+                ItemData.setSpellType(ItemData.getHeldItem((Player) arguments.get(0)), (String) arguments.get(1));
                 return true;
             }
         });
