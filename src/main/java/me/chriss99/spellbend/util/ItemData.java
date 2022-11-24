@@ -4,6 +4,7 @@ import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +45,13 @@ public class ItemData {
             return null;
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-        if (data.has(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING))
-            return data.get(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING);
+        if (data.has(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING)) {
+            String spellType = data.get(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING);
+            if (spellType != null)
+                spellType = spellType.toUpperCase();
+
+            return spellType;
+        }
         return null;
     }
 
@@ -60,8 +66,9 @@ public class ItemData {
         if (!item.hasItemMeta()) //TODO THIS BYPASS IS GARBAGE!!!! FIX AT SOME POINT
             item.setItemMeta(new ItemStack(Material.STONE).getItemMeta());
 
-        item.getItemMeta().getPersistentDataContainer()
-                .set(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, spellType);
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, spellType);
+        item.setItemMeta(meta);
         return item;
     }
 
@@ -89,8 +96,13 @@ public class ItemData {
             return null;
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-        if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING))
-            return data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING);
+        if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING)) {
+            String spellName = data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING);
+            if (spellName != null)
+                spellName = spellName.toLowerCase();
+
+            return spellName;
+        }
         return null;
     }
 
@@ -105,8 +117,9 @@ public class ItemData {
         if (!item.hasItemMeta()) //TODO THIS BYPASS IS GARBAGE!!!! FIX AT SOME POINT
             item.setItemMeta(new ItemStack(Material.STONE).getItemMeta());
 
-        item.getItemMeta().getPersistentDataContainer()
-                .set(PersistentDataKeys.spellNameKey, PersistentDataType.STRING, spellName);
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(PersistentDataKeys.spellNameKey, PersistentDataType.STRING, spellName);
+        item.setItemMeta(meta);
         return item;
     }
 }
