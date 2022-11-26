@@ -1,9 +1,6 @@
 package me.chriss99.spellbend.playerdata;
 
 import me.chriss99.spellbend.data.CoolDownEntry;
-//import game.spellbend.playerdata.Gems;
-//import game.spellbend.playerdata.Gold;
-//import game.spellbend.playerdata.PlayerDataUtil;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.util.ItemData;
@@ -27,7 +24,7 @@ public class PlayerDataBoard {
      * Starts the loop to update all players holding a coolDowned item and creates a board for all players currently online
      */
     public static void start() {
-        if (!Bukkit.getOnlinePlayers().isEmpty())                  //creating boards for players already online
+        if (!Bukkit.getOnlinePlayers().isEmpty())           //creating boards for players already online
             for (Player player : Bukkit.getOnlinePlayers())
                 updateBoard(player);
 
