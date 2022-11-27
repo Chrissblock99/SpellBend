@@ -8,10 +8,7 @@ import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.playerdata.CoolDowns;
 import me.chriss99.spellbend.playerdata.DmgMods;
 import me.chriss99.spellbend.util.math.VectorConversion;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +26,7 @@ public class Fiery_Rage extends Spell implements Killable {
     public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "AURA", item);
         instance = this;
-        CoolDowns.setCoolDown(caster, super.spellType, new float[]{1, 0, 10, 30}, Enums.CoolDownStage.WINDUP);
+        CoolDowns.setCoolDown(caster, super.spellType, new float[]{1, 0, 10, 30});
         windup();
     }
 
@@ -50,11 +47,12 @@ public class Fiery_Rage extends Spell implements Killable {
                         Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
                         Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
                         (float) MathUtil.random(1.3d, 2d));
-                caster.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(1f/3f)),
+                World world = caster.getWorld();
+                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(1f/3f)),
                         time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(1f/3f))), 1, dustOptions);
-                caster.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI),
+                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI),
                         time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI)), 1, dustOptions);
-                caster.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(5f/3f)),
+                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(5f/3f)),
                         time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(5f/3f))), 1, dustOptions);
 
                 if (time == 360) {
@@ -110,12 +108,11 @@ public class Fiery_Rage extends Spell implements Killable {
     public void casterDeath(@Nullable Entity killer) {
         CoolDownEntry entry = CoolDowns.getCoolDownEntry(caster, spellType);
         if (entry == null) {
-            Bukkit.getLogger().warning(caster.getName() + " had Fiery Rage active under the type \"" + spellType + "\" while dieing, but no CoolDownEntry was found, skipping it's removal!");
+            Bukkit.getLogger().warning(caster.getName() + " had Fiery Rage active under the type \"" + spellType + "\" while dying, but no CoolDownEntry was found, skipping it's removal!");
             return;
         }
 
         entry.skipToStage(Enums.CoolDownStage.COOLDOWN);
-        cancelSpell();
     }
 
     @Override
@@ -127,7 +124,6 @@ public class Fiery_Rage extends Spell implements Killable {
         }
 
         entry.transformToStage(Enums.CoolDownStage.COOLDOWN);
-        cancelSpell();
     }
 
     @Override
@@ -135,14 +131,13 @@ public class Fiery_Rage extends Spell implements Killable {
         if (!windupTask.isCancelled()) {
             windupTask.cancel();
             caster.setGravity(true);
-            SpellHandler.getActivePlayerSpells(caster).remove(instance);
             return;
         }
+
         if (!activeTask.isCancelled()) {
             DmgMods.setDmgMod(Enums.DmgMod.DEALT);
             DmgMods.removeDmgMod(caster, Enums.DmgModType.SPELL, 1.5f);
             activeTask.cancel();
         }
-        SpellHandler.getActivePlayerSpells(caster).remove(instance);
     }
 }

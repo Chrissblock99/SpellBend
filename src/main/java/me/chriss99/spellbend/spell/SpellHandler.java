@@ -129,6 +129,7 @@ public class SpellHandler {
             if (spell instanceof Killable killable)
                 killable.casterDeath(killer);
             spell.cancelSpell();
+            activeSpells.remove(i);
         }
     }
 
@@ -160,8 +161,12 @@ public class SpellHandler {
         }
 
         ArrayList<Spell> activeSpells = playerToActiveSpellListMap.get(player);
-        for (int i = activeSpells.size()-1;i>=0;i--)
-            activeSpells.get(i).casterLeave();
+        for (int i = activeSpells.size()-1;i>=0;i--) {
+            Spell spell = activeSpells.get(i);
+            spell.casterLeave();
+            spell.cancelSpell();
+            activeSpells.remove(i);
+        }
 
         playerToActiveSpellListMap.remove(player);
     }
