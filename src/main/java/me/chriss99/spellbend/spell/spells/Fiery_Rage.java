@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class Fiery_Rage extends Spell implements Killable {
     BukkitTask windupTask;
     BukkitTask activeTask;
-    Spell instance;
+    final Spell instance;
 
     public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "AURA", item);

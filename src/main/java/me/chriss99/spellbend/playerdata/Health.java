@@ -148,7 +148,7 @@ public class Health {
             damageEntries = Objects.requireNonNull(registerPlayer(victim));
         }
 
-        String msg = victim.getName() + " was slain by " + killer.getName() + " using " + item.getItemMeta().getLocalizedName(); //TODO use LuckPerms here ALSO properly get the item name AND implement cosmetics at some point
+        String msg = victim.getName() + " was slain by " + killer.getName() + " using " + item.getItemMeta().displayName(); //TODO use LuckPerms here ALSO implement cosmetics at some point
         for (Player player : victim.getWorld().getPlayers())
             player.sendMessage(msg);
 
