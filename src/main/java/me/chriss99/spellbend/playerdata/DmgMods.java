@@ -132,15 +132,16 @@ public class DmgMods {
     }
 
     /**
-     * Sets the DmgMod from the specified type of the player if it is larger
-     * <b>this can mathematically not be undone and will break things if added modifiers are still present
-     * therefore it should only be used rarely</b>
+     * Sets the DmgMod from the specified type of the player if it is larger <br>
+     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
+     * which should be used to undo this modifier with removeDmgMod() later in the process</b> <br>
+     * If the extending action didn't change anything, 1 will be returned
      *
      * @param player The player to set the DmgMod of
      * @param modType The DmgMod type
      * @param modifier The damage modifier
      */
-    public static void extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+    public static float extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         float[] dmgMods = currentMap.get(player);
         if (dmgMods == null) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
@@ -148,27 +149,34 @@ public class DmgMods {
         }
 
         int index = Maps.dmgModToIndexMap.get(modType);
-        if (dmgMods[index]<modifier)
+        if (dmgMods[index]<modifier) {
+            float oldDmgMod = dmgMods[index];
             dmgMods[index] = modifier;
+            return dmgMods[index]/oldDmgMod;
+        }
+        return 1;
     }
 
     /**
-     * Sets the DmgMod from the specified type of the player
-     * <b>this can mathematically not be undone and will break things if added modifiers are still present
-     * therefore it should only be used rarely</b>
+     * Sets the DmgMod from the specified type of the player <br>
+     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
+     * which should be used to undo this modifier with removeDmgMod() later in the process</b>
      *
      * @param player The player to set the DmgMod of
      * @param modType The DmgMod type
      * @param modifier The damage modifier
      */
-    public static void setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+    public static float setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         float[] dmgMods = currentMap.get(player);
         if (dmgMods == null) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
             dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        dmgMods[Maps.dmgModToIndexMap.get(modType)] = modifier;
+        int index = Maps.dmgModToIndexMap.get(modType);
+        float oldDmgMod = dmgMods[index];
+        dmgMods[index] = modifier;
+        return dmgMods[index]/oldDmgMod;
     }
 
     /**
