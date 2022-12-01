@@ -15,6 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * This class has two enum states: TAKEN and DEALT <br>
+ * depending on those either the damage taken or dealt will be modified <br>
+ * The state can be set with setDmgMod() and the appropriate enum: Enums.DmgMod <br>
+ * <b>THIS IS NOT THREAD SAVE</b>
+ */
 public class DmgMods {
     private static final Gson gson = SpellBend.getGson();
     private static HashMap<Player, float[]> currentMap = PlayerSessionStorage.dmgDealtMods;
