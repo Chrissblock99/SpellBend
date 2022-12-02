@@ -45,14 +45,14 @@ public class ItemData {
             return null;
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-        if (data.has(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING)) {
-            String spellType = data.get(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING);
-            if (spellType != null)
-                spellType = spellType.toUpperCase();
+        if (!data.has(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING))
+            return null;
 
-            return spellType;
-        }
-        return null;
+        String spellType = data.get(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING);
+        if (spellType != null)
+            spellType = spellType.toUpperCase();
+
+        return spellType;
     }
 
     /**
@@ -96,14 +96,14 @@ public class ItemData {
             return null;
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-        if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING)) {
-            String spellName = data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING);
-            if (spellName != null)
-                spellName = spellName.toLowerCase();
+        if (!data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING))
+            return null;
 
-            return spellName;
-        }
-        return null;
+        String spellName = data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING);
+        if (spellName != null)
+            spellName = spellType.toLowerCase();
+
+        return spellName;
     }
 
     /**
