@@ -99,11 +99,16 @@ public class DmgMods {
      * therefore it can be undone by dividing it by the same modifier
      * To do that call removeDmgMod()
      *
+     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     *
      * @param player The player to add the DmgMod to
      * @param modType The DmgMod type
-     * @param modifier The damage modifier
+     * @param modifier The damage modifier not smaller or equal to 0
      */
     public static void addDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+        if (modifier <= 0)
+            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+
         float[] dmgMods = currentMap.get(player);
         if (dmgMods == null) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
@@ -117,11 +122,16 @@ public class DmgMods {
      * Removes the DmgMod from the specified type of the player
      * It does this by dividing the number with the modifier, undoing addDmgMod() in the process
      *
+     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     *
      * @param player The player to remove the DmgMod from
      * @param modType The DmgMod type
-     * @param modifier The damage modifier
+     * @param modifier The damage modifier not smaller or equal to 0
      */
     public static void removeDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+        if (modifier <= 0)
+            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+
         float[] dmgMods = currentMap.get(player);
         if (dmgMods == null) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
@@ -136,11 +146,16 @@ public class DmgMods {
      * <b>this can mathematically not be undone and will break things if added modifiers are still present
      * therefore it should only be used rarely</b>
      *
+     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     *
      * @param player The player to set the DmgMod of
      * @param modType The DmgMod type
-     * @param modifier The damage modifier
+     * @param modifier The damage modifier not smaller or equal to 0
      */
     public static void extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+        if (modifier <= 0)
+            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+
         float[] dmgMods = currentMap.get(player);
         if (dmgMods == null) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
@@ -157,11 +172,16 @@ public class DmgMods {
      * <b>this can mathematically not be undone and will break things if added modifiers are still present
      * therefore it should only be used rarely</b>
      *
+     * @throws IllegalArgumentException If tje modifier is smaller or equal to 0
+     *
      * @param player The player to set the DmgMod of
      * @param modType The DmgMod type
-     * @param modifier The damage modifier
+     * @param modifier The damage modifier not smaller or equal to 0
      */
     public static void setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+        if (modifier <= 0)
+            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+
         float[] dmgMods = currentMap.get(player);
         if (dmgMods == null) {
             Bukkit.getLogger().warning(player.getName() + " was not logged in PlayerTo" + currentName + " map, now fixing!");
