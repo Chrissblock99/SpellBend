@@ -158,6 +158,7 @@ public class DmgMods {
      * @param player The player to set the DmgMod of
      * @param modType The DmgMod type
      * @param modifier The damage modifier not smaller or equal to 0
+     * @return An undo factor usable to undo the change later
      */
     public static float extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (modifier <= 0)
@@ -188,6 +189,7 @@ public class DmgMods {
      * @param player The player to set the DmgMod of
      * @param modType The DmgMod type
      * @param modifier The damage modifier not smaller or equal to 0
+     * @return An undo factor usable to undo the change later
      */
     public static float setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (modifier <= 0)
