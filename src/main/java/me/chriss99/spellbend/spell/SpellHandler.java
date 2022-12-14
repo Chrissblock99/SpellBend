@@ -15,12 +15,13 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SpellHandler {
     private static final HashMap<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
-    private static final HashMap<Player, ArrayList<Spell>> playerToActiveSpellListMap = new HashMap<>();
+    private static final HashMap<Player, Set<Spell>> playerToActiveSpellListMap = new HashMap<>();
 
     /**
      * @throws IllegalArgumentException If name is already contained in the map.
@@ -36,7 +37,7 @@ public class SpellHandler {
     }
 
     /**
-     * Creates a spell of item's named type and adds it to the players activeSpellList.
+     * Creates a spell of item's named type and adds it to the players activeSpellSet.
      *
      * @param player The player casting the spell
      * @param spellItem The item used (HAS to be a spell)
@@ -48,7 +49,7 @@ public class SpellHandler {
     }
 
     /**
-     * Creates a spell of named type and adds it to the players activeSpellList.
+     * Creates a spell of named type and adds it to the players activeSpellSet.
      *
      * @param player The player casting the spell
      * @param spellName The name of the spell
@@ -60,7 +61,7 @@ public class SpellHandler {
     }
 
     /**
-     * Creates a spell of item's named type and adds it to the players activeSpellList.
+     * Creates a spell of item's named type and adds it to the players activeSpellSet.
      *
      * @param player The player casting the spell
      * @param spellItem The item used (HAS to be a spell)
@@ -78,7 +79,7 @@ public class SpellHandler {
     }
 
     /**
-     * Creates a spell of named type and adds it to the players activeSpellList.
+     * Creates a spell of named type and adds it to the players activeSpellSet.
      *
      * @param player The player casting the spell
      * @param spellName The name of the spell
@@ -96,7 +97,7 @@ public class SpellHandler {
     }
 
     /**
-     * Creates a spell of named type and adds it to the players activeSpellList.
+     * Creates a spell of named type and adds it to the players activeSpellSet.
      *
      * @param player The player casting the spell
      * @param spellName The name of the spell
@@ -113,60 +114,58 @@ public class SpellHandler {
         return true;
     }
 
-    public static ArrayList<Spell> getActivePlayerSpells(@NotNull Player player) {
+    public static Set<Spell> getActivePlayerSpells(@NotNull Player player) {
         if (!playerToActiveSpellListMap.containsKey(player)) {
-            Bukkit.getLogger().warning("Player " + player.getName() + " was not contained in playerToActiveSpellListMap! Registering manually.\n(This probably won't affect the program directly, it just shouldn't have happened and is probably a bug that could cause other problems.)");
-            playerToActiveSpellListMap.put(player, new ArrayList<>());
+            Bukkit.getLogger().warning("Player " + player.getName() + " was not contained in playerToActiveSpellSetMap! Registering manually.\n(This probably won't affect the program directly, it just shouldn't have happened and is probably a bug that could cause other problems.)");
+            playerToActiveSpellListMap.put(player, new HashSet<>());
         }
 
         return playerToActiveSpellListMap.get(player);
     }
 
     public static void killPlayer(@NotNull Player player, @Nullable Entity killer) {
-        ArrayList<Spell> activeSpells = playerToActiveSpellListMap.get(player);
-        for (int i = activeSpells.size()-1;i>=0;i--) {
-            Spell spell = activeSpells.get(i);
+        Set<Spell> activeSpells = playerToActiveSpellListMap.get(player);
+        for (Spell spell : activeSpells) {
             if (spell instanceof Killable killable)
                 killable.casterDeath(killer);
             spell.cancelSpell();
-            activeSpells.remove(i);
         }
+        activeSpells.clear();
     }
 
     /**
-     * Adds the player and an empty ArrayList to the playerToActiveSpellListMap.
+     * Adds the player and an empty ArrayList to the playerToActiveSpellSetMap.
      * <b>This is only intended to be used if the player joins the server.</b>
      *
      * @param player The player to register
      */
     public static void registerPlayer(@NotNull Player player) {
         if (playerToActiveSpellListMap.containsKey(player)) {
-            Bukkit.getLogger().warning("A call to register \"" + player.getName() + "\" in the playerToActiveSpellListMap was received but the player is already contained in the map! Ignoring the call.");
+            Bukkit.getLogger().warning("A call to register \"" + player.getName() + "\" in the playerToActiveSpellSetMap was received but the player is already contained in the map! Ignoring the call.");
             return;
         }
 
-        playerToActiveSpellListMap.put(player, new ArrayList<>());
+        playerToActiveSpellListMap.put(player, new HashSet<>());
     }
 
     /**
-     * Removes the player from the playerToActiveSpellListMap.
+     * Removes the player from the playerToActiveSpellSetMap.
      * <b>This is only intended to be used if the player leaves the server.</b>
      *
      * @param player The player to remove
      */
     public static void deRegisterPlayer(@NotNull Player player) {
         if (!playerToActiveSpellListMap.containsKey(player)) {
-            Bukkit.getLogger().warning("A call to deRegister \"" + player.getName() + "\" in the playerToActiveSpellListMap was received but the player is not contained in the map! Ignoring the call.");
+            Bukkit.getLogger().warning("A call to deRegister \"" + player.getName() + "\" in the playerToActiveSpellSetMap was received but the player is not contained in the map! Ignoring the call.");
             return;
         }
 
-        ArrayList<Spell> activeSpells = playerToActiveSpellListMap.get(player);
-        for (int i = activeSpells.size()-1;i>=0;i--) {
-            Spell spell = activeSpells.get(i);
+        Set<Spell> activeSpells = playerToActiveSpellListMap.get(player);
+        for (Spell spell : activeSpells) {
             spell.casterLeave();
             spell.cancelSpell();
-            activeSpells.remove(i);
         }
+        activeSpells.clear();
 
         playerToActiveSpellListMap.remove(player);
     }

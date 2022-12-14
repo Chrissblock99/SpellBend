@@ -15,6 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Objects;
 
+/**
+ * This class has two enum states: TAKEN and DEALT <br>
+ * depending on those either the damage taken or dealt will be modified <br>
+ * The state can be set with setDmgMod() and the appropriate enum: Enums.DmgMod <br>
+ * <b>THIS IS NOT THREAD SAVE</b>
+ */
 public class DmgMods {
     private static final Gson gson = SpellBend.getGson();
     private static HashMap<Player, float[]> currentMap = PlayerSessionStorage.dmgDealtMods;
@@ -142,9 +148,10 @@ public class DmgMods {
     }
 
     /**
-     * Sets the DmgMod from the specified type of the player if it is larger
-     * <b>this can mathematically not be undone and will break things if added modifiers are still present
-     * therefore it should only be used rarely</b>
+     * Sets the DmgMod from the specified type of the player if it is larger <br>
+     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
+     * which should be used to undo this modifier with removeDmgMod() later in the process</b> <br>
+     * If the extending action didn't change anything, 1 will be returned
      *
      * @throws IllegalArgumentException If the modifier is smaller or equal to 0
      *
@@ -152,7 +159,7 @@ public class DmgMods {
      * @param modType The DmgMod type
      * @param modifier The damage modifier not smaller or equal to 0
      */
-    public static void extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+    public static float extendDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (modifier <= 0)
             throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
 
@@ -163,14 +170,18 @@ public class DmgMods {
         }
 
         int index = Maps.dmgModToIndexMap.get(modType);
-        if (dmgMods[index]<modifier)
+        if (dmgMods[index]<modifier) {
+            float oldDmgMod = dmgMods[index];
             dmgMods[index] = modifier;
+            return dmgMods[index]/oldDmgMod;
+        }
+        return 1;
     }
 
     /**
-     * Sets the DmgMod from the specified type of the player
-     * <b>this can mathematically not be undone and will break things if added modifiers are still present
-     * therefore it should only be used rarely</b>
+     * Sets the DmgMod from the specified type of the player <br>
+     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
+     * which should be used to undo this modifier with removeDmgMod() later in the process</b>
      *
      * @throws IllegalArgumentException If tje modifier is smaller or equal to 0
      *
@@ -178,7 +189,7 @@ public class DmgMods {
      * @param modType The DmgMod type
      * @param modifier The damage modifier not smaller or equal to 0
      */
-    public static void setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
+    public static float setDmgMod(@NotNull Player player, @NotNull Enums.DmgModType modType, float modifier) {
         if (modifier <= 0)
             throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
 
@@ -188,7 +199,10 @@ public class DmgMods {
             dmgMods = Objects.requireNonNull(loadDmgMods(player));
         }
 
-        dmgMods[Maps.dmgModToIndexMap.get(modType)] = modifier;
+        int index = Maps.dmgModToIndexMap.get(modType);
+        float oldDmgMod = dmgMods[index];
+        dmgMods[index] = modifier;
+        return dmgMods[index]/oldDmgMod;
     }
 
     /**

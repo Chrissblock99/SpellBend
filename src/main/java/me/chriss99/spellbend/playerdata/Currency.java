@@ -13,7 +13,10 @@ import java.util.HashMap;
 import java.util.Objects;
 
 /**
- * NOT THREAD SAVE
+ * This class has three enum states: GEMS, GOLD and CRYSTALS <br>
+ * depending on those the corresponding currency will be modified <br>
+ * The state can be set with setCurrency() and the appropriate enum: Enums.Currency <br>
+ * <b>THIS IS NOT THREAD SAVE</b>
  */
 public class Currency {
     private static HashMap<Player, Float> currentMap = PlayerSessionStorage.gems;

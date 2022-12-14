@@ -60,7 +60,7 @@ public class Test {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
                 sender.sendMessage("Spells:");
-                ArrayList<Spell> playerSpells = SpellHandler.getActivePlayerSpells((Player) arguments.get(0));
+                Set<Spell> playerSpells = SpellHandler.getActivePlayerSpells((Player) arguments.get(0));
                 if (playerSpells.size() == 0) {
                     sender.sendMessage("none");
                     return true;
