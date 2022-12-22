@@ -20,8 +20,9 @@ public class Enums {
         CRYSTALS
     }
 
-    public enum DmgMod {
-        DEALT,
-        TAKEN
+    public enum Modifier {
+        DMGDEALT,
+        DMGTAKEN,
+        WALKSPEED
     }
 }

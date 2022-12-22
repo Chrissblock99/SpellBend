@@ -5,7 +5,7 @@ import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.playerdata.CoolDowns;
 import me.chriss99.spellbend.playerdata.Currency;
-import me.chriss99.spellbend.playerdata.DmgMods;
+import me.chriss99.spellbend.playerdata.PercentageMods;
 import me.chriss99.spellbend.playerdata.PlayerDataBoard;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.SpellHandler;
@@ -140,10 +140,10 @@ public class Test {
             }
         });
 
-        subCommands.put("value dmgMod get", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, String.class, Player.class}, new String[]{"dmgMod", "dmgModType", "player"}) {
+        subCommands.put("value dmgMod get", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, String.class, Player.class}, new String[]{"dmgMod", "dmgModType", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 String dmgModTypeString = ((String) arguments.get(1)).toUpperCase();
                 Player player = (Player) arguments.get(2);
 
@@ -157,55 +157,55 @@ public class Test {
                     return true;
                 }
 
-                DmgMods.setDmgMod(dmgMod);
-                StringBuilder stringBuilder = new StringBuilder().append(DmgMods.getCurrentName());
+                PercentageMods.setModifier(dmgMod);
+                StringBuilder stringBuilder = new StringBuilder().append(PercentageMods.getCurrentName());
                 //noinspection SpellCheckingInspection
                 stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "").append("ifier ")
                         .append(dmgModTypeString).append(" of ").append(player.getName()).append(": ")
-                        .append(DmgMods.getDmgMod(player, (dmgModTypeString.equals("ALL")) ? null : Enums.DmgModType.valueOf(dmgModTypeString)));
+                        .append(PercentageMods.getModifier(player, (dmgModTypeString.equals("ALL")) ? null : Enums.DmgModType.valueOf(dmgModTypeString)));
                 sender.sendMessage(stringBuilder.toString());
                 return true;
             }
         });
 
-        subCommands.put("value dmgMod add", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
+        subCommands.put("value dmgMod add", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
                 Player player = (Player) arguments.get(2);
                 Float num = (Float) arguments.get(3);
 
-                DmgMods.setDmgMod(dmgMod);
-                DmgMods.addDmgMod(player, dmgModType, num);
+                PercentageMods.setModifier(dmgMod);
+                PercentageMods.addModifier(player, dmgModType, num);
                 return true;
             }
         });
 
-        subCommands.put("value dmgMod remove", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
+        subCommands.put("value dmgMod remove", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
                 Player player = (Player) arguments.get(2);
                 Float num = (Float) arguments.get(3);
 
-                DmgMods.setDmgMod(dmgMod);
-                DmgMods.removeDmgMod(player, dmgModType, num);
+                PercentageMods.setModifier(dmgMod);
+                PercentageMods.removeModifier(player, dmgModType, num);
                 return true;
             }
         });
 
-        subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{Enums.DmgMod.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
+        subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.DmgMod dmgMod = (Enums.DmgMod) arguments.get(0);
+                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
                 Player player = (Player) arguments.get(2);
                 Float num = (Float) arguments.get(3);
 
-                DmgMods.setDmgMod(dmgMod);
-                DmgMods.setDmgMod(player, dmgModType, num);
+                PercentageMods.setModifier(dmgMod);
+                PercentageMods.setDmgMod(player, dmgModType, num);
                 return true;
             }
         });

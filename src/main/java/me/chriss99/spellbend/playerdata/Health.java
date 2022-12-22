@@ -78,10 +78,10 @@ public class Health {
         }
 
         double dmg = rawDamage;
-        DmgMods.setDmgMod(Enums.DmgMod.DEALT);
-        dmg *= (attacker instanceof Player player) ? DmgMods.getDmgMod(player, null) : 1;
-        DmgMods.setDmgMod(Enums.DmgMod.TAKEN);
-        dmg *= DmgMods.getDmgMod(victim, null);
+        PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
+        dmg *= (attacker instanceof Player player) ? PercentageMods.getModifier(player, null) : 1;
+        PercentageMods.setModifier(Enums.Modifier.DMGTAKEN);
+        dmg *= PercentageMods.getModifier(victim, null);
 
         double healthBefore = getHealth(victim);
         damageEntries.add(0, new DamageEntry(attacker,

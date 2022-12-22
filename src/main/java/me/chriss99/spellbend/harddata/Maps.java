@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class Maps {
     public static final HashMap<Enums.CoolDownStage, Integer> coolDownStageToIndexMap = createCoolDownStageToIndexMap();
-    public static final HashMap<Enums.DmgModType, Integer> dmgModToIndexMap = createDmgModToIndexMap();
+    public static final HashMap<Enums.DmgModType, Integer> modifierToIndexMap = createDmgModToIndexMap();
 
     private static @NotNull HashMap<Enums.CoolDownStage, Integer> createCoolDownStageToIndexMap() {
         HashMap<Enums.CoolDownStage, Integer> map = new HashMap<>();

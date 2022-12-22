@@ -101,7 +101,7 @@ public class ItemData {
 
         String spellName = data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING);
         if (spellName != null)
-            spellName = spellType.toLowerCase();
+            spellName = spellName.toLowerCase();
 
         return spellName;
     }

@@ -79,15 +79,15 @@ public class PlayerDataUtil {
             e.printStackTrace();
         }
         try {
-            DmgMods.setDmgMod(Enums.DmgMod.DEALT);
-            DmgMods.loadDmgMods(player);
+            PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
+            PercentageMods.loadDmgMods(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The loading of " + player.getName() + "'s DmgDealtMods generated an exception!");
             e.printStackTrace();
         }
         try {
-            DmgMods.setDmgMod(Enums.DmgMod.TAKEN);
-            DmgMods.loadDmgMods(player);
+            PercentageMods.setModifier(Enums.Modifier.DMGTAKEN);
+            PercentageMods.loadDmgMods(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The loading of " + player.getName() + "'s DmgTakenMods generated an exception!");
             e.printStackTrace();
@@ -146,15 +146,15 @@ public class PlayerDataUtil {
             e.printStackTrace();
         }
         try {
-            DmgMods.setDmgMod(Enums.DmgMod.DEALT);
-            DmgMods.saveDmgMods(player);
+            PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
+            PercentageMods.saveDmgMods(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s DmgDealtMods generated an exception!");
             e.printStackTrace();
         }
         try {
-            DmgMods.setDmgMod(Enums.DmgMod.TAKEN);
-            DmgMods.saveDmgMods(player);
+            PercentageMods.setModifier(Enums.Modifier.DMGTAKEN);
+            PercentageMods.saveDmgMods(player);
         } catch (Exception e) {
             Bukkit.getLogger().warning("The saving of " + player.getName() + "'s DmgTakenMods generated an exception!");
             e.printStackTrace();

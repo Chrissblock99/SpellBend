@@ -6,7 +6,7 @@ import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.playerdata.CoolDowns;
-import me.chriss99.spellbend.playerdata.DmgMods;
+import me.chriss99.spellbend.playerdata.PercentageMods;
 import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -77,8 +77,8 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     private void activate() {
-        DmgMods.setDmgMod(Enums.DmgMod.DEALT);
-        DmgMods.addDmgMod(caster, Enums.DmgModType.SPELL, 1.5f);
+        PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
+        PercentageMods.addModifier(caster, Enums.DmgModType.SPELL, 1.5f);
         final Player player = caster;
 
         activeTask = new BukkitRunnable() {
@@ -93,8 +93,8 @@ public class Fiery_Rage extends Spell implements Killable {
                 player.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, player.getLocation().add(0d, 1d, 0d), 1, dustOptions);
 
                 if (time == 0) {
-                    DmgMods.setDmgMod(Enums.DmgMod.DEALT);
-                    DmgMods.removeDmgMod(player, Enums.DmgModType.SPELL, 1.5f);
+                    PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
+                    PercentageMods.removeModifier(player, Enums.DmgModType.SPELL, 1.5f);
 
                     activeTask.cancel();
                     SpellHandler.getActivePlayerSpells(player).remove(instance);
@@ -135,8 +135,8 @@ public class Fiery_Rage extends Spell implements Killable {
         }
 
         if (!activeTask.isCancelled()) {
-            DmgMods.setDmgMod(Enums.DmgMod.DEALT);
-            DmgMods.removeDmgMod(caster, Enums.DmgModType.SPELL, 1.5f);
+            PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
+            PercentageMods.removeModifier(caster, Enums.DmgModType.SPELL, 1.5f);
             activeTask.cancel();
         }
     }
