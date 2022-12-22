@@ -24,7 +24,7 @@ import java.util.Objects;
 public class PercentageMods {
     private static final Gson gson = SpellBend.getGson();
     private static HashMap<Player, float[]> currentMap = PlayerSessionStorage.dmgDealtMods;
-    private static NamespacedKey currentKey = PersistentDataKeys.dmgDealtModsKey;
+    private static NamespacedKey currentKey = PersistentDataKeys.damageDealtModifiersKey;
     private static String currentName = "DmgDealtMods";
     private static Enums.Modifier modifier = Enums.Modifier.DMGDEALT;
 
@@ -33,12 +33,12 @@ public class PercentageMods {
         switch (modifier) {
             case DMGDEALT -> {
                 currentMap = PlayerSessionStorage.dmgDealtMods;
-                currentKey = PersistentDataKeys.dmgDealtModsKey;
+                currentKey = PersistentDataKeys.damageDealtModifiersKey;
                 currentName = "DmgDealtMods";
             }
             case DMGTAKEN -> {
                 currentMap = PlayerSessionStorage.dmgTakenMods;
-                currentKey = PersistentDataKeys.dmgTakenModsKey;
+                currentKey = PersistentDataKeys.damageTakenModifiersKey;
                 currentName = "DmgTakenMods";
             }
             case WALKSPEED -> {

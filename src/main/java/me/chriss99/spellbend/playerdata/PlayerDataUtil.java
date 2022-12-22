@@ -29,8 +29,8 @@ public class PlayerDataUtil {
         //data.set(PersistentDataKeys.crystalShardsKey, PersistentDataType.INTEGER, 0);
         //data.set(PersistentDataKeys.spellsOwnedKey, PersistentDataType.INTEGER_ARRAY, new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0});
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
-        data.set(PersistentDataKeys.dmgDealtModsKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
-        data.set(PersistentDataKeys.dmgTakenModsKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
+        data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
+        data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
     }
 
     /**
