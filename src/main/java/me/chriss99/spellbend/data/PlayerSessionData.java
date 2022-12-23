@@ -1,8 +1,12 @@
 package me.chriss99.spellbend.data;
 
+import com.google.gson.Gson;
+import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,6 +14,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class PlayerSessionData {
+    private static final Gson gson = SpellBend.getGson();
     private static final HashMap<Player, PlayerSessionData> playerSessions = new HashMap<>();
 
     //TODO might not be needed, but keep until good reasoning is found
@@ -63,6 +68,21 @@ public class PlayerSessionData {
         }
 
         return playerSession;
+    }
+
+    /**
+     * Sets up all the PersistentData of the player
+     *
+     * @param player The player who's PersistentData to set up
+     */
+    public static void setupPlayerData(@NotNull Player player) {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        data.set(PersistentDataKeys.gemsKey, PersistentDataType.FLOAT, 150f);
+        data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
+        data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
+        data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
+        data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
+        data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
     }
 
     private PlayerSessionData(@NotNull Player player) {
@@ -128,6 +148,7 @@ public class PlayerSessionData {
      */
     public void endSession() {
         saveSession();
+        //noinspection SuspiciousMethodCalls
         playerSessions.remove(this);
     }
 }

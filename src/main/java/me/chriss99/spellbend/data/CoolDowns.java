@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import me.chriss99.spellbend.playerdata.PlayerDataBoard;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

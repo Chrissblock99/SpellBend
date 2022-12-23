@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.events;
 
-import me.chriss99.spellbend.playerdata.PlayerDataBoard;
-import me.chriss99.spellbend.playerdata.PlayerDataUtil;
+import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import org.bukkit.entity.Player;
@@ -20,6 +20,6 @@ public class PlayerQuit implements Listener {
 
         PlayerDataBoard.deRegisterPlayer(player);
         SpellHandler.deRegisterPlayer(player);
-        PlayerDataUtil.saveAll(player);
+        PlayerSessionData.getPlayerSession(player).endSession();
     }
 }

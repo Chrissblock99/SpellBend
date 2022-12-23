@@ -1,7 +1,7 @@
 package me.chriss99.spellbend;
 
 import com.google.gson.Gson;
-import me.chriss99.spellbend.playerdata.PlayerDataBoard;
+import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 

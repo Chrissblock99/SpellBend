@@ -1,6 +1,5 @@
 package me.chriss99.spellbend.data;
 
-import me.chriss99.spellbend.playerdata.PlayerDataBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;

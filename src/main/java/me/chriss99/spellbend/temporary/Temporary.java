@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.temporary;
 
-import me.chriss99.spellbend.playerdata.CoolDowns;
-import me.chriss99.spellbend.playerdata.PlayerDataBoard;
+import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.entity.Player;
@@ -17,7 +17,8 @@ public class Temporary {
     public static void playerSwitchHeldItem(@NotNull Player player, @Nullable ItemStack oldItem, @Nullable ItemStack newItem) {
         if (SpellHandler.itemIsSpell(oldItem) || SpellHandler.itemIsSpell(newItem)) {
             String spellType = ItemData.getSpellType(newItem);
-            if (CoolDowns.typeIsCooledDown(player, spellType))
+            if (PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
+                //noinspection ConstantConditions because if it would be null, then the type cannot be cooled down, and it would not reach this statement
                 PlayerDataBoard.registerPlayer(player, spellType);
                 //have to pass null here as the event isn't finished yet.
                 //therefore the item the player is currently holding is still the old one

@@ -2,11 +2,10 @@ package me.chriss99.spellbend.spell.spells;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
+import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.math.MathUtil;
-import me.chriss99.spellbend.playerdata.CoolDowns;
-import me.chriss99.spellbend.playerdata.PercentageMods;
 import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -19,14 +18,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Fiery_Rage extends Spell implements Killable {
-    BukkitTask windupTask;
-    BukkitTask activeTask;
-    final Spell instance;
+    private BukkitTask windupTask;
+    private BukkitTask activeTask;
+    private final Spell instance;
+    private final PlayerSessionData sessionData;
 
     public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "AURA", item);
         instance = this;
-        CoolDowns.setCoolDown(caster, super.spellType, new float[]{1, 0, 10, 30});
+        sessionData = PlayerSessionData.getPlayerSession(caster);
+        sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{1, 0, 10, 30});
         windup();
     }
 
@@ -77,9 +78,7 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     private void activate() {
-        PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
-        PercentageMods.addModifier(caster, Enums.DmgModType.SPELL, 1.5f);
-        final Player player = caster;
+        sessionData.getDamageDealtModifiers().addModifier(Enums.DmgModType.SPELL, 1.5f);
 
         activeTask = new BukkitRunnable() {
             int time = 200;
@@ -90,14 +89,13 @@ public class Fiery_Rage extends Spell implements Killable {
                         Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
                         Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
                         (float) (0.2d + MathUtil.random(time/80d, 1d+time/80d)));
-                player.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, player.getLocation().add(0d, 1d, 0d), 1, dustOptions);
+                caster.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(0d, 1d, 0d), 1, dustOptions);
 
                 if (time == 0) {
-                    PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
-                    PercentageMods.removeModifier(player, Enums.DmgModType.SPELL, 1.5f);
+                    sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
 
                     activeTask.cancel();
-                    SpellHandler.getActivePlayerSpells(player).remove(instance);
+                    SpellHandler.getActivePlayerSpells(caster).remove(instance);
                 }
                 time--;
             }
@@ -106,7 +104,7 @@ public class Fiery_Rage extends Spell implements Killable {
 
     @Override
     public void casterDeath(@Nullable Entity killer) {
-        CoolDownEntry entry = CoolDowns.getCoolDownEntry(caster, spellType);
+        CoolDownEntry entry = sessionData.getCoolDowns().getCoolDownEntry(spellType);
         if (entry == null) {
             Bukkit.getLogger().warning(caster.getName() + " had Fiery Rage active under the type \"" + spellType + "\" while dying, but no CoolDownEntry was found, skipping it's removal!");
             return;
@@ -117,7 +115,7 @@ public class Fiery_Rage extends Spell implements Killable {
 
     @Override
     public void casterLeave() {
-        CoolDownEntry entry = CoolDowns.getCoolDownEntry(caster, spellType);
+        CoolDownEntry entry = sessionData.getCoolDowns().getCoolDownEntry(spellType);
         if (entry == null) {
             Bukkit.getLogger().warning(caster.getName() + " left while having FieryRage active but had no corresponding CoolDown (" + spellType + ") active!");
             return;
@@ -135,8 +133,7 @@ public class Fiery_Rage extends Spell implements Killable {
         }
 
         if (!activeTask.isCancelled()) {
-            PercentageMods.setModifier(Enums.Modifier.DMGDEALT);
-            PercentageMods.removeModifier(caster, Enums.DmgModType.SPELL, 1.5f);
+            sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
             activeTask.cancel();
         }
     }

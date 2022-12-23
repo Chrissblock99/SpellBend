@@ -1,12 +1,9 @@
 package me.chriss99.spellbend.commands;
 
-import me.chriss99.spellbend.data.CoolDownEntry;
+import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import me.chriss99.spellbend.playerdata.CoolDowns;
-import me.chriss99.spellbend.playerdata.Currency;
-import me.chriss99.spellbend.playerdata.PercentageMods;
-import me.chriss99.spellbend.playerdata.PlayerDataBoard;
+import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.Item;
@@ -21,7 +18,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.Map;
 
 public class Test {
     private final HashMap<String, AdvancedSubCommand> subCommands = new HashMap<>();
@@ -157,12 +158,14 @@ public class Test {
                     return true;
                 }
 
-                PercentageMods.setModifier(dmgMod);
-                StringBuilder stringBuilder = new StringBuilder().append(PercentageMods.getCurrentName());
+                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
+                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
+                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
+                StringBuilder stringBuilder = new StringBuilder().append(dmgMod);
                 //noinspection SpellCheckingInspection
                 stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "").append("ifier ")
                         .append(dmgModTypeString).append(" of ").append(player.getName()).append(": ")
-                        .append(PercentageMods.getModifier(player, (dmgModTypeString.equals("ALL")) ? null : Enums.DmgModType.valueOf(dmgModTypeString)));
+                        .append(percentageModifier.getModifier((dmgModTypeString.equals("ALL")) ? null : Enums.DmgModType.valueOf(dmgModTypeString)));
                 sender.sendMessage(stringBuilder.toString());
                 return true;
             }
@@ -176,8 +179,10 @@ public class Test {
                 Player player = (Player) arguments.get(2);
                 Float num = (Float) arguments.get(3);
 
-                PercentageMods.setModifier(dmgMod);
-                PercentageMods.addModifier(player, dmgModType, num);
+                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
+                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
+                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
+                percentageModifier.addModifier(dmgModType, num);
                 return true;
             }
         });
@@ -190,8 +195,10 @@ public class Test {
                 Player player = (Player) arguments.get(2);
                 Float num = (Float) arguments.get(3);
 
-                PercentageMods.setModifier(dmgMod);
-                PercentageMods.removeModifier(player, dmgModType, num);
+                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
+                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
+                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
+                percentageModifier.removeModifier(dmgModType, num);
                 return true;
             }
         });
@@ -204,8 +211,10 @@ public class Test {
                 Player player = (Player) arguments.get(2);
                 Float num = (Float) arguments.get(3);
 
-                PercentageMods.setModifier(dmgMod);
-                PercentageMods.setDmgMod(player, dmgModType, num);
+                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
+                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
+                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
+                percentageModifier.setModifier(dmgModType, num);
                 return true;
             }
         });
@@ -216,9 +225,11 @@ public class Test {
                 String spellType = ((String) arguments.get(0)).toUpperCase();
                 Player player = (Player) arguments.get(1);
 
+                CoolDowns coolDowns = PlayerSessionData.getPlayerSession(player).getCoolDowns();
+
                 if (spellType.equals("ALL")) {
                     sender.sendMessage("active CoolDowns of " + player.getName() + ":");
-                    Set<Map.Entry<String, CoolDownEntry>> entrySet = CoolDowns.getCoolDowns(player).entrySet();
+                    Set<Map.Entry<String, CoolDownEntry>> entrySet = coolDowns.getCoolDowns().entrySet();
                     if (entrySet.size() == 0) {
                         sender.sendMessage("none");
                         return true;
@@ -229,7 +240,7 @@ public class Test {
                     }
                     return true;
                 }
-                CoolDownEntry coolDownEntry = CoolDowns.getCoolDownEntry(player, spellType);
+                CoolDownEntry coolDownEntry = coolDowns.getCoolDownEntry(spellType);
                 if (coolDownEntry == null) {
                     sender.sendMessage(arguments.get(0) + " is not cooled down for " + player.getName());
                     return true;
@@ -250,7 +261,7 @@ public class Test {
                 float[] timeInS = new float[]{(Float) arguments.get(2), (Float) arguments.get(3), (Float) arguments.get(4), (Float) arguments.get(5)};
                 Enums.CoolDownStage coolDownStage = (Enums.CoolDownStage) arguments.get(6);
 
-                CoolDowns.setCoolDown(player, spellType, timeInS, coolDownStage);
+                PlayerSessionData.getPlayerSession(player).getCoolDowns().setCoolDown(spellType, timeInS, coolDownStage);
                 return true;
             }
         });
@@ -258,11 +269,17 @@ public class Test {
         subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class}, new String[]{"currency", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.Currency currency = (Enums.Currency) arguments.get(0);
+                Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
 
-                Currency.setCurrency(currency);
-                sender.sendMessage(player.getName() + "'s " + currency + " count is: " + Currency.getCurrency(player));
+                Currency currency;
+                switch (currencyEnum) {
+                    case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
+                    case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
+                    case CRYSTALS -> currency = PlayerSessionData.getPlayerSession(player).getCrystals();
+                    default -> currency = null; //this stupid line that never executes and if executed will only cause problems only exists SO THE JAVA COMPILER WON'T SCREAM AROUND THAT currency MIGHT NOT HAVE BEEN INITIALIZED
+                }
+                sender.sendMessage(player.getName() + "'s " + currencyEnum + " count is: " + currency.getCurrency());
                 return true;
             }
         });
@@ -270,12 +287,18 @@ public class Test {
         subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.Currency currency = (Enums.Currency) arguments.get(0);
+                Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);
 
-                Currency.setCurrency(currency);
-                Currency.addCurrency(player, value);
+                Currency currency;
+                switch (currencyEnum) {
+                    case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
+                    case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
+                    case CRYSTALS -> currency = PlayerSessionData.getPlayerSession(player).getCrystals();
+                    default -> currency = null; //this stupid line that never executes and if executed will only cause problems only exists SO THE JAVA COMPILER WON'T SCREAM AROUND THAT currency MIGHT NOT HAVE BEEN INITIALIZED
+                }
+                currency.addCurrency(value);
                 return true;
             }
         });
@@ -283,12 +306,18 @@ public class Test {
         subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
             public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
-                Enums.Currency currency = (Enums.Currency) arguments.get(0);
+                Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);
 
-                Currency.setCurrency(currency);
-                Currency.setCurrency(player, value);
+                Currency currency;
+                switch (currencyEnum) {
+                    case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
+                    case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
+                    case CRYSTALS -> currency = PlayerSessionData.getPlayerSession(player).getCrystals();
+                    default -> currency = null; //this stupid line that never executes and if executed will only cause problems only exists SO THE JAVA COMPILER WON'T SCREAM AROUND THAT currency MIGHT NOT HAVE BEEN INITIALIZED
+                }
+                currency.setCurrency(value);
                 return true;
             }
         });
