@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.spell;
 
+import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import me.chriss99.spellbend.playerdata.PlayerSessionStorage;
 import me.chriss99.spellbend.spell.spells.Killable;
 import me.chriss99.spellbend.spell.spells.Spell;
 import me.chriss99.spellbend.spell.spellsubclassbuilder.SpellSubClassBuilder;
@@ -107,7 +107,7 @@ public class SpellHandler {
      * @return If the spell was cast or not
      */
     public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, boolean force) {
-        if (!force && PlayerSessionStorage.coolDowns.get(player).containsKey(spellType))
+        if (!force && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
             return false;
 
         playerToActiveSpellListMap.get(player).add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellType, spellItem));
