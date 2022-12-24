@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.data;
 
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -9,12 +9,12 @@ public class DamageEntry {
     private final Entity attacker;
     private double damage;
 
-    public DamageEntry(@NotNull Entity attacker, double damage) {
+    public DamageEntry(@Nullable Entity attacker, double damage) {
         this.attacker = attacker;
         this.damage = damage;
     }
 
-    public @NotNull Entity getAttacker() {
+    public @Nullable Entity getAttacker() {
         return attacker;
     }
 

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -34,12 +35,12 @@ public class Health {
     /**
      * @throws IllegalArgumentException If the damage value is negative
      *
-     * @param attacker The attacking entity
+     * @param attacker The attacking entity (null if undefined)
      * @param rawDamage The damage dealt not modified by dmgMods
-     * @param item The item used to damage
+     * @param item The item used to damage (null if undefined)
      * @return The damage dealt after modification by dmgMods (and limited to health left)
      */
-    public double damagePlayer(@NotNull Entity attacker, double rawDamage, @NotNull ItemStack item) {
+    public double damagePlayer(@Nullable Entity attacker, double rawDamage, @Nullable ItemStack item) {
         if (rawDamage < 0)
             throw new IllegalArgumentException("Damage cannot be negative!");
 
@@ -59,6 +60,20 @@ public class Health {
 
         player.setHealth(health);
         return damage;
+    }
+
+    /**
+     * Takes in a value and passes it to healPlayer() or damagePlayer() respectively <br>
+     * <b>as this cannot be traced back to a dmg cause, it is discouraged to use this</b>
+     *
+     * @param health the health to displace by
+     */
+    public void displaceHealth(double health) {
+        if (health == 0)
+            return;
+        if (health < 0)
+            damagePlayer(null, health*(-1), null);
+        else healPlayer(health);
     }
 
     /**
@@ -98,10 +113,21 @@ public class Health {
      * @param killer The entity that killed them
      * @param item The item used
      */
-    public void onPlayerDeath(@NotNull Entity killer, @NotNull ItemStack item) {
-        String message = player.getName() + " was slain by " + killer.getName() + " using " + item.getItemMeta().displayName(); //TODO use LuckPerms here ALSO implement cosmetics at some point
+    public void onPlayerDeath(@Nullable Entity killer, @Nullable ItemStack item) {
+        //TODO use LuckPerms here ALSO implement cosmetics at some point
+        StringBuilder message = new StringBuilder(player.getName());
+        switch ((killer != null) + "-" + (item != null)) {
+            case "true-true" -> //noinspection ConstantConditions
+                    message.append(" was slain by ").append(killer.getName()).append(" using ").append(item.getItemMeta().displayName());
+            case "true-false" -> //noinspection ConstantConditions
+                    message.append(" was slain by ").append(killer.getName());
+            case "false-true" -> //noinspection ConstantConditions
+                    message.append(" died to").append(item.getItemMeta().displayName());
+            case "false-false" -> message.append(" died");
+        }
+
         for (Player playerInWorld : player.getWorld().getPlayers())
-            playerInWorld.sendMessage(message);
+            playerInWorld.sendMessage(message.toString());
 
         ArrayList<DamageEntry> uniqueAttackers = new ArrayList<>();
 
@@ -109,8 +135,8 @@ public class Health {
             Entity attacker = damageEntry.getAttacker();
             boolean foundAlreadyExistingEntry = false;
 
-            for (DamageEntry uniqueEntry : uniqueAttackers) //checking if such an attacker already is in list
-                if (attacker.equals(uniqueEntry.getAttacker())) {
+            for (DamageEntry uniqueEntry : uniqueAttackers) //checking if such an attacker already is in list, also skipping all nulls
+                if (attacker != null && attacker.equals(uniqueEntry.getAttacker())) {
                     uniqueEntry.setDamage(uniqueEntry.getDamage() + damageEntry.getDamage());
                     foundAlreadyExistingEntry = true;
                     break;
@@ -125,7 +151,7 @@ public class Health {
                 int gold = (int) Math.ceil(10 * percentage);
                 int gems = (int) Math.ceil(3 * percentage);
 
-                uniqueAttacker.sendMessage("§e" + ((killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + gold + " Gold §8| §b+" + gems + " Gems");
+                uniqueAttacker.sendMessage("§e" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + gold + " Gold §8| §b+" + gems + " Gems");
                 PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(uniqueAttacker);
                 sessionData.getGold().addCurrency(gold);
                 sessionData.getGems().addCurrency(gems);
@@ -133,7 +159,8 @@ public class Health {
         }
 
         player.setGameMode(GameMode.SPECTATOR);
-        player.setSpectatorTarget(killer);
+        if (killer != null)
+            player.setSpectatorTarget(killer);
         damageEntries.clear(); //practically setting health back to max
 
         new BukkitRunnable() {
