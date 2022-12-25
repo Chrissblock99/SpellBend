@@ -54,7 +54,6 @@ public class Escape_Through_Time extends Spell {
 
                 if (time == 0) {
                     SpellHandler.removeClickableSpellRunnable(item);
-                    armorStand.remove();
                     explode();
 
                     armorStandTask.cancel();
@@ -92,6 +91,7 @@ public class Escape_Through_Time extends Spell {
 
     private void explode() {
         armorStandOrigin.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, armorStandOrigin.add(0, 1, 0), 1);
+        armorStand.remove();
     }
 
     @Override
@@ -108,8 +108,8 @@ public class Escape_Through_Time extends Spell {
 
         SpellHandler.removeClickableSpellRunnable(item);
         armorStandTask.cancel();
-        escapeTask.cancel();
-        armorStand.remove();
+        if (escapeTask != null)
+            escapeTask.cancel();
         explode();
         SpellHandler.removeClickableSpellRunnable(item);
     }

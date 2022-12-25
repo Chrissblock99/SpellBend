@@ -124,8 +124,10 @@ public class CoolDownEntry {
      */
     public float skipToStage(@NotNull Enums.CoolDownStage coolDownStage) {
         updateCoolDownStage();
-        if (Maps.coolDownStageToIndexMap.get(coolDownStage)<Maps.coolDownStageToIndexMap.get(this.coolDownStage) || coolDownStage.equals(this.coolDownStage))
-            throw new IllegalArgumentException("The CoolDownStage to skip to cannot be older than or the same as the current one!");
+        if (Maps.coolDownStageToIndexMap.get(coolDownStage)<=Maps.coolDownStageToIndexMap.get(this.coolDownStage))
+            throw new IllegalArgumentException("The CoolDownStage to skip to cannot be older than the current one!");
+        if (coolDownStage.equals(this.coolDownStage))
+            return 0;
 
         float timeSkipped = skipCurrentStage();
         int stageToSkipToIndex = Maps.coolDownStageToIndexMap.get(coolDownStage);

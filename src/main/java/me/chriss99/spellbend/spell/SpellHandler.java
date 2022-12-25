@@ -213,7 +213,6 @@ public class SpellHandler {
         Set<Spell> activeSpells = playerToActiveSpellListMap.get(player);
         for (Spell spell : activeSpells) {
             spell.casterLeave();
-            spell.cancelSpell();
         }
         activeSpells.clear();
 
