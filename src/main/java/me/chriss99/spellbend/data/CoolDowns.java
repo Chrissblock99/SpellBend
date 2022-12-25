@@ -69,9 +69,10 @@ public class CoolDowns {
      *
      * @param spellType The SpellType to cool down
      * @param timeInSeconds The time to cool down
+     * @return The newly added CoolDownEntry
      */
-    public void setCoolDown(@NotNull String spellType, float[] timeInSeconds) {
-        setCoolDown(spellType, timeInSeconds, Enums.CoolDownStage.WINDUP);
+    public CoolDownEntry setCoolDown(@NotNull String spellType, float[] timeInSeconds) {
+        return setCoolDown(spellType, timeInSeconds, Enums.CoolDownStage.WINDUP);
     }
 
     /**
@@ -80,13 +81,16 @@ public class CoolDowns {
      * @param spellType The SpellType to cool down
      * @param timeInSeconds The time to cool down
      * @param coolDownStage The CoolDownStage
+     * @return The newly added CoolDownEntry
      */
-    public void setCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry setCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
         spellType = spellType.toUpperCase();
 
-        coolDowns.put(spellType, new CoolDownEntry(spellType, timeInSeconds, coolDownStage));
+        CoolDownEntry coolDownEntry = new CoolDownEntry(spellType, timeInSeconds, coolDownStage);
+        coolDowns.put(spellType, coolDownEntry);
         if (spellType.equals(ItemData.getHeldSpellType(player)))
             PlayerDataBoard.registerPlayer(player, spellType);
+        return coolDownEntry;
     }
 
     /**
@@ -105,8 +109,9 @@ public class CoolDowns {
      * @param spellType The SpellType to cool down
      * @param timeInSeconds The time to cool down
      * @param coolDownStage The CoolDownStage to start in
+     * @return The now present CoolDownEntry
      */
-    public void extendCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry extendCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
         removeExpiredCoolDowns();
 
         CoolDownEntry newCoolDown = new CoolDownEntry(spellType, timeInSeconds, coolDownStage);
@@ -120,6 +125,7 @@ public class CoolDowns {
 
         if (spellType.equals(ItemData.getHeldSpellType(player)))
             PlayerDataBoard.registerPlayer(player, spellType);
+        return getCoolDownEntry(spellType);
     }
 
     /**
@@ -129,12 +135,13 @@ public class CoolDowns {
      * @param spellType The SpellType to cool down
      * @param timeInSeconds The time to cool down
      * @param coolDownStage The CoolDownType
+     * @return The now present CoolDownEntry
      */
-    public void addCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry addCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
         if (coolDowns.containsKey(spellType))
             Bukkit.getLogger().warning("CoolDown " + spellType + " is already present (" + coolDowns.get(spellType) + ") " +
                     "when trying to add (" + Arrays.toString(timeInSeconds) + ", " + coolDownStage + ") to " + player.getName() + ", assigning larger coolDown!");
-        extendCoolDown(spellType, timeInSeconds, coolDownStage);
+        return extendCoolDown(spellType, timeInSeconds, coolDownStage);
     }
 
     /**
@@ -164,6 +171,7 @@ public class CoolDowns {
      * Saves the coolDowns to the players PersistentDataContainer
      */
     public void saveCoolDowns() {
+        removeExpiredCoolDowns();
         player.getPersistentDataContainer().set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(coolDowns));
     }
 }

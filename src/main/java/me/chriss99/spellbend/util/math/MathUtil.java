@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.util.math;
 
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -71,5 +72,9 @@ public class MathUtil {
     public static int additiveArrayValue(int[] a) {
         for (int i = 1;i<a.length;i++) a[0] += a[i];
         return a[0];
+    }
+
+    public static @NotNull Vector lerp(@NotNull Vector a, @NotNull Vector b, float t) {
+        return new Vector(b.getX() + t * (a.getX() - b.getX()), b.getY() + t * (a.getY() - b.getY()), b.getZ() + t * (a.getZ() - b.getZ()));
     }
 }

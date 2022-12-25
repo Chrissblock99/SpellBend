@@ -22,6 +22,7 @@ import java.util.Set;
 public class SpellHandler {
     private static final HashMap<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
     private static final HashMap<Player, Set<Spell>> playerToActiveSpellListMap = new HashMap<>();
+    private static final HashMap<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
 
     /**
      * @throws IllegalArgumentException If name is already contained in the map.
@@ -34,6 +35,55 @@ public class SpellHandler {
             throw new IllegalArgumentException("Spell name is already contained in the map!");
 
         nameToSpellBuilderMap.put(name.toUpperCase(), builder);
+    }
+
+    /**
+     * Adds an item and runnable to the clickableSpellRunnables
+     *
+     * @param item The item to add
+     * @param runnable The runnable to execute
+     */
+    public static void addClickableSpellRunnable(@NotNull ItemStack item, @NotNull Runnable runnable) {
+        clickableSpellRunnables.put(item, runnable);
+    }
+
+    /**
+     * Removes the item from the clickableSpellRunnables
+     *
+     * @param item The item to remove
+     */
+    public static void removeClickableSpellRunnable(@NotNull ItemStack item) {
+        clickableSpellRunnables.remove(item);
+    }
+
+    public static void playerClickedSpellItem(@NotNull Player player, @NotNull ItemStack spellItem) {
+        String spellName = ItemData.getSpellName(spellItem);
+        if (spellName == null) {
+            Bukkit.getLogger().warning(player.getName() + " supposedly clicked a spellItem, but the item has no spellName!");
+            return;
+        }
+
+        playerClickedSpellItem(player, spellName, spellItem);
+    }
+
+    public static void playerClickedSpellItem(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem) {
+        String spellType = ItemData.getSpellType(spellItem);
+        if (spellType == null) {
+            Bukkit.getLogger().warning(player.getName() + " supposedly clicked a spellItem, but the item has no spellType!");
+            return;
+        }
+
+        playerClickedSpellItem(player, spellName, spellType, spellItem);
+    }
+
+    public static void playerClickedSpellItem(@NotNull Player player, @NotNull String spellName, @NotNull String spellType, @NotNull ItemStack spellItem) {
+        Runnable clickableSpellRunnable = clickableSpellRunnables.get(spellItem);
+        if (clickableSpellRunnable != null) {
+            clickableSpellRunnable.run();
+            return;
+        }
+
+        letPlayerCastSpell(player, spellName, spellType, spellItem, false);
     }
 
     /**

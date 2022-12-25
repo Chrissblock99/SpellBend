@@ -3,9 +3,7 @@ package me.chriss99.spellbend.util;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.commands.Test;
 import me.chriss99.spellbend.events.*;
-import me.chriss99.spellbend.spell.spellsubclassbuilder.Ember_BlastBuilder;
-import me.chriss99.spellbend.spell.spellsubclassbuilder.Fiery_RageBuilder;
-import me.chriss99.spellbend.spell.spellsubclassbuilder.Test_SpellBuilder;
+import me.chriss99.spellbend.spell.spellsubclassbuilder.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
@@ -29,6 +27,7 @@ public class GeneralRegisterUtil {
 
         new Fiery_RageBuilder();
         new Ember_BlastBuilder();
+        new Escape_Through_TimeBuilder();
     }
 
     public static void registerAllCommands() {

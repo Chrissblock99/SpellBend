@@ -20,7 +20,7 @@ public class PlayerInteractEntity implements Listener {
             //noinspection ConstantConditions
             if (!InteractableEntityHandler.isInteractableEntity(event.getRightClicked()))
                 if (SpellHandler.itemIsRegisteredSpell(event.getPlayer().getInventory().getItemInMainHand()))
-                    SpellHandler.letPlayerCastSpell(event.getPlayer(), event.getPlayer().getInventory().getItemInMainHand());
+                    SpellHandler.playerClickedSpellItem(event.getPlayer(), event.getPlayer().getInventory().getItemInMainHand());
         }
     }
 }
