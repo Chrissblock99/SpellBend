@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.events;
 
+import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoin implements Listener {
     public PlayerJoin() {
-        GeneralRegisterUtil.registerEvent(this);
+        SpellBend.registerEvent(this);
     }
 
     @EventHandler
