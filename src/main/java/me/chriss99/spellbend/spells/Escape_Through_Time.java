@@ -12,6 +12,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -21,7 +22,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Escape_Through_Time extends Spell {
+public class Escape_Through_Time extends Spell implements Killable {
     private final Escape_Through_Time instance;
     private final Location armorStandOrigin;
     private BukkitTask armorStandTask;
@@ -111,6 +112,11 @@ public class Escape_Through_Time extends Spell {
     private void explode() {
         armorStandOrigin.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, armorStandOrigin.add(0, 1, 0), 1);
         armorStand.remove();
+    }
+
+    @Override
+    public void casterDeath(@Nullable Entity Killer) {
+        cancelSpell();
     }
 
     @Override
