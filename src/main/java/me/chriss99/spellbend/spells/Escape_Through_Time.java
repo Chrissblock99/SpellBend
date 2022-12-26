@@ -1,10 +1,10 @@
-package me.chriss99.spellbend.spell.spells;
+package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Enums;
-import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -28,6 +28,15 @@ public class Escape_Through_Time extends Spell {
     private final CoolDownEntry coolDown;
     private ArmorStand armorStand;
     private final SpellHandler spellHandler;
+
+    public static void register() {
+        SpellHandler.addSpellBuilderToMap("escape_through_time", new SpellSubClassBuilder() {
+            @Override
+            public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
+                return new Escape_Through_Time(caster, spellType, item);
+            }
+        });
+    }
 
     public Escape_Through_Time(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "TRANSPORT", item);

@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.events;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.spell.SpellHandler;
+import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;

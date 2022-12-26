@@ -3,7 +3,6 @@ package me.chriss99.spellbend.data;
 import com.google.gson.Gson;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import me.chriss99.spellbend.spell.SpellHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;

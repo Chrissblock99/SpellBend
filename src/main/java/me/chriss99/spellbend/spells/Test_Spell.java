@@ -1,6 +1,7 @@
-package me.chriss99.spellbend.spell.spells;
+package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.data.SpellHandler;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -8,6 +9,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Test_Spell extends Spell implements Killable, Stunable {
+
+    public static void register() {
+        SpellHandler.addSpellBuilderToMap("test_spell", new SpellSubClassBuilder() {
+            @Override
+            public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
+                return new Test_Spell(caster, spellType, item);
+            }
+        });
+    }
 
     public Test_Spell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "TEST", item);

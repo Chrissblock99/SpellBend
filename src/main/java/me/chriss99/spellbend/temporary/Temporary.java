@@ -2,7 +2,7 @@ package me.chriss99.spellbend.temporary;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.PlayerDataBoard;
-import me.chriss99.spellbend.spell.SpellHandler;
+import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

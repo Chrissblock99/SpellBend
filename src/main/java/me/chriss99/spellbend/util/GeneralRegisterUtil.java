@@ -3,7 +3,7 @@ package me.chriss99.spellbend.util;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.commands.Test;
 import me.chriss99.spellbend.events.*;
-import me.chriss99.spellbend.spell.spellsubclassbuilder.*;
+import me.chriss99.spellbend.spells.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
@@ -23,11 +23,11 @@ public class GeneralRegisterUtil {
     }
 
     public static void registerAllSpells() {
-        new Test_SpellBuilder();
+        Test_Spell.register();
 
-        new Fiery_RageBuilder();
-        new Ember_BlastBuilder();
-        new Escape_Through_TimeBuilder();
+        Fiery_Rage.register();
+        Ember_Blast.register();
+        Escape_Through_Time.register();
     }
 
     public static void registerAllCommands() {

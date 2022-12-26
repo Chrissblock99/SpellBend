@@ -4,7 +4,7 @@ import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.data.PlayerDataBoard;
-import me.chriss99.spellbend.spell.spells.Spell;
+import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
 import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
