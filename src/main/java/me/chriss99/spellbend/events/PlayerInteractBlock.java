@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.events;
 
+import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import org.bukkit.GameMode;
@@ -21,7 +22,7 @@ public class PlayerInteractBlock implements Listener {
             if (event.hasItem())
                 if (Action.RIGHT_CLICK_AIR.equals(event.getAction()) || Action.RIGHT_CLICK_BLOCK.equals(event.getAction()))
                     if (SpellHandler.itemIsRegisteredSpell(event.getItem()))
-                        SpellHandler.playerClickedSpellItem(event.getPlayer(), event.getItem());
+                        PlayerSessionData.getPlayerSession(event.getPlayer()).getSpellHandler().playerClickedSpellItem(event.getItem());
         }
     }
 }

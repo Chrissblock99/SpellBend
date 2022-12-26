@@ -27,6 +27,7 @@ public class Escape_Through_Time extends Spell {
     private BukkitTask escapeTask;
     private final CoolDownEntry coolDown;
     private ArmorStand armorStand;
+    private final SpellHandler spellHandler;
 
     public Escape_Through_Time(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "TRANSPORT", item);
@@ -34,7 +35,8 @@ public class Escape_Through_Time extends Spell {
         coolDown = PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{0, 0, 15, 5});
         armorStandOrigin = caster.getLocation();
         setupArmorStand();
-        SpellHandler.addClickableSpellRunnable(item, this::escapeTeleport);
+        spellHandler = PlayerSessionData.getPlayerSession(caster).getSpellHandler();
+        spellHandler.addClickableSpellRunnable(item, this::escapeTeleport);
     }
 
     private void setupArmorStand() {
@@ -42,6 +44,11 @@ public class Escape_Through_Time extends Spell {
         armorStand.setVisible(false);
         armorStand.setBasePlate(false);
         armorStand.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 99999, 255, false, false));
+
+        for (int i = 0;i<360;i+=10)
+            armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, armorStand.getLocation().clone().add(Math.cos(i*MathUtil.DEGTORAD)*1.5f, 0, Math.sin(i*MathUtil.DEGTORAD)*1.5f),
+                    1, 0, 0, 0, 0,
+                    new Particle.DustTransition(Color.fromRGB(0, 100, 0), Color.fromRGB(0, 50, 50), 2));
 
         armorStandTask = new BukkitRunnable() {
             int time = 300;
@@ -53,11 +60,11 @@ public class Escape_Through_Time extends Spell {
                         new Particle.DustTransition(Color.fromRGB(0, 100, 0), Color.fromRGB(0, 50, 50), 2));
 
                 if (time == 0) {
-                    SpellHandler.removeClickableSpellRunnable(item);
+                    spellHandler.removeClickableSpellRunnable(item);
                     explode();
 
                     armorStandTask.cancel();
-                    SpellHandler.getActivePlayerSpells(caster).remove(instance);
+                    spellHandler.getActivePlayerSpells().remove(instance);
                 }
                 time--;
             }
@@ -65,7 +72,7 @@ public class Escape_Through_Time extends Spell {
     }
 
     private void escapeTeleport() {
-        SpellHandler.removeClickableSpellRunnable(item);
+        spellHandler.removeClickableSpellRunnable(item);
 
         escapeTask = new BukkitRunnable() {
             final Location casterOrigin = caster.getLocation().clone();
@@ -82,7 +89,7 @@ public class Escape_Through_Time extends Spell {
                     escapeTask.cancel();
                     armorStandTask.cancel();
                     coolDown.skipToStage(Enums.CoolDownStage.COOLDOWN);
-                    SpellHandler.getActivePlayerSpells(caster).remove(instance);
+                    spellHandler.getActivePlayerSpells().remove(instance);
                 }
                 time--;
             }
@@ -106,11 +113,10 @@ public class Escape_Through_Time extends Spell {
             //only needed for extreme edge cases that currently (25.12.2022) never happen in the code
         else Bukkit.getLogger().warning(caster.getName() + " had Escape Through Time Active but no corresponding CoolDown of type " + spellType + " was found!");
 
-        SpellHandler.removeClickableSpellRunnable(item);
+        spellHandler.removeClickableSpellRunnable(item);
         armorStandTask.cancel();
         if (escapeTask != null)
             escapeTask.cancel();
         explode();
-        SpellHandler.removeClickableSpellRunnable(item);
     }
 }

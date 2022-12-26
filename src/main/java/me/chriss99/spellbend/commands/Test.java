@@ -5,7 +5,6 @@ import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.spell.spells.Spell;
-import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.Item;
 import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
@@ -61,7 +60,7 @@ public class Test {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 sender.sendMessage("Spells:");
-                Set<Spell> playerSpells = SpellHandler.getActivePlayerSpells((Player) arguments.get(0));
+                Set<Spell> playerSpells = PlayerSessionData.getPlayerSession((Player) arguments.get(0)).getSpellHandler().getActivePlayerSpells();
                 if (playerSpells.size() == 0) {
                     sender.sendMessage("none");
                     return true;

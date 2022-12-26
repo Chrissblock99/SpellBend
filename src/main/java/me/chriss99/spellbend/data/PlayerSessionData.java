@@ -3,6 +3,7 @@ package me.chriss99.spellbend.data;
 import com.google.gson.Gson;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.spell.SpellHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -20,6 +21,8 @@ public class PlayerSessionData {
 
     //TODO might not be needed, but keep until good reasoning is found
     private final Player player;
+
+    private final SpellHandler spellHandler;
 
     private final Currency gems;
     private final Currency gold;
@@ -89,6 +92,8 @@ public class PlayerSessionData {
     private PlayerSessionData(@NotNull Player player) {
         this.player = player;
 
+        spellHandler = new SpellHandler(player);
+
         gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150);
         gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650);
         crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0);
@@ -101,6 +106,10 @@ public class PlayerSessionData {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public SpellHandler getSpellHandler() {
+        return spellHandler;
     }
 
     public Currency getGems() {
@@ -149,7 +158,13 @@ public class PlayerSessionData {
      */
     public void endSession() {
         saveSession();
+        spellHandler.playerLeave();
         //noinspection SuspiciousMethodCalls
         playerSessions.remove(this);
+    }
+
+    public static void endAllSessions() {
+        for (Map.Entry<Player, PlayerSessionData> playerToSessionData : playerSessions.entrySet())
+            playerToSessionData.getValue().endSession();
     }
 }

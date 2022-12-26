@@ -22,8 +22,14 @@ import java.util.Set;
 
 public class SpellHandler {
     private static final Map<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
-    private static final Map<Player, Set<Spell>> playerToActiveSpellListMap = new HashMap<>();
-    private static final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
+
+    private final Player player;
+    private final Set<Spell> activeSpells = new HashSet<>();
+    private final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
+
+    public SpellHandler(@NotNull Player player) {
+        this.player = player;
+    }
 
     /**
      * @throws IllegalArgumentException If name is already contained in the map.
@@ -44,7 +50,7 @@ public class SpellHandler {
      * @param item The item to add
      * @param runnable The runnable to execute
      */
-    public static void addClickableSpellRunnable(@NotNull ItemStack item, @NotNull Runnable runnable) {
+    public void addClickableSpellRunnable(@NotNull ItemStack item, @NotNull Runnable runnable) {
         clickableSpellRunnables.put(item, runnable);
     }
 
@@ -53,129 +59,118 @@ public class SpellHandler {
      *
      * @param item The item to remove
      */
-    public static void removeClickableSpellRunnable(@NotNull ItemStack item) {
+    public void removeClickableSpellRunnable(@NotNull ItemStack item) {
         clickableSpellRunnables.remove(item);
     }
 
-    public static void playerClickedSpellItem(@NotNull Player player, @NotNull ItemStack spellItem) {
+    public void playerClickedSpellItem(@NotNull ItemStack spellItem) {
         String spellName = ItemData.getSpellName(spellItem);
         if (spellName == null) {
             Bukkit.getLogger().warning(player.getName() + " supposedly clicked a spellItem, but the item has no spellName!");
             return;
         }
 
-        playerClickedSpellItem(player, spellName, spellItem);
+        playerClickedSpellItem(spellName, spellItem);
     }
 
-    public static void playerClickedSpellItem(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem) {
+    public void playerClickedSpellItem(@NotNull String spellName, @NotNull ItemStack spellItem) {
         String spellType = ItemData.getSpellType(spellItem);
         if (spellType == null) {
             Bukkit.getLogger().warning(player.getName() + " supposedly clicked a spellItem, but the item has no spellType!");
             return;
         }
 
-        playerClickedSpellItem(player, spellName, spellType, spellItem);
+        playerClickedSpellItem(spellName, spellType, spellItem);
     }
 
-    public static void playerClickedSpellItem(@NotNull Player player, @NotNull String spellName, @NotNull String spellType, @NotNull ItemStack spellItem) {
+    public void playerClickedSpellItem(@NotNull String spellName, @NotNull String spellType, @NotNull ItemStack spellItem) {
         Runnable clickableSpellRunnable = clickableSpellRunnables.get(spellItem);
         if (clickableSpellRunnable != null) {
             clickableSpellRunnable.run();
             return;
         }
 
-        letPlayerCastSpell(player, spellName, spellType, spellItem, false);
+        letPlayerCastSpell(spellName, spellType, spellItem, false);
     }
 
     /**
      * Creates a spell of item's named type and adds it to the players activeSpellSet.
      *
-     * @param player The player casting the spell
      * @param spellItem The item used (HAS to be a spell)
      * @return If the spell was cast or not
      */
     @SuppressWarnings("UnusedReturnValue")
-    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(player, spellItem, false);
+    public boolean letPlayerCastSpell(@NotNull ItemStack spellItem) {
+        return letPlayerCastSpell(spellItem, false);
     }
 
     /**
      * Creates a spell of named type and adds it to the players activeSpellSet.
      *
-     * @param player The player casting the spell
      * @param spellName The name of the spell
      * @param spellItem The item used (doesn't HAVE to be a spell)
      * @return If the spell was cast or not
      */
-    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(player, spellName, spellItem, false);
+    public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem) {
+        return letPlayerCastSpell(spellName, spellItem, false);
     }
 
     /**
      * Creates a spell of item's named type and adds it to the players activeSpellSet.
      *
-     * @param player The player casting the spell
      * @param spellItem The item used (HAS to be a spell)
      * @param force To force the spell even if coolDowned
      * @return If the spell was cast or not
      */
-    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull ItemStack spellItem, boolean force) {
+    public boolean letPlayerCastSpell(@NotNull ItemStack spellItem, boolean force) {
         if (!itemIsRegisteredSpell(spellItem)) {
             Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
             return false;
         }
 
         //noinspection ConstantConditions
-        return letPlayerCastSpell(player, spellItem.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING).toUpperCase(), spellItem, force);
+        return letPlayerCastSpell(spellItem.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING).toUpperCase(), spellItem, force);
     }
 
     /**
      * Creates a spell of named type and adds it to the players activeSpellSet.
      *
-     * @param player The player casting the spell
      * @param spellName The name of the spell
      * @param spellItem The item used (HAS to be a spell)
      * @param force To force the spell even if coolDowned
      * @return If the spell was cast or not
      */
-    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @NotNull ItemStack spellItem, boolean force) {
+    public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem, boolean force) {
         if (!itemIsRegisteredSpell(spellItem)) {
             Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
             return false;
         }
 
-        return letPlayerCastSpell(player, spellName, ItemData.getSpellType(spellItem), spellItem, force);
+        return letPlayerCastSpell(spellName, ItemData.getSpellType(spellItem), spellItem, force);
     }
 
     /**
      * Creates a spell of named type and adds it to the players activeSpellSet.
      *
-     * @param player The player casting the spell
      * @param spellName The name of the spell
      * @param spellType The spellType it should be used under
      * @param spellItem The item used (doesn't HAVE to be a spell)
      * @param force To force the spell even if coolDowned
      * @return If the spell was cast or not
      */
-    public static boolean letPlayerCastSpell(@NotNull Player player, @NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, boolean force) {
+    public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, boolean force) {
         if (!force && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
             return false;
 
-        playerToActiveSpellListMap.get(player).add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellType, spellItem));
+        activeSpells.add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellType, spellItem));
         return true;
     }
 
-    public static Set<Spell> getActivePlayerSpells(@NotNull Player player) {
-        if (!playerToActiveSpellListMap.containsKey(player)) {
-            Bukkit.getLogger().warning("Player " + player.getName() + " was not contained in playerToActiveSpellSetMap! Registering manually.\n(This probably won't affect the program directly, it just shouldn't have happened and is probably a bug that could cause other problems.)");
-            playerToActiveSpellListMap.put(player, new HashSet<>());
-        }
-
-        return playerToActiveSpellListMap.get(player);
+    public Set<Spell> getActivePlayerSpells() {
+        return activeSpells;
     }
 
-    public static void killPlayer(@NotNull Player player, @Nullable Entity killer) {
-        Set<Spell> activeSpells = playerToActiveSpellListMap.get(player);
+    public void killPlayer(@Nullable Entity killer) {
         for (Spell spell : activeSpells) {
             if (spell instanceof Killable killable)
                 killable.casterDeath(killer);
@@ -185,39 +180,14 @@ public class SpellHandler {
     }
 
     /**
-     * Adds the player and an empty List to the playerToActiveSpellSetMap.
-     * <b>This is only intended to be used if the player joins the server.</b>
-     *
-     * @param player The player to register
-     */
-    public static void registerPlayer(@NotNull Player player) {
-        if (playerToActiveSpellListMap.containsKey(player)) {
-            Bukkit.getLogger().warning("A call to register \"" + player.getName() + "\" in the playerToActiveSpellSetMap was received but the player is already contained in the map! Ignoring the call.");
-            return;
-        }
-
-        playerToActiveSpellListMap.put(player, new HashSet<>());
-    }
-
-    /**
-     * Removes the player from the playerToActiveSpellSetMap.
+     * calls casterLeave() on all the players Spells
      * <b>This is only intended to be used if the player leaves the server.</b>
-     *
-     * @param player The player to remove
      */
-    public static void deRegisterPlayer(@NotNull Player player) {
-        if (!playerToActiveSpellListMap.containsKey(player)) {
-            Bukkit.getLogger().warning("A call to deRegister \"" + player.getName() + "\" in the playerToActiveSpellSetMap was received but the player is not contained in the map! Ignoring the call.");
-            return;
-        }
-
-        Set<Spell> activeSpells = playerToActiveSpellListMap.get(player);
+    public void playerLeave() {
         for (Spell spell : activeSpells) {
             spell.casterLeave();
         }
         activeSpells.clear();
-
-        playerToActiveSpellListMap.remove(player);
     }
 
     public static boolean spellBuilderIsRegistered(@NotNull String name) {

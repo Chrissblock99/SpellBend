@@ -2,6 +2,7 @@ package me.chriss99.spellbend;
 
 import com.google.gson.Gson;
 import me.chriss99.spellbend.data.PlayerDataBoard;
+import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,7 +22,7 @@ public final class SpellBend extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        PlayerSessionData.endAllSessions();
     }
 
     public static SpellBend getInstance() {

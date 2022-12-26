@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.events;
 
+import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.temporary.InteractableEntityHandler;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
@@ -20,7 +21,7 @@ public class PlayerInteractEntity implements Listener {
             //noinspection ConstantConditions
             if (!InteractableEntityHandler.isInteractableEntity(event.getRightClicked()))
                 if (SpellHandler.itemIsRegisteredSpell(event.getPlayer().getInventory().getItemInMainHand()))
-                    SpellHandler.playerClickedSpellItem(event.getPlayer(), event.getPlayer().getInventory().getItemInMainHand());
+                    PlayerSessionData.getPlayerSession(event.getPlayer()).getSpellHandler().playerClickedSpellItem(event.getPlayer().getInventory().getItemInMainHand());
         }
     }
 }

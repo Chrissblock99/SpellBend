@@ -2,7 +2,6 @@ package me.chriss99.spellbend.events;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.PlayerDataBoard;
-import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.entity.Player;
@@ -23,7 +22,6 @@ public class PlayerJoin implements Listener {
             PlayerSessionData.setupPlayerData(player);
 
         PlayerSessionData.loadPlayerSession(player);
-        SpellHandler.registerPlayer(player);
 
         String heldSpellType = ItemData.getHeldSpellType(player);
         if (heldSpellType != null)

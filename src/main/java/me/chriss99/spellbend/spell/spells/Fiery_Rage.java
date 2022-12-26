@@ -4,7 +4,6 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Enums;
-import me.chriss99.spellbend.spell.SpellHandler;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.*;
@@ -95,7 +94,7 @@ public class Fiery_Rage extends Spell implements Killable {
                     sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
 
                     activeTask.cancel();
-                    SpellHandler.getActivePlayerSpells(caster).remove(instance);
+                    PlayerSessionData.getPlayerSession(caster).getSpellHandler().getActivePlayerSpells().remove(instance);
                 }
                 time--;
             }
@@ -122,6 +121,7 @@ public class Fiery_Rage extends Spell implements Killable {
         }
 
         entry.transformToStage(Enums.CoolDownStage.COOLDOWN);
+        cancelSpell();
     }
 
     @Override
