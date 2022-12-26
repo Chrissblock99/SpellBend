@@ -3,7 +3,6 @@ package me.chriss99.spellbend.commands;
 import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
 import me.chriss99.spellbend.util.ItemData;
@@ -51,7 +50,7 @@ public class Test {
                     return true;
                 }
 
-                PlayerDataBoard.updateBoard((Player) sender);
+                PlayerSessionData.getPlayerSession((Player) sender).getPlayerDataBoard().updateBoard();
                 return true;
             }
         });

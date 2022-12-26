@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.events;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.entity.Player;
@@ -25,7 +24,7 @@ public class PlayerJoin implements Listener {
 
         String heldSpellType = ItemData.getHeldSpellType(player);
         if (heldSpellType != null)
-            PlayerDataBoard.registerPlayer(player, heldSpellType);
-        else PlayerDataBoard.updateBoard(player);
+            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerHasActiveVisibleCoolDown(heldSpellType);
+        else PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
     }
 }

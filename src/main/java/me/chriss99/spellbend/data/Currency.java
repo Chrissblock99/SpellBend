@@ -24,12 +24,12 @@ public class Currency {
 
     public void addCurrency(float currency) {
         this.currency += currency;
-        PlayerDataBoard.updateBoard(player);
+        PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
     }
 
     public void setCurrency(float currency) {
         this.currency = currency;
-        PlayerDataBoard.updateBoard(player);
+        PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
     }
 
     public float getCurrency() {

@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.events;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.util.GeneralRegisterUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +16,7 @@ public class PlayerQuit implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        PlayerDataBoard.deRegisterPlayer(player);
+        PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerNoLongerHasActiveVisibleCoolDown();
         PlayerSessionData.getPlayerSession(player).endSession();
     }
 }

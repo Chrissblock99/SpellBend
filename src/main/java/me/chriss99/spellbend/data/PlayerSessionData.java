@@ -22,6 +22,7 @@ public class PlayerSessionData {
     private final Player player;
 
     private final SpellHandler spellHandler;
+    private final PlayerDataBoard playerDataBoard;
 
     private final Currency gems;
     private final Currency gold;
@@ -92,6 +93,7 @@ public class PlayerSessionData {
         this.player = player;
 
         spellHandler = new SpellHandler(player);
+        playerDataBoard = new PlayerDataBoard(player);
 
         gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150);
         gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650);
@@ -109,6 +111,10 @@ public class PlayerSessionData {
 
     public SpellHandler getSpellHandler() {
         return spellHandler;
+    }
+
+    public PlayerDataBoard getPlayerDataBoard() {
+        return playerDataBoard;
     }
 
     public Currency getGems() {
@@ -158,6 +164,7 @@ public class PlayerSessionData {
     public void endSession() {
         saveSession();
         spellHandler.playerLeave();
+        playerDataBoard.playerNoLongerHasActiveVisibleCoolDown();
         //noinspection SuspiciousMethodCalls
         playerSessions.remove(this);
     }

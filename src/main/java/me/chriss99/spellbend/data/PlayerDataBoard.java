@@ -18,13 +18,19 @@ import java.util.Map;
 public class PlayerDataBoard {
     private static final Map<Player, String> playersHoldingCoolDownedItem = new HashMap<>();
 
+    private final Player player;
+
+    public PlayerDataBoard(@NotNull Player player) {
+        this.player = player;
+    }
+
     /**
      * Starts the loop to update all players holding a coolDowned item and creates a board for all players currently online
      */
     public static void start() {
         if (!Bukkit.getOnlinePlayers().isEmpty())           //creating boards for players already online
             for (Player player : Bukkit.getOnlinePlayers())
-                updateBoard(player);
+                PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
 
         new BukkitRunnable(){
             @Override
@@ -39,13 +45,14 @@ public class PlayerDataBoard {
                         return;
                     }
                     CoolDownEntry coolDownEntry = PlayerSessionData.getPlayerSession(player).getCoolDowns().getCoolDownEntry(spellType);
+                    PlayerDataBoard playerDataBoard = PlayerSessionData.getPlayerSession(player).getPlayerDataBoard();
 
                     if (coolDownEntry == null) {
-                        updateBoard(player, null);
+                        playerDataBoard.updateBoard(null);
                         return;
                     }
 
-                    updateBoard(player, spellType);
+                    playerDataBoard.updateBoard(spellType);
                 }
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 2);
@@ -53,82 +60,72 @@ public class PlayerDataBoard {
 
     /**
      * Adds the player to the map of all players holding a coolDowned item.
-     *
-     * @param player The player to add
      */
-    public static void registerPlayer(@NotNull Player player, @NotNull String spellType) {
+    public void playerHasActiveVisibleCoolDown(@NotNull String spellType) {
         playersHoldingCoolDownedItem.put(player, spellType);
-        updateBoard(player, spellType);
+        updateBoard(spellType);
     }
 
     /**
      * Removes the player from the map of all players holding a coolDowned item.
-     *
-     * @param player The player to remove
      */
-    public static void deRegisterPlayer(@NotNull Player player) {
+    public void playerNoLongerHasActiveVisibleCoolDown() {
         playersHoldingCoolDownedItem.remove(player);
-        updateBoard(player, false);
+        updateBoard(false);
     }
 
     /**
      * Removes the player from the map of all players holding a coolDowned item.
      *
-     * @param player The player to remove
      * @param spellType The spellType to update the board with
      */
-    public static void deRegisterPlayer(@NotNull Player player, @Nullable String spellType) {
+    public void playerNoLongerHasActiveVisibleCoolDown(@Nullable String spellType) {
         playersHoldingCoolDownedItem.remove(player);
-        updateBoard(player, spellType, false);
+        updateBoard(spellType, false);
     }
 
     /**
      * Updates the player's scoreboard
-     *
-     * @param player The player whose scoreboard to update
      */
-    public static void updateBoard(@NotNull Player player) {
+    public void updateBoard() {
         String heldCoolDownedSpellType = null;
         String heldSpellType = ItemData.getHeldSpellType(player);
         if (PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(heldSpellType))
             heldCoolDownedSpellType = heldSpellType;
 
-        updateBoard(player, heldCoolDownedSpellType);
+        updateBoard(heldCoolDownedSpellType);
     }
 
     /**
      * Updates the player's scoreboard and displays the spellTypes coolDown.
      *
-     * @param player The player whose scoreboard to update
      * @param heldCoolDownedSpellType The spellType of the currently held CoolDown
      */
-    public static void updateBoard(@NotNull Player player, @Nullable String heldCoolDownedSpellType) {
-        updateBoard(player, heldCoolDownedSpellType, true);
+    public void updateBoard(@Nullable String heldCoolDownedSpellType) {
+        updateBoard(heldCoolDownedSpellType, true);
     }
 
     /**
      * Updates the player's scoreboard and displays the spellTypes coolDown.
      *
-     * @param player The player whose scoreboard to update
      * @param deRegister To deRegister the player in specific cases or not
      */
-    public static void updateBoard(@NotNull Player player, boolean deRegister) {
+    public void updateBoard(boolean deRegister) {
         String heldCoolDownedSpellType = null;
         String heldSpellType = ItemData.getHeldSpellType(player);
         if (PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(heldSpellType))
             heldCoolDownedSpellType = heldSpellType;
 
-        updateBoard(player, heldCoolDownedSpellType, deRegister);
+        updateBoard(heldCoolDownedSpellType, deRegister);
     }
 
     /**
      * Updates the player's scoreboard and displays the spellTypes coolDown.
      *
-     * @param player The player whose scoreboard to update
      * @param heldCoolDownedSpellType The spellType of the currently held CoolDown
      * @param deRegister To deRegister the player in specific cases or not
      */
-    public static void updateBoard(@NotNull Player player, @Nullable String heldCoolDownedSpellType, boolean deRegister) {
+    public void updateBoard(@Nullable String heldCoolDownedSpellType, boolean deRegister) {
         Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
         Objective obj = board.registerNewObjective("playerDataBoard", "dummy", Component.text("WIP"/*PlayerDataUtil.constructDisplayString(player)*/)); //TODO use LuckPerms here
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -157,7 +154,7 @@ public class PlayerDataBoard {
             //iason was here
             //makes it not recall itself infinitely if used correctly
             if (deRegister)
-                deRegisterPlayer(player);
+                playerNoLongerHasActiveVisibleCoolDown();
             return;
         }
         CoolDownEntry coolDownEntry = sessionData.getCoolDowns().getCoolDownEntry(heldCoolDownedSpellType);
@@ -171,7 +168,7 @@ public class PlayerDataBoard {
 
             //makes it not recall itself infinitely if used correctly
             if (deRegister)
-                deRegisterPlayer(player);
+                playerNoLongerHasActiveVisibleCoolDown();
             return;
         }
 
