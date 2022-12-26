@@ -18,7 +18,7 @@ import java.util.*;
 public class CoolDowns {
     private static final Gson gson = SpellBend.getGson();
     private final Player player;
-    private final HashMap<String, CoolDownEntry> coolDowns;
+    private final Map<String, CoolDownEntry> coolDowns;
 
     public CoolDowns(@NotNull Player player) {
         this.player = player;
@@ -154,11 +154,11 @@ public class CoolDowns {
     }
 
     /**
-     * @return The coolDown HashMap
+     * @return The coolDown Map
      * @deprecated gives too much access
      */
     @Deprecated
-    public HashMap<String, CoolDownEntry> getCoolDowns() {
+    public Map<String, CoolDownEntry> getCoolDowns() {
         removeExpiredCoolDowns();
         return coolDowns;
     }

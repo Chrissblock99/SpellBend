@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerDataBoard {
-    private static final HashMap<Player, String> playersHoldingCoolDownedItem = new HashMap<>();
+    private static final Map<Player, String> playersHoldingCoolDownedItem = new HashMap<>();
 
     /**
      * Starts the loop to update all players holding a coolDowned item and creates a board for all players currently online

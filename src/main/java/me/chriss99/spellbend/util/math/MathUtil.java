@@ -3,7 +3,7 @@ package me.chriss99.spellbend.util.math;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MathUtil {
     public static final double DEGTORAD = Math.PI/180;
@@ -17,7 +17,7 @@ public class MathUtil {
         return a[(int) Math.round(random(0, a.length-1))];
     }
 
-    public static @NotNull Object randomEntry(@NotNull ArrayList<?> a) {
+    public static @NotNull Object randomEntry(@NotNull List<?> a) {
         return a.get((int) Math.round(random(0, a.size()-1)));
     }
 

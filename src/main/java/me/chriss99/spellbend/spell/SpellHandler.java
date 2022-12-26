@@ -17,12 +17,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class SpellHandler {
-    private static final HashMap<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
-    private static final HashMap<Player, Set<Spell>> playerToActiveSpellListMap = new HashMap<>();
-    private static final HashMap<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
+    private static final Map<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
+    private static final Map<Player, Set<Spell>> playerToActiveSpellListMap = new HashMap<>();
+    private static final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
 
     /**
      * @throws IllegalArgumentException If name is already contained in the map.
@@ -184,7 +185,7 @@ public class SpellHandler {
     }
 
     /**
-     * Adds the player and an empty ArrayList to the playerToActiveSpellSetMap.
+     * Adds the player and an empty List to the playerToActiveSpellSetMap.
      * <b>This is only intended to be used if the player joins the server.</b>
      *
      * @param player The player to register

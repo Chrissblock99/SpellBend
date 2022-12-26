@@ -11,11 +11,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class PlayerSessionData {
     private static final Gson gson = SpellBend.getGson();
-    private static final HashMap<Player, PlayerSessionData> playerSessions = new HashMap<>();
+    private static final Map<Player, PlayerSessionData> playerSessions = new HashMap<>();
 
     //TODO might not be needed, but keep until good reasoning is found
     private final Player player;

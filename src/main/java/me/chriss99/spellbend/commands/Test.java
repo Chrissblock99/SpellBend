@@ -25,12 +25,12 @@ import java.util.Set;
 import java.util.Map;
 
 public class Test {
-    private final HashMap<String, AdvancedSubCommand> subCommands = new HashMap<>();
+    private final Map<String, AdvancedSubCommand> subCommands = new HashMap<>();
 
     public Test() {
         subCommands.put("item", new AdvancedSubCommand(new Class[0]) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 if (!(sender instanceof Player)) {
                     sender.sendMessage("§4Only players can use this subCommand!");
                     return true;
@@ -46,7 +46,7 @@ public class Test {
 
         subCommands.put("update sidebar", new AdvancedSubCommand(new Class[0]) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 if (!(sender instanceof Player)) {
                     sender.sendMessage("§4Only players can use this subCommand!");
                     return true;
@@ -59,7 +59,7 @@ public class Test {
 
         subCommands.put("memory spell", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 sender.sendMessage("Spells:");
                 Set<Spell> playerSpells = SpellHandler.getActivePlayerSpells((Player) arguments.get(0));
                 if (playerSpells.size() == 0) {
@@ -75,7 +75,7 @@ public class Test {
 
         subCommands.put("memory tasks", new AdvancedSubCommand(new Class[]{String.class}, new String[]{"filter"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 boolean filtering = !arguments.get(0).equals("all");
                 String filter = null;
                 if (filtering) filter = (String) arguments.get(0);
@@ -109,7 +109,7 @@ public class Test {
 
         subCommands.put("value item get spellName", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Player player = (Player) arguments.get(0);
                 sender.sendMessage(player.getName() + "'s held item's spellName is " + ItemData.getHeldSpellName(player) + ".");
                 return true;
@@ -118,7 +118,7 @@ public class Test {
 
         subCommands.put("value item get spellType", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Player player = (Player) arguments.get(0);
                 sender.sendMessage(player.getName() + "'s held item's spellType is " + ItemData.getHeldSpellType(player) + ".");
                 return true;
@@ -127,7 +127,7 @@ public class Test {
 
         subCommands.put("value item set spellName", new AdvancedSubCommand(new Class[]{Player.class, String.class}, new String[]{"player", "spellName"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 ItemData.setSpellName(ItemData.getHeldItem((Player) arguments.get(0)), (String) arguments.get(1));
                 return true;
             }
@@ -135,7 +135,7 @@ public class Test {
 
         subCommands.put("value item set spellType", new AdvancedSubCommand(new Class[]{Player.class, String.class}, new String[]{"player", "spellType"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 ItemData.setSpellType(ItemData.getHeldItem((Player) arguments.get(0)), (String) arguments.get(1));
                 return true;
             }
@@ -143,13 +143,13 @@ public class Test {
 
         subCommands.put("value dmgMod get", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, String.class, Player.class}, new String[]{"dmgMod", "dmgModType", "player"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 String dmgModTypeString = ((String) arguments.get(1)).toUpperCase();
                 Player player = (Player) arguments.get(2);
 
                 Enums.DmgModType[] dmgModTypes = Enums.DmgModType.values();
-                ArrayList<String> dmgModTypeStrings = new ArrayList<>(3);
+                List<String> dmgModTypeStrings = new ArrayList<>(3);
                 for (Enums.DmgModType modType : dmgModTypes)
                     dmgModTypeStrings.add(modType.toString().toUpperCase());
 
@@ -173,7 +173,7 @@ public class Test {
 
         subCommands.put("value dmgMod add", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
                 Player player = (Player) arguments.get(2);
@@ -189,7 +189,7 @@ public class Test {
 
         subCommands.put("value dmgMod remove", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
                 Player player = (Player) arguments.get(2);
@@ -205,7 +205,7 @@ public class Test {
 
         subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
                 Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
                 Player player = (Player) arguments.get(2);
@@ -221,7 +221,7 @@ public class Test {
 
         subCommands.put("value cooldown get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"spellType", "player"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 String spellType = ((String) arguments.get(0)).toUpperCase();
                 Player player = (Player) arguments.get(1);
 
@@ -255,7 +255,7 @@ public class Test {
         subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class, Float.class, Float.class, Float.class, Enums.CoolDownStage.class},
                 new String[]{"spellType", "player", "windupTime", "activeTime", "passiveTime", "coolDownTime", "coolDownStage"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 String spellType = (String) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 float[] timeInS = new float[]{(Float) arguments.get(2), (Float) arguments.get(3), (Float) arguments.get(4), (Float) arguments.get(5)};
@@ -268,7 +268,7 @@ public class Test {
 
         subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class}, new String[]{"currency", "player"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
 
@@ -286,7 +286,7 @@ public class Test {
 
         subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);
@@ -305,7 +305,7 @@ public class Test {
 
         subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
-            public boolean onCommand(CommandSender sender, ArrayList<Object> arguments) {
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);

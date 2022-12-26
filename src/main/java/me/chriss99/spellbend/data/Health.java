@@ -10,11 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Health {
     private final static SpellBend plugin = SpellBend.getInstance();
     private final Player player;
-    private final ArrayList<DamageEntry> damageEntries = new ArrayList<>();
+    private final List<DamageEntry> damageEntries = new ArrayList<>();
 
     public Health(@NotNull Player player) {
         this.player = player;
@@ -129,7 +130,7 @@ public class Health {
         for (Player playerInWorld : player.getWorld().getPlayers())
             playerInWorld.sendMessage(message.toString());
 
-        ArrayList<DamageEntry> uniqueAttackers = new ArrayList<>();
+        List<DamageEntry> uniqueAttackers = new ArrayList<>();
 
         for (DamageEntry damageEntry : damageEntries) {
             Entity attacker = damageEntry.getAttacker();
