@@ -4,6 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
+import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Bukkit;
@@ -54,10 +55,12 @@ public class Escape_Through_Time extends Spell {
         armorStand.setBasePlate(false);
         armorStand.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 99999, 255, false, false));
 
-        for (int i = 0;i<360;i+=10)
-            armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, armorStand.getLocation().clone().add(Math.cos(i*MathUtil.DEGTORAD)*1.5f, 0, Math.sin(i*MathUtil.DEGTORAD)*1.5f),
+        for (int i = 0; i < 360; i += 10) {
+            Color color = Colors.getRandomYellow1or2();
+            armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, armorStand.getLocation().clone().add(Math.cos(i * MathUtil.DEGTORAD) * 1.5f, 0, Math.sin(i * MathUtil.DEGTORAD) * 1.5f),
                     1, 0, 0, 0, 0,
-                    new Particle.DustTransition(Color.fromRGB(0, 100, 0), Color.fromRGB(0, 50, 50), 2));
+                    new Particle.DustTransition(color, color, 2));
+    }
 
         armorStandTask = new BukkitRunnable() {
             int time = 300;
@@ -66,7 +69,7 @@ public class Escape_Through_Time extends Spell {
             public void run() {
                 armorStand.teleport(armorStandOrigin.clone().add(0, -Math.sin(time/13.64f)/3f, 0));
                 armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, armorStand.getLocation().clone().add(0, 1, 0), 1, 0.5, 0.6, 0.5, 0,
-                        new Particle.DustTransition(Color.fromRGB(0, 100, 0), Color.fromRGB(0, 50, 50), 2));
+                        new Particle.DustTransition(Colors.yellow2, Colors.yellow2, 2));
 
                 if (time == 0) {
                     spellHandler.removeClickableSpellRunnable(item);

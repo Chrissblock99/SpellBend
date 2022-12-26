@@ -4,6 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
+import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.VectorConversion;
@@ -53,10 +54,8 @@ public class Fiery_Rage extends Spell implements Killable {
                 location.setYaw(startRot + time);
                 caster.teleport(location);
 
-                Particle.DustTransition dustOptions = new Particle.DustTransition(
-                        Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
-                        Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
-                        (float) MathUtil.random(1.3d, 2d));
+                Color color = Colors.getRandomOrange5or6();
+                Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, (float) MathUtil.random(1.3d, 2d));
                 World world = caster.getWorld();
                 world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(1f/3f)),
                         time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(1f/3f))), 1, dustOptions);
@@ -94,11 +93,9 @@ public class Fiery_Rage extends Spell implements Killable {
 
             @Override
             public void run() {
-                Particle.DustTransition dustOptions = new Particle.DustTransition(
-                        Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
-                        Color.fromRGB((int) MathUtil.random(210d, 255d), (int) MathUtil.random(80d, 120d), (int) MathUtil.random(0d, 40d)),
-                        (float) (0.2d + MathUtil.random(time/80d, 1d+time/80d)));
-                caster.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(0d, 1d, 0d), 1, dustOptions);
+                Color color = Colors.getRandomOrange1or2();
+                Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, (float) (0.2d + MathUtil.random(time/80d, 1d+time/80d)));
+                caster.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(0, 1.3, 0), 1, dustOptions);
 
                 if (time == 0) {
                     sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
