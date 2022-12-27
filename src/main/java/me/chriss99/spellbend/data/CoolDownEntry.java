@@ -66,7 +66,7 @@ public class CoolDownEntry {
     public void updateCoolDownStage() {
         int i = 0;
         float timeSinceStartInS = (new Date().getTime() - startDate.getTime()) / 1000f;
-        while (i<4 && !(getTimeToStageInS(i + 1) > timeSinceStartInS))
+        while (i<3 && !(getTimeToStageInS(i + 1) > timeSinceStartInS))
             i++;
         coolDownStage = Enums.CoolDownStage.values()[i];
     }
@@ -124,8 +124,10 @@ public class CoolDownEntry {
      */
     public float skipToStage(@NotNull Enums.CoolDownStage coolDownStage) {
         updateCoolDownStage();
-        if (Maps.coolDownStageToIndexMap.get(coolDownStage)<Maps.coolDownStageToIndexMap.get(this.coolDownStage) || coolDownStage.equals(this.coolDownStage))
-            throw new IllegalArgumentException("The CoolDownStage to skip to cannot be older than or the same as the current one!");
+        if (Maps.coolDownStageToIndexMap.get(coolDownStage)<Maps.coolDownStageToIndexMap.get(this.coolDownStage))
+            throw new IllegalArgumentException("The CoolDownStage to skip to cannot be older than the current one!");
+        if (coolDownStage.equals(this.coolDownStage))
+            return 0;
 
         float timeSkipped = skipCurrentStage();
         int stageToSkipToIndex = Maps.coolDownStageToIndexMap.get(coolDownStage);
@@ -160,7 +162,7 @@ public class CoolDownEntry {
     public float transformToStage(@NotNull Enums.CoolDownStage coolDownStage) {
         float transformedTime = skipToStage(coolDownStage);
         timeInS[Maps.coolDownStageToIndexMap.get(coolDownStage)] += transformedTime;
-        return  transformedTime;
+        return transformedTime;
     }
 
     /**

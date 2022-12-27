@@ -10,11 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Health {
     private final static SpellBend plugin = SpellBend.getInstance();
     private final Player player;
-    private final ArrayList<DamageEntry> damageEntries = new ArrayList<>();
+    private final List<DamageEntry> damageEntries = new ArrayList<>();
 
     public Health(@NotNull Player player) {
         this.player = player;
@@ -59,6 +60,7 @@ public class Health {
         }
 
         player.setHealth(health);
+        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
         return damage;
     }
 
@@ -104,6 +106,7 @@ public class Health {
             heal *= -1;
         }
 
+        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
         return getHealth();
     }
 
@@ -115,21 +118,21 @@ public class Health {
      */
     public void onPlayerDeath(@Nullable Entity killer, @Nullable ItemStack item) {
         //TODO use LuckPerms here ALSO implement cosmetics at some point
-        StringBuilder message = new StringBuilder(player.getName());
+        StringBuilder message = new StringBuilder("§8[§c☠§8] §e§l" + player.getName() + "§r§c");
         switch ((killer != null) + "-" + (item != null)) {
             case "true-true" -> //noinspection ConstantConditions
-                    message.append(" was slain by ").append(killer.getName()).append(" using ").append(item.getItemMeta().displayName());
+                    message.append(" was slain by §e§l").append(killer.getName()).append("§r§c using ").append(item.getItemMeta().getLocalizedName());
             case "true-false" -> //noinspection ConstantConditions
-                    message.append(" was slain by ").append(killer.getName());
+                    message.append(" was slain by §e§l").append(killer.getName());
             case "false-true" -> //noinspection ConstantConditions
-                    message.append(" died to").append(item.getItemMeta().displayName());
+                    message.append(" died to").append(item.getItemMeta().getLocalizedName());
             case "false-false" -> message.append(" died");
         }
 
         for (Player playerInWorld : player.getWorld().getPlayers())
             playerInWorld.sendMessage(message.toString());
 
-        ArrayList<DamageEntry> uniqueAttackers = new ArrayList<>();
+        List<DamageEntry> uniqueAttackers = new ArrayList<>();
 
         for (DamageEntry damageEntry : damageEntries) {
             Entity attacker = damageEntry.getAttacker();
@@ -148,13 +151,15 @@ public class Health {
         for (DamageEntry entry : uniqueAttackers) {
             if (entry.getAttacker() instanceof Player uniqueAttacker) {
                 double percentage = entry.getDamage() / 20d;
-                int gold = (int) Math.ceil(10 * percentage);
-                int gems = (int) Math.ceil(3 * percentage);
+                float gold = (float) (10 * percentage);
+                float gems = (float) (3 * percentage);
+                float health = (float) (8 * percentage);
 
-                uniqueAttacker.sendMessage("§e" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + gold + " Gold §8| §b+" + gems + " Gems");
+                uniqueAttacker.sendMessage("§e" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + gold + " Gold §8| §b+" + gems + " Gems §8| §c+" + health + " Health");
                 PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(uniqueAttacker);
                 sessionData.getGold().addCurrency(gold);
                 sessionData.getGems().addCurrency(gems);
+                sessionData.getHealth().healPlayer(health);
             }
         }
 
@@ -170,6 +175,8 @@ public class Health {
                 player.setGameMode(GameMode.ADVENTURE);
             }
         }.runTaskLater(plugin, 100);
+
+        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
     }
 
     public Player getPlayer() {

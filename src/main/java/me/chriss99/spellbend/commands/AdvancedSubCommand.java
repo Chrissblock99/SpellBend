@@ -2,7 +2,7 @@ package me.chriss99.spellbend.commands;
 
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public abstract class AdvancedSubCommand {
@@ -29,5 +29,5 @@ public abstract class AdvancedSubCommand {
         this.argumentString = stringBuilder.toString();
     }
 
-    public abstract boolean onCommand(CommandSender sender, ArrayList<Object> arguments);
+    public abstract boolean onCommand(CommandSender sender, List<Object> arguments);
 }

@@ -7,19 +7,26 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class PlayerSessionData {
     private static final Gson gson = SpellBend.getGson();
-    private static final HashMap<Player, PlayerSessionData> playerSessions = new HashMap<>();
+    private static final Map<Player, PlayerSessionData> playerSessions = new HashMap<>();
 
     //TODO might not be needed, but keep until good reasoning is found
     private final Player player;
 
+    private final SpellHandler spellHandler;
+    private final PlayerDataBoard playerDataBoard;
+    private final ActionBarController actionBarController;
+
+    private final Currency mana;
     private final Currency gems;
     private final Currency gold;
     private final Currency crystals;
@@ -28,6 +35,18 @@ public class PlayerSessionData {
     private final PercentageModifier damageDealtModifiers;
     private final PercentageModifier damageTakenModifiers;
     private final Health health;
+
+    public static void startManaRegenerator() {
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                for (Map.Entry<Player, PlayerSessionData> entry : playerSessions.entrySet()) {
+                    Currency mana = entry.getValue().getMana();
+                    mana.setCurrency(Math.min(100, mana.getCurrency()+5));
+                }
+            }
+        }.runTaskTimer(SpellBend.getInstance(), 0, 20);
+    }
 
     /**
      * Loads the players sessionData from his PersistentData, checking if it is already loaded or if the player isn't online
@@ -88,9 +107,14 @@ public class PlayerSessionData {
     private PlayerSessionData(@NotNull Player player) {
         this.player = player;
 
-        gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150);
-        gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650);
-        crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0);
+        spellHandler = new SpellHandler(player);
+        playerDataBoard = new PlayerDataBoard(player);
+        actionBarController = new ActionBarController(player);
+
+        mana = new Currency(player, 100, false, true);
+        gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150, true, false);
+        gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
+        crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
 
         coolDowns = new CoolDowns(player);
         damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
@@ -100,6 +124,22 @@ public class PlayerSessionData {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public SpellHandler getSpellHandler() {
+        return spellHandler;
+    }
+
+    public PlayerDataBoard getPlayerDataBoard() {
+        return playerDataBoard;
+    }
+
+    public ActionBarController getActionBarController() {
+        return actionBarController;
+    }
+
+    public Currency getMana() {
+        return mana;
     }
 
     public Currency getGems() {
@@ -130,6 +170,10 @@ public class PlayerSessionData {
         return health;
     }
 
+    public static Map<Player, PlayerSessionData> getPlayerSessions() {
+        return playerSessions;
+    }
+
     /**
      * Saves the sessionData to the players PersistentData
      */
@@ -148,7 +192,14 @@ public class PlayerSessionData {
      */
     public void endSession() {
         saveSession();
+        spellHandler.playerLeave();
+        playerDataBoard.playerNoLongerHasActiveVisibleCoolDown();
         //noinspection SuspiciousMethodCalls
         playerSessions.remove(this);
+    }
+
+    public static void endAllSessions() {
+        for (Map.Entry<Player, PlayerSessionData> playerToSessionData : playerSessions.entrySet())
+            playerToSessionData.getValue().endSession();
     }
 }

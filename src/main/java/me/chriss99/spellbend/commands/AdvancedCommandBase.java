@@ -7,18 +7,15 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 public abstract class AdvancedCommandBase extends BukkitCommand implements CommandExecutor {
-    public final HashMap<String, AdvancedSubCommand> subCommands;
+    public final Map<String, AdvancedSubCommand> subCommands;
     public final String command;
     public final String usage;
 
-    public AdvancedCommandBase(@NotNull String command, @NotNull String usage, @NotNull HashMap<String, AdvancedSubCommand> subCommands) {
+    public AdvancedCommandBase(@NotNull String command, @NotNull String usage, @NotNull Map<String, AdvancedSubCommand> subCommands) {
         super(command);
         this.subCommands = subCommands;
         this.command = command;
@@ -36,11 +33,11 @@ public abstract class AdvancedCommandBase extends BukkitCommand implements Comma
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] arguments) {
-        final ArrayList<AdvancedSubCommand> validSubCommands = new ArrayList<>();
+        final List<AdvancedSubCommand> validSubCommands = new ArrayList<>();
         String path = "";
         String latestValidPath = "";
         String potentialErrorMessage = "§4No Error was found.";
-        ArrayList<String> argumentList = new ArrayList<>(Arrays.asList(arguments));
+        List<String> argumentList = new ArrayList<>(Arrays.asList(arguments));
 
         if (subCommands.containsKey(path)) validSubCommands.add(subCommands.get(path));
         for (String argument : arguments) {
@@ -74,7 +71,7 @@ public abstract class AdvancedCommandBase extends BukkitCommand implements Comma
         }
 
         AdvancedSubCommand subCommand = validSubCommands.get(validSubCommands.size()-1);
-        ArrayList<Object> parsedArguments = new ArrayList<>();
+        List<Object> parsedArguments = new ArrayList<>();
         for (int i = 0;i<subCommand.arguments.length;i++) {
             String parseFrom = argumentList.get(i);
             //noinspection rawtypes

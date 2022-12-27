@@ -1,6 +1,6 @@
 package me.chriss99.spellbend.events;
 
-import me.chriss99.spellbend.util.GeneralRegisterUtil;
+import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.temporary.Temporary;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 
 public class InventoryClick implements Listener {
     public InventoryClick() {
-        GeneralRegisterUtil.registerEvent(this);
+        SpellBend.registerEvent(this);
     }
 
     @EventHandler
