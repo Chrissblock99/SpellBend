@@ -87,6 +87,6 @@ public class WalkSpeed extends PercentageModifier {
     }
 
     private void updateWalkSpeed() {
-        getPlayer().setWalkSpeed(getModifier(null));
+        getPlayer().setWalkSpeed(getModifier(null)*0.2f);
     }
 }
