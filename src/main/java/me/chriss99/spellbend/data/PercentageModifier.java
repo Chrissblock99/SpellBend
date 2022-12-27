@@ -19,7 +19,7 @@ public class PercentageModifier {
 
     private final Player player;
     private final float[] modifiers;
-    private boolean isZero = false;
+    private byte isZero = 0;
     private final NamespacedKey key;
 
     public PercentageModifier(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name) {
@@ -48,7 +48,7 @@ public class PercentageModifier {
      * @return The modifier, 0 if isZero
      */
     public float getModifier(@Nullable Enums.DmgModType modType) {
-        if (isZero)
+        if (isZero <= 0)
             return 0;
 
         if (modType == null) {
@@ -140,15 +140,15 @@ public class PercentageModifier {
         return modifiers[index]/oldModifiers;
     }
 
-    public void setIsZero(boolean isZero) {
-        this.isZero = isZero;
+    public void displaceIsZero(int displace) {
+        isZero += displace;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public boolean getIsZero() {
+    public byte getIsZero() {
         return isZero;
     }
 
