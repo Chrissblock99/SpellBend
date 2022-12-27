@@ -93,8 +93,9 @@ public class Escape_Through_Time extends Spell implements Killable {
 
             @Override
             public void run() {
-                caster.teleport(new Location(caster.getWorld(), 0, 0, 0, casterOrigin.getYaw(), casterOrigin.getPitch()).add(MathUtil.lerp(casterOrigin.toVector(), armorStandOrigin.toVector(), (time * time)/400f)));
-                caster.getWorld().spawnParticle(Particle.SMOKE_LARGE, caster.getEyeLocation(), 3, 0.3, 0.3, 0.3, 0);
+                caster.teleport(new Location(caster.getWorld(), 0, 0, 0, casterOrigin.getYaw(), casterOrigin.getPitch()).add(MathUtil.lerpVector(casterOrigin.toVector(), armorStandOrigin.toVector(), Math.pow(time/20f, 0.333333333))));
+                caster.getWorld().spawnParticle(Particle.SMOKE_LARGE, caster.getLocation().add(0 , 1.3, 0), 5, 0, 0, 0, 0.5);
+                caster.getWorld().spawnParticle(Particle.VILLAGER_ANGRY, caster.getLocation().add(0 , 0.8, 0), 5, 0, 0, 0, 0);
 
                 if (time == 0) {
                     armorStand.remove();
