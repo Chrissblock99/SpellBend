@@ -111,7 +111,9 @@ public class Escape_Through_Time extends Spell implements Killable {
     }
 
     private void explode() {
-        for (Map.Entry<Player, Double> entry : PlayerUtil.getPlayersNearLocation(armorStandOrigin, 4.5).entrySet())
+        Map<Player, Double> players = PlayerUtil.getPlayersNearLocation(armorStandOrigin, 4.5);
+        players.remove(caster);
+        for (Map.Entry<Player, Double> entry : players.entrySet())
             PlayerSessionData.getPlayerSession(entry.getKey()).getHealth().damagePlayer(caster, 3, item);
 
         armorStandOrigin.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, armorStandOrigin.add(0, 1, 0), 1);
