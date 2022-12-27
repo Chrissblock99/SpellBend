@@ -45,7 +45,7 @@ public class PercentageModifier {
      * @param modType The modifiers name, null returns all of them
      * @return The modifier
      */
-    public  float getModifier(@Nullable Enums.DmgModType modType) {
+    public float getModifier(@Nullable Enums.DmgModType modType) {
         if (modType == null) {
             float result = 1;
             for (float num : modifiers)
