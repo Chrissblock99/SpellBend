@@ -37,6 +37,7 @@ public class WalkSpeed extends PercentageModifier {
      * @param modType The type of the modifier
      * @param modifier The modifier not smaller or equal to 0
      */
+    @Override
     public void removeModifier(@NotNull Enums.DmgModType modType, float modifier) {
         super.removeModifier(modType, modifier);
         updateWalkSpeed();
@@ -54,6 +55,7 @@ public class WalkSpeed extends PercentageModifier {
      * @param modifier The modifier not smaller or equal to 0
      * @return An undo factor usable to undo the change later
      */
+    @Override
     public float extendModifier(@NotNull Enums.DmgModType modType, float modifier) {
         float returnValue = super.extendModifier(modType, modifier);
         updateWalkSpeed();
@@ -71,10 +73,17 @@ public class WalkSpeed extends PercentageModifier {
      * @param modifier The modifier not smaller or equal to 0
      * @return An undo factor usable to undo the change later
      */
+    @Override
     public float setModifier(@NotNull Enums.DmgModType modType, float modifier) {
         float returnValue = super.setModifier(modType, modifier);
         updateWalkSpeed();
         return returnValue;
+    }
+
+    @Override
+    public void displaceIsZero(int displace) {
+        super.displaceIsZero(displace);
+        updateWalkSpeed();
     }
 
     private void updateWalkSpeed() {
