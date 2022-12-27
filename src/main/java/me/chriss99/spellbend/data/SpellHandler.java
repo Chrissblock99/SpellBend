@@ -1,10 +1,8 @@
 package me.chriss99.spellbend.data;
 
+import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import me.chriss99.spellbend.spells.Killable;
-import me.chriss99.spellbend.spells.PlayerStateValidator;
-import me.chriss99.spellbend.spells.Spell;
-import me.chriss99.spellbend.spells.SpellSubClassBuilder;
+import me.chriss99.spellbend.spells.*;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -12,22 +10,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SpellHandler {
     private static final Map<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
     private static final Map<String, PlayerStateValidator> nameToPlayerStateValidatorMap = new HashMap<>();
     private static final Map<String, Integer> nameToManaCostMap = new HashMap<>();
 
+    private static final SpellBend plugin = SpellBend.getInstance();
+
     private final Player player;
     private final Set<Spell> activeSpells = new HashSet<>();
     private final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
+    private BukkitTask stunReverseTask = null;
 
     public SpellHandler(@NotNull Player player) {
         this.player = player;
@@ -219,6 +219,34 @@ public class SpellHandler {
         return activeSpells;
     }
 
+    /**
+     * Stuns the player and broadcasts that to their spells
+     *
+     * @param timeInTicks The time to stun for
+     */
+    public void stunPlayer(int timeInTicks) {
+        PercentageModifier walkSpeed = PlayerSessionData.getPlayerSession(player).getWalkSpeedModifiers();
+        if (stunReverseTask != null) {
+            stunReverseTask.cancel();
+        } else walkSpeed.displaceIsZero(1);
+        stunReverseTask = new BukkitRunnable(){
+            @Override
+            public void run() {
+                stunReverseTask = null;
+                walkSpeed.displaceIsZero(-1);
+            }
+        }.runTaskLater(plugin, timeInTicks);
+
+        for (Spell spell : activeSpells)
+            if (spell instanceof Stunable stunable)
+                stunable.casterStun(timeInTicks);
+    }
+
+    /**
+     * Kills the player and broadcasts that to their spells
+     *
+     * @param killer The Nullable entity which killed them
+     */
     public void killPlayer(@Nullable Entity killer) {
         for (Spell spell : activeSpells) {
             if (spell instanceof Killable killable)
