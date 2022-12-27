@@ -153,7 +153,7 @@ public class Health {
                 double percentage = entry.getDamage() / 20d;
                 float gold = (float) (10 * percentage);
                 float gems = (float) (3 * percentage);
-                float health = (float) (8 * percentage);
+                float health = (float) (5 * percentage);
 
                 uniqueAttacker.sendMessage("§e" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + gold + " Gold §8| §b+" + gems + " Gems §8| §c+" + health + " Health");
                 PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(uniqueAttacker);
