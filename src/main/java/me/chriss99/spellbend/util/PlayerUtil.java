@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.util;
 
 import org.bukkit.Chunk;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -12,7 +13,7 @@ import java.util.*;
 
 public class PlayerUtil {
     /**
-     * Gets all players near the location and returns them with their distance^2
+     * Gets all adventure mode players near the location and returns them with their distance^2
      *
      * @param location The location to get players near
      * @param distance The distance
@@ -42,6 +43,9 @@ public class PlayerUtil {
         double distanceSquared = distance * distance;
 
         for (Player player : players) {
+            if (!GameMode.ADVENTURE.equals(player.getGameMode()))
+                continue;
+
             Location playerLocation = player.getLocation();
             double deltaX = playerLocation.getX()-location.getX();
             double deltaY = playerLocation.getY()-location.getY();
