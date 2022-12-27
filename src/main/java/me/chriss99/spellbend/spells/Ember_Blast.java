@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class Ember_Blast extends Spell { //TODO this
 
     public static void register() {
-        SpellHandler.addSpellBuilderToMap("ember_blast", new SpellSubClassBuilder() {
+        SpellHandler.registerSpell("ember_blast", 35, new SpellSubClassBuilder() {
             @Override
             public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
                 return new Ember_Blast(caster, spellType, item);

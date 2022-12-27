@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerDataBoard {
-    private static final Map<Player, String> playersHoldingCoolDownedItem = new HashMap<>();
+    private static final Map<Player, String> playersHavingActiveVisibleCoolDown = new HashMap<>();
 
     private final Player player;
 
@@ -27,20 +27,20 @@ public class PlayerDataBoard {
     /**
      * Starts the loop to update all players holding a coolDowned item and creates a board for all players currently online
      */
-    public static void start() {
-        if (!Bukkit.getOnlinePlayers().isEmpty())           //creating boards for players already online
-            for (Player player : Bukkit.getOnlinePlayers())
-                PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
+    public static void startUpdater() {
+        //creating boards for players already online
+        for (Player player : Bukkit.getOnlinePlayers())
+            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
 
         new BukkitRunnable(){
             @Override
             public void run() {
-                for (Map.Entry<Player, String> entry : playersHoldingCoolDownedItem.entrySet()) {
+                for (Map.Entry<Player, String> entry : playersHavingActiveVisibleCoolDown.entrySet()) {
                     Player player = entry.getKey();
                     String spellType = entry.getValue();
 
                     if (!player.isOnline()) {
-                        playersHoldingCoolDownedItem.remove(player);
+                        playersHavingActiveVisibleCoolDown.remove(player);
                         Bukkit.getLogger().warning(player.getName() + " registered in playersHoldingCoolDownedItems is offline, removing from Map!");
                         return;
                     }
@@ -62,7 +62,7 @@ public class PlayerDataBoard {
      * Adds the player to the map of all players holding a coolDowned item.
      */
     public void playerHasActiveVisibleCoolDown(@NotNull String spellType) {
-        playersHoldingCoolDownedItem.put(player, spellType);
+        playersHavingActiveVisibleCoolDown.put(player, spellType);
         updateBoard(spellType);
     }
 
@@ -70,7 +70,7 @@ public class PlayerDataBoard {
      * Removes the player from the map of all players holding a coolDowned item.
      */
     public void playerNoLongerHasActiveVisibleCoolDown() {
-        playersHoldingCoolDownedItem.remove(player);
+        playersHavingActiveVisibleCoolDown.remove(player);
         updateBoard(false);
     }
 
@@ -80,7 +80,7 @@ public class PlayerDataBoard {
      * @param spellType The spellType to update the board with
      */
     public void playerNoLongerHasActiveVisibleCoolDown(@Nullable String spellType) {
-        playersHoldingCoolDownedItem.remove(player);
+        playersHavingActiveVisibleCoolDown.remove(player);
         updateBoard(spellType, false);
     }
 

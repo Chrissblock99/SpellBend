@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,9 @@ public class PlayerSessionData {
 
     private final SpellHandler spellHandler;
     private final PlayerDataBoard playerDataBoard;
+    private final ActionBarController actionBarController;
 
+    private final Currency mana;
     private final Currency gems;
     private final Currency gold;
     private final Currency crystals;
@@ -32,6 +35,18 @@ public class PlayerSessionData {
     private final PercentageModifier damageDealtModifiers;
     private final PercentageModifier damageTakenModifiers;
     private final Health health;
+
+    public static void startManaRegenerator() {
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                for (Map.Entry<Player, PlayerSessionData> entry : playerSessions.entrySet()) {
+                    Currency mana = entry.getValue().getMana();
+                    mana.setCurrency(Math.min(100, mana.getCurrency()+5));
+                }
+            }
+        }.runTaskTimer(SpellBend.getInstance(), 0, 20);
+    }
 
     /**
      * Loads the players sessionData from his PersistentData, checking if it is already loaded or if the player isn't online
@@ -94,10 +109,12 @@ public class PlayerSessionData {
 
         spellHandler = new SpellHandler(player);
         playerDataBoard = new PlayerDataBoard(player);
+        actionBarController = new ActionBarController(player);
 
-        gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150);
-        gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650);
-        crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0);
+        mana = new Currency(player, 100, false, true);
+        gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150, true, false);
+        gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
+        crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
 
         coolDowns = new CoolDowns(player);
         damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
@@ -115,6 +132,14 @@ public class PlayerSessionData {
 
     public PlayerDataBoard getPlayerDataBoard() {
         return playerDataBoard;
+    }
+
+    public ActionBarController getActionBarController() {
+        return actionBarController;
+    }
+
+    public Currency getMana() {
+        return mana;
     }
 
     public Currency getGems() {
@@ -143,6 +168,10 @@ public class PlayerSessionData {
 
     public Health getHealth() {
         return health;
+    }
+
+    public static Map<Player, PlayerSessionData> getPlayerSessions() {
+        return playerSessions;
     }
 
     /**

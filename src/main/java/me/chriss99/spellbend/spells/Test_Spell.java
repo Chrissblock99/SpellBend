@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public class Test_Spell extends Spell implements Killable, Stunable {
 
     public static void register() {
-        SpellHandler.addSpellBuilderToMap("test_spell", new SpellSubClassBuilder() {
+        SpellHandler.registerSpell("test_spell", 10, new SpellSubClassBuilder() {
             @Override
             public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
                 return new Test_Spell(caster, spellType, item);

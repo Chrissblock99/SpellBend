@@ -60,6 +60,7 @@ public class Health {
         }
 
         player.setHealth(health);
+        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
         return damage;
     }
 
@@ -105,6 +106,7 @@ public class Health {
             heal *= -1;
         }
 
+        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
         return getHealth();
     }
 
@@ -116,14 +118,14 @@ public class Health {
      */
     public void onPlayerDeath(@Nullable Entity killer, @Nullable ItemStack item) {
         //TODO use LuckPerms here ALSO implement cosmetics at some point
-        StringBuilder message = new StringBuilder(player.getName());
+        StringBuilder message = new StringBuilder("§8[§c☠§8] §e§l" + player.getName() + "§r§c");
         switch ((killer != null) + "-" + (item != null)) {
             case "true-true" -> //noinspection ConstantConditions
-                    message.append(" was slain by ").append(killer.getName()).append(" using ").append(item.getItemMeta().displayName());
+                    message.append(" was slain by §e§l").append(killer.getName()).append("§r§c using ").append(item.getItemMeta().getLocalizedName());
             case "true-false" -> //noinspection ConstantConditions
-                    message.append(" was slain by ").append(killer.getName());
+                    message.append(" was slain by §e§l").append(killer.getName());
             case "false-true" -> //noinspection ConstantConditions
-                    message.append(" died to").append(item.getItemMeta().displayName());
+                    message.append(" died to").append(item.getItemMeta().getLocalizedName());
             case "false-false" -> message.append(" died");
         }
 
@@ -173,6 +175,8 @@ public class Health {
                 player.setGameMode(GameMode.ADVENTURE);
             }
         }.runTaskLater(plugin, 100);
+
+        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
     }
 
     public Player getPlayer() {

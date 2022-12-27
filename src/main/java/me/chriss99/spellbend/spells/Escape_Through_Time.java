@@ -6,11 +6,9 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.Enums;
+import me.chriss99.spellbend.util.PlayerUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -22,6 +20,8 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 public class Escape_Through_Time extends Spell implements Killable {
     private final Escape_Through_Time instance;
     private final Location armorStandOrigin;
@@ -32,7 +32,7 @@ public class Escape_Through_Time extends Spell implements Killable {
     private final SpellHandler spellHandler;
 
     public static void register() {
-        SpellHandler.addSpellBuilderToMap("escape_through_time", new SpellSubClassBuilder() {
+        SpellHandler.registerSpell("escape_through_time", 25, new SpellSubClassBuilder() {
             @Override
             public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
                 return new Escape_Through_Time(caster, spellType, item);
@@ -110,6 +110,9 @@ public class Escape_Through_Time extends Spell implements Killable {
     }
 
     private void explode() {
+        for (Map.Entry<Player, Double> entry : PlayerUtil.getPlayersNearLocation(armorStandOrigin, 4.5).entrySet())
+            PlayerSessionData.getPlayerSession(entry.getKey()).getHealth().damagePlayer(caster, 3, item);
+
         armorStandOrigin.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, armorStandOrigin.add(0, 1, 0), 1);
         armorStand.remove();
     }

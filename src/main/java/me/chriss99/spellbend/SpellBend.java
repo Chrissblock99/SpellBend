@@ -2,13 +2,11 @@ package me.chriss99.spellbend;
 
 import com.google.gson.Gson;
 import me.chriss99.spellbend.commands.Test;
+import me.chriss99.spellbend.data.ActionBarController;
 import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.events.*;
-import me.chriss99.spellbend.spells.Ember_Blast;
-import me.chriss99.spellbend.spells.Escape_Through_Time;
-import me.chriss99.spellbend.spells.Fiery_Rage;
-import me.chriss99.spellbend.spells.Test_Spell;
+import me.chriss99.spellbend.spells.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,7 +22,9 @@ public final class SpellBend extends JavaPlugin {
         registerAllEvents();
         registerAllSpells();
         registerAllCommands();
-        PlayerDataBoard.start();
+        PlayerDataBoard.startUpdater();
+        ActionBarController.startUpdater();
+        PlayerSessionData.startManaRegenerator();
     }
 
     @Override

@@ -2,6 +2,7 @@ package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.Killable;
+import me.chriss99.spellbend.spells.PlayerStateValidator;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.spells.SpellSubClassBuilder;
 import me.chriss99.spellbend.util.ItemData;
@@ -21,6 +22,8 @@ import java.util.Set;
 
 public class SpellHandler {
     private static final Map<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
+    private static final Map<String, PlayerStateValidator> nameToPlayerStateValidatorMap = new HashMap<>();
+    private static final Map<String, Integer> nameToManaCostMap = new HashMap<>();
 
     private final Player player;
     private final Set<Spell> activeSpells = new HashSet<>();
@@ -31,16 +34,43 @@ public class SpellHandler {
     }
 
     /**
-     * @throws IllegalArgumentException If name is already contained in the map.
+     * @throws IllegalArgumentException If the name is already contained in the map
      *
-     * @param name The name of the Spell to add.
-     * @param builder The SpellSubClassBuilder object which will return a Spell
+     * @param name The name of the Spell to add
+     * @param builder The SpellSubClassBuilder object which will return a spell
+     * @param manaCost The manaCost of the spell
      */
-    public static void addSpellBuilderToMap(@NotNull String name, @NotNull SpellSubClassBuilder builder) {
+    public static void registerSpell(@NotNull String name, int manaCost, @NotNull SpellSubClassBuilder builder) {
         if (nameToSpellBuilderMap.containsKey(name))
-            throw new IllegalArgumentException("Spell name is already contained in the map!");
+            throw new IllegalArgumentException("Spell name is already contained in the builderMap!");
+        if (nameToManaCostMap.containsKey(name))
+            throw new IllegalArgumentException("Spell name is already contained in the manaCostMap!");
 
-        nameToSpellBuilderMap.put(name.toUpperCase(), builder);
+        name = name.toUpperCase();
+        nameToSpellBuilderMap.put(name, builder);
+        nameToManaCostMap.put(name, manaCost);
+    }
+
+    /**
+     * @throws IllegalArgumentException If the name is already contained in the map
+     *
+     * @param name The name of the Spell to add
+     * @param builder The SpellSubClassBuilder object which will return a spell
+     * @param manaCost The manaCost of the spell
+     * @param stateValidator The playerStateValidator
+     */
+    public static void registerSpell(@NotNull String name, int manaCost, @NotNull SpellSubClassBuilder builder,  @NotNull PlayerStateValidator stateValidator) {
+        if (nameToSpellBuilderMap.containsKey(name))
+            throw new IllegalArgumentException("Spell name is already contained in the builderMap!");
+        if (nameToManaCostMap.containsKey(name))
+            throw new IllegalArgumentException("Spell name is already contained in the manaCostMap!");
+        if (nameToPlayerStateValidatorMap.containsKey(name))
+            throw new IllegalArgumentException("Spell name is already contained in the stateValidatorMap!");
+
+        name = name.toUpperCase();
+        nameToSpellBuilderMap.put(name, builder);
+        nameToManaCostMap.put(name, manaCost);
+        nameToPlayerStateValidatorMap.put(name, stateValidator);
     }
 
     /**
@@ -160,8 +190,28 @@ public class SpellHandler {
     public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, boolean force) {
         if (!force && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
             return false;
+        PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+        spellName = spellName.toUpperCase();
 
-        activeSpells.add(nameToSpellBuilderMap.get(spellName.toUpperCase()).createSpell(player, spellType, spellItem));
+        int manaCost = nameToManaCostMap.get(spellName);
+        Currency mana = sessionData.getMana();
+        if (mana.getCurrency()<manaCost) {
+            sessionData.getActionBarController().displayMessage("&c&lNot enough mana!");
+            return false;
+        }
+
+        PlayerStateValidator stateValidator = nameToPlayerStateValidatorMap.get(spellName);
+        if (stateValidator != null) {
+            String errorMessage = stateValidator.validateState(player);
+            if (errorMessage != null) {
+                sessionData.getActionBarController().displayMessage(errorMessage);
+                return false;
+            }
+        }
+
+        mana.addCurrency(-manaCost);
+        Spell spell = nameToSpellBuilderMap.get(spellName).createSpell(player, spellType, spellItem);
+        activeSpells.add(spell);
         return true;
     }
 
