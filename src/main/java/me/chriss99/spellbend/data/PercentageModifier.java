@@ -48,7 +48,7 @@ public class PercentageModifier {
      * @return The modifier, 0 if isZero
      */
     public float getModifier(@Nullable Enums.DmgModType modType) {
-        if (isZero <= 0)
+        if (isZero > 0)
             return 0;
 
         if (modType == null) {
