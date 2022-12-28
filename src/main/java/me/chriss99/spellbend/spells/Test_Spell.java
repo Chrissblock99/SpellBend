@@ -42,8 +42,7 @@ public class Test_Spell extends Spell implements Killable, Stunable {
     }
 
     @Override
-    public void casterStun(int timeInS) {
-
+    public void casterStun(int timeInTicks) {
         cancelSpell();
     }
 }

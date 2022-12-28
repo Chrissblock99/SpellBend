@@ -19,6 +19,7 @@ public class PercentageModifier {
 
     private final Player player;
     private final float[] modifiers;
+    private byte isZero = 0;
     private final NamespacedKey key;
 
     public PercentageModifier(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name) {
@@ -39,13 +40,17 @@ public class PercentageModifier {
     }
 
     /**
-     * Gets the specified modifier of the player
-     * returns all of them multiplied together if given null
+     * Gets the specified modifier of the player <br>
+     * returns all of them multiplied together if given null <br>
+     * if isZero is true it returns 0
      *
      * @param modType The modifiers name, null returns all of them
-     * @return The modifier
+     * @return The modifier, 0 if isZero
      */
-    public  float getModifier(@Nullable Enums.DmgModType modType) {
+    public float getModifier(@Nullable Enums.DmgModType modType) {
+        if (isZero > 0)
+            return 0;
+
         if (modType == null) {
             float result = 1;
             for (float num : modifiers)
@@ -135,8 +140,16 @@ public class PercentageModifier {
         return modifiers[index]/oldModifiers;
     }
 
+    public void displaceIsZero(int displace) {
+        isZero += displace;
+    }
+
     public Player getPlayer() {
         return player;
+    }
+
+    public byte getIsZero() {
+        return isZero;
     }
 
     /**

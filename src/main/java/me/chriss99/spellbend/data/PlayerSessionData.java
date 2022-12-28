@@ -34,6 +34,7 @@ public class PlayerSessionData {
     private final CoolDowns coolDowns;
     private final PercentageModifier damageDealtModifiers;
     private final PercentageModifier damageTakenModifiers;
+    private final PercentageModifier walkSpeedModifiers;
     private final Health health;
 
     public static void startManaRegenerator() {
@@ -102,6 +103,7 @@ public class PlayerSessionData {
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
         data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
         data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
+        data.set(PersistentDataKeys.walkSpeedModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
     }
 
     private PlayerSessionData(@NotNull Player player) {
@@ -119,6 +121,7 @@ public class PlayerSessionData {
         coolDowns = new CoolDowns(player);
         damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
         damageTakenModifiers = new PercentageModifier(player, PersistentDataKeys.damageTakenModifiersKey, "damageTakenModifiers");
+        walkSpeedModifiers = new WalkSpeed(player, PersistentDataKeys.walkSpeedModifiersKey, "walkSpeedModifiers");
         health = new Health(player);
     }
 
@@ -166,6 +169,10 @@ public class PlayerSessionData {
         return damageTakenModifiers;
     }
 
+    public PercentageModifier getWalkSpeedModifiers() {
+        return walkSpeedModifiers;
+    }
+
     public Health getHealth() {
         return health;
     }
@@ -185,6 +192,7 @@ public class PlayerSessionData {
         coolDowns.saveCoolDowns();
         damageDealtModifiers.saveModifiers();
         damageTakenModifiers.saveModifiers();
+        walkSpeedModifiers.saveModifiers();
     }
 
     /**

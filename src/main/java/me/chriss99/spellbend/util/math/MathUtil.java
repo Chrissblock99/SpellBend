@@ -74,7 +74,15 @@ public class MathUtil {
         return a[0];
     }
 
-    public static @NotNull Vector lerp(@NotNull Vector a, @NotNull Vector b, float t) {
+    public static boolean randomChance(double percentage) {
+        return percentage >= Math.random();
+    }
+
+    public static double lerp(double a, double b, double t) {
+        return b + t * (a - b);
+    }
+
+    public static @NotNull Vector lerpVector(@NotNull Vector a, @NotNull Vector b, double t) {
         return new Vector(b.getX() + t * (a.getX() - b.getX()), b.getY() + t * (a.getY() - b.getY()), b.getZ() + t * (a.getZ() - b.getZ()));
     }
 }

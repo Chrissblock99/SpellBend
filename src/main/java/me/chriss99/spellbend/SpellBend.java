@@ -48,6 +48,7 @@ public final class SpellBend extends JavaPlugin {
         Fiery_Rage.register();
         Ember_Blast.register();
         Escape_Through_Time.register();
+        Seismic_Shock.register();
     }
 
     public static void registerAllCommands() {
