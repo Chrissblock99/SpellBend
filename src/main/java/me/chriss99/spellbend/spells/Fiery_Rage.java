@@ -64,6 +64,9 @@ public class Fiery_Rage extends Spell implements Killable {
                 world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(5f/3f)),
                         time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(5f/3f))), 1, dustOptions);
 
+                world.playSound(location, Sound.BLOCK_LAVA_POP, 2, 1+time/720f);
+                world.playSound(location, Sound.ENTITY_BLAZE_SHOOT, 2, 1+time/720f);
+
                 if (time == 360) {
                     windupTask.cancel();
                     launchPlayer();
@@ -87,18 +90,43 @@ public class Fiery_Rage extends Spell implements Killable {
 
     private void activate() {
         sessionData.getDamageDealtModifiers().addModifier(Enums.DmgModType.SPELL, 1.5f);
+        sessionData.getWalkSpeedModifiers().addModifier(Enums.DmgModType.SPELL, 1.2f);
 
+        World world = caster.getWorld();
+        Location location = caster.getLocation();
+        for (int i = 0;i<360;i += 20) {
+            world.spawnParticle(Particle.EXPLOSION_LARGE, location.clone().add(new Vector(Math.cos(i) * 1.5, 0, Math.sin(i) * 1.5)), 1, 0, 0, 0, 0);
+            world.playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 3, 1f);
+        }
+
+
+        world.playSound(location, Sound.BLOCK_BEACON_ACTIVATE, 3, 1.5f);
+        world.playSound(location, Sound.ENTITY_BLAZE_AMBIENT, 3, 1.5f);
         activeTask = new BukkitRunnable() {
             int time = 200;
 
             @Override
             public void run() {
-                Color color = Colors.getRandomOrange1or2();
-                Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, (float) (0.2d + MathUtil.random(time/80d, 1d+time/80d)));
-                caster.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(0, 1.3, 0), 1, dustOptions);
+                boolean burrowIsActive = false;
+                for (Spell spell : sessionData.getSpellHandler().getActivePlayerSpells())
+                    if (spell instanceof Escape_Through_Time) { //TODO MAKE THIS CHECK FOR BURROW WHEN IT EXISTS!
+                        burrowIsActive = true;
+                        break;
+                    }
+
+                if (!burrowIsActive) {
+                    caster.setFireTicks(2);
+                    Color color = Colors.getRandomOrange1or2();
+                    Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, 0.5f+time/60f);
+                    world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(0, 1.3, 0), 1, dustOptions);
+                }
 
                 if (time == 0) {
                     sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
+                    sessionData.getWalkSpeedModifiers().removeModifier(Enums.DmgModType.SPELL, 1.2f);
+
+                    world.playSound(caster.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1.2f);
+                    world.playSound(caster.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.5f);
 
                     activeTask.cancel();
                     PlayerSessionData.getPlayerSession(caster).getSpellHandler().getActivePlayerSpells().remove(instance);
@@ -141,6 +169,13 @@ public class Fiery_Rage extends Spell implements Killable {
 
         if (!activeTask.isCancelled()) {
             sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
+            sessionData.getWalkSpeedModifiers().removeModifier(Enums.DmgModType.SPELL, 1.2f);
+
+            World world = caster.getWorld();
+            Location location = caster.getLocation();
+            world.playSound(location, Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1.2f);
+            world.playSound(location, Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.5f);
+
             activeTask.cancel();
         }
     }
