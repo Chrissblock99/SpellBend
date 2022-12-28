@@ -18,9 +18,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class Seismic_Shock extends Spell implements Killable, Stunable {
     public static Vector[] ring1 = createRing1();
@@ -112,7 +110,6 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
 
     private void active(@NotNull Location center) {
         activeTask = new BukkitRunnable() {
-            final Set<Player> alreadyMovedPlayers = new HashSet<>();
             int time = 15;
 
             @Override
@@ -144,10 +141,8 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                     players.remove(caster);
                     for (Map.Entry<Player, Double> entry : players.entrySet()) {
                         Player player = entry.getKey();
-                        if (!alreadyMovedPlayers.contains(player)) {
+                        if (player.isOnGround()) //if this is every removed use a list of already moved players instead, like mango did it
                             player.getVelocity().add(new Vector(0, 0.5, 0));
-                            alreadyMovedPlayers.add(player);
-                        }
                         shockPlayer(player, 1);
                         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
                         sessionData.getHealth().damagePlayer(caster, 2.5, item);
