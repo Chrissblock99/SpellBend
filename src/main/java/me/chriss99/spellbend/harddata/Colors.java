@@ -39,7 +39,15 @@ public class Colors {
         return (Color) MathUtil.randomEntry(new Color[]{blue1, blue2, blue3});
     }
 
+    public static Color getRandomBlue3to5() {
+        return (Color) MathUtil.randomEntry(new Color[]{blue3, blue4, blue5});
+    }
+
     public static Color getRandomBlue2to5() {
         return (Color) MathUtil.randomEntry(new Color[]{blue2, blue3, blue4, blue5});
+    }
+
+    public static Color getRandomBlue4to5() {
+        return (Color) MathUtil.randomEntry(new Color[]{blue4, blue5});
     }
 }
