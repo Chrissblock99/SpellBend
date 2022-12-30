@@ -82,8 +82,9 @@ public class PlayerSessionData {
      * @param player The player whose sessionData to get
      * @return The player's session, null if offline
      */
-    public static @Nullable PlayerSessionData getPlayerSession(@NotNull Player player) {
+    public static @NotNull PlayerSessionData getPlayerSession(@NotNull Player player) {
         if (!player.isOnline()) {
+            //noinspection DataFlowIssue
             return null;
         }
 
