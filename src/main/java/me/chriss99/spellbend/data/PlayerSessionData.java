@@ -121,7 +121,7 @@ public class PlayerSessionData {
         coolDowns = new CoolDowns(player);
         damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
         damageTakenModifiers = new PercentageModifier(player, PersistentDataKeys.damageTakenModifiersKey, "damageTakenModifiers");
-        walkSpeedModifiers = new WalkSpeed(player, PersistentDataKeys.walkSpeedModifiersKey, "walkSpeedModifiers");
+        walkSpeedModifiers = new WalkSpeed(player);
         health = new Health(player);
     }
 

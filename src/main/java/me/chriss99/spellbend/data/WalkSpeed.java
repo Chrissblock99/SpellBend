@@ -1,14 +1,14 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.harddata.Enums;
-import org.bukkit.NamespacedKey;
+import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class WalkSpeed extends PercentageModifier {
 
-    public WalkSpeed(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name) {
-        super(player, key, name);
+    public WalkSpeed(@NotNull Player player) {
+        super(player, PersistentDataKeys.walkSpeedModifiersKey, "walkSpeed");
     }
 
     /**
