@@ -19,7 +19,7 @@ public class PlayerSessionData {
     private static final Gson gson = SpellBend.getGson();
     private static final Map<Player, PlayerSessionData> playerSessions = new HashMap<>();
 
-    //TODO might not be needed, but keep until good reasoning is found
+
     private final Player player;
 
     private final SpellHandler spellHandler;
@@ -31,6 +31,7 @@ public class PlayerSessionData {
     private final Currency gold;
     private final Currency crystals;
 
+    private final ValueTracker canNotJump;
     private final ValueTracker invisibility;
 
     private final CoolDowns coolDowns;
@@ -109,6 +110,7 @@ public class PlayerSessionData {
         data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
         data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
 
+        data.set(PersistentDataKeys.canNotJumpKey, PersistentDataType.INTEGER, 0);
         data.set(PersistentDataKeys.invisibilityKey, PersistentDataType.INTEGER, 0);
 
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
@@ -129,6 +131,7 @@ public class PlayerSessionData {
         gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
         crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
 
+        canNotJump = new ValueTracker(player, PersistentDataKeys.canNotJumpKey, "canNotJump", 0);
         invisibility = new Invisibility(player);
 
         coolDowns = new CoolDowns(player);
@@ -170,6 +173,10 @@ public class PlayerSessionData {
         return crystals;
     }
 
+    public ValueTracker getCanNotJump() {
+        return canNotJump;
+    }
+
     public ValueTracker getInvisibility() {
         return invisibility;
     }
@@ -206,6 +213,7 @@ public class PlayerSessionData {
         gold.saveCurrency();
         crystals.saveCurrency();
 
+        canNotJump.saveValue();
         invisibility.saveValue();
 
         coolDowns.saveCoolDowns();

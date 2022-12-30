@@ -13,6 +13,7 @@ public class PersistentDataKeys {
     public static final NamespacedKey goldKey = new NamespacedKey(plugin, "gold");
     public static final NamespacedKey crystalsKey = new NamespacedKey(plugin, "crystals");
 
+    public static final NamespacedKey canNotJumpKey = new NamespacedKey(plugin, "canJump");
     public static final NamespacedKey invisibilityKey = new NamespacedKey(plugin, "invisibility");
 
     public static final NamespacedKey coolDownsKey = new NamespacedKey(plugin, "coolDowns");

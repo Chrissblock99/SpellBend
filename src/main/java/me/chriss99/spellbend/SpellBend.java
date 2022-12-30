@@ -40,6 +40,7 @@ public final class SpellBend extends JavaPlugin {
         new FoodLevelChange();
         new PlayerSwitchHeldItem();
         new InventoryClick();
+        new PlayerJump();
     }
 
     public static void registerAllSpells() {
