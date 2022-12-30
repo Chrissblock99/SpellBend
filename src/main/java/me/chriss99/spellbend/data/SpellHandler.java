@@ -225,15 +225,22 @@ public class SpellHandler {
      * @param timeInTicks The time to stun for
      */
     public void stunPlayer(int timeInTicks) {
-        PercentageModifier walkSpeed = PlayerSessionData.getPlayerSession(player).getWalkSpeedModifiers();
+        PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+        PercentageModifier walkSpeed = sessionData.getWalkSpeedModifiers();
+        ValueTracker canNotJump = sessionData.getCanNotJump();
+
         if (stunReverseTask != null) {
             stunReverseTask.cancel();
-        } else walkSpeed.displaceIsZero(1);
+        } else {
+            walkSpeed.displaceIsZero(1);
+            canNotJump.displaceValue(1);
+        }
         stunReverseTask = new BukkitRunnable(){
             @Override
             public void run() {
                 stunReverseTask = null;
                 walkSpeed.displaceIsZero(-1);
+                canNotJump.displaceValue(-1);
             }
         }.runTaskLater(plugin, timeInTicks);
 
