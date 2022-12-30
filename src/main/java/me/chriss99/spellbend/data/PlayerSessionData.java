@@ -31,6 +31,8 @@ public class PlayerSessionData {
     private final Currency gold;
     private final Currency crystals;
 
+    private final ValueTracker invisibility;
+
     private final CoolDowns coolDowns;
     private final PercentageModifier damageDealtModifiers;
     private final PercentageModifier damageTakenModifiers;
@@ -80,7 +82,11 @@ public class PlayerSessionData {
      * @param player The player whose sessionData to get
      * @return The player's session, null if offline
      */
-    public static @NotNull PlayerSessionData getPlayerSession(@NotNull Player player) {
+    public static @Nullable PlayerSessionData getPlayerSession(@NotNull Player player) {
+        if (!player.isOnline()) {
+            return null;
+        }
+
         PlayerSessionData playerSession = playerSessions.get(player);
         if (playerSession == null) {
             Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerSessions map, now fixing!");
@@ -96,10 +102,14 @@ public class PlayerSessionData {
      * @param player The player who's PersistentData to set up
      */
     public static void setupPlayerData(@NotNull Player player) {
+
         PersistentDataContainer data = player.getPersistentDataContainer();
         data.set(PersistentDataKeys.gemsKey, PersistentDataType.FLOAT, 150f);
         data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
         data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
+
+        data.set(PersistentDataKeys.invisibilityKey, PersistentDataType.INTEGER, 0);
+
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
         data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
         data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
@@ -117,6 +127,8 @@ public class PlayerSessionData {
         gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150, true, false);
         gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
         crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
+
+        invisibility = new Invisibility(player);
 
         coolDowns = new CoolDowns(player);
         damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
@@ -157,6 +169,10 @@ public class PlayerSessionData {
         return crystals;
     }
 
+    public ValueTracker getInvisibility() {
+        return invisibility;
+    }
+
     public CoolDowns getCoolDowns() {
         return coolDowns;
     }
@@ -188,6 +204,8 @@ public class PlayerSessionData {
         gems.saveCurrency();
         gold.saveCurrency();
         crystals.saveCurrency();
+
+        invisibility.saveValue();
 
         coolDowns.saveCoolDowns();
         damageDealtModifiers.saveModifiers();
