@@ -104,8 +104,8 @@ public class PlayerSessionData {
      * @param player The player who's PersistentData to set up
      */
     public static void setupPlayerData(@NotNull Player player) {
-
         PersistentDataContainer data = player.getPersistentDataContainer();
+
         data.set(PersistentDataKeys.gemsKey, PersistentDataType.FLOAT, 150f);
         data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
         data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
@@ -229,8 +229,7 @@ public class PlayerSessionData {
         saveSession();
         spellHandler.playerLeave();
         playerDataBoard.playerNoLongerHasActiveVisibleCoolDown();
-        //noinspection SuspiciousMethodCalls
-        playerSessions.remove(this);
+        playerSessions.remove(player);
     }
 
     public static void endAllSessions() {
