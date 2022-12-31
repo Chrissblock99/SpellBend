@@ -105,6 +105,22 @@ public class Test {
             }
         });
 
+        subCommands.put("memory sessions", new AdvancedSubCommand(new Class[0], new String[0]) {
+            @Override
+            public boolean onCommand(CommandSender sender, List<Object> arguments) {
+                sender.sendMessage("Sessions:");
+                int printed = 0;
+                for (Map.Entry<Player, PlayerSessionData> entry : PlayerSessionData.getPlayerSessions().entrySet()) {
+                    sender.sendMessage(entry.getKey().getName());
+                    printed++;
+                }
+                if (printed == 0) {
+                    sender.sendMessage("none");
+                }
+                return true;
+            }
+        });
+
         subCommands.put("value item get spellName", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
