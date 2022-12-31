@@ -8,21 +8,9 @@ public class Enums {
         COOLDOWN
     }
 
-    public enum DmgModType {
-        SPELL,
-        HANDICAP,
-        FORCE
-    }
-
     public enum Currency {
         GEMS,
         GOLD,
         CRYSTALS
-    }
-
-    public enum Modifier {
-        DMGDEALT,
-        DMGTAKEN,
-        WALKSPEED
     }
 }

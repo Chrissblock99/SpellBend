@@ -1,6 +1,5 @@
 package me.chriss99.spellbend.data;
 
-import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -11,38 +10,36 @@ public class WalkSpeed extends PercentageModifier {
     }
 
     /**
-     * Adds the Modifier to the specified type of the player
+     * Adds the Modifier to the player
      * It does this by multiplying the number with the modifier
      * therefore it can be undone by dividing it by the same modifier
      * To do that call removeModifier()
      *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     * @throws IllegalArgumentException If the modifier is negative
      *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
+     * @param modifier The modifier not negative
      */
     @Override
-    public void addModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        super.addModifier(modType, modifier);
+    public void addModifier(float modifier) {
+        super.addModifier(modifier);
         updateWalkSpeed();
     }
 
     /**
-     * Removes the modifier from the specified type of the player
+     * Removes the modifier from the player
      * It does this by dividing the number with the modifier, undoing addModifier() in the process
      *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     * @throws IllegalArgumentException If the modifier is negative
      *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
+     * @param modifier The modifier not negative
      */
     @Override
-    public void removeModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        super.removeModifier(modType, modifier);
+    public void removeModifier(float modifier) {
+        super.removeModifier(modifier);
         updateWalkSpeed();
     }
 
     private void updateWalkSpeed() {
-        getPlayer().setWalkSpeed(getModifier(null)*0.2f);
+        getPlayer().setWalkSpeed(getModifier()*0.2f);
     }
 }

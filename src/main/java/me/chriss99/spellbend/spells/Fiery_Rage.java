@@ -89,8 +89,8 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     private void activate() {
-        sessionData.getDamageDealtModifiers().addModifier(Enums.DmgModType.SPELL, 1.5f);
-        sessionData.getWalkSpeedModifiers().addModifier(Enums.DmgModType.SPELL, 1.2f);
+        sessionData.getDamageDealtModifiers().addModifier(1.5f);
+        sessionData.getWalkSpeedModifiers().addModifier(1.2f);
 
         World world = caster.getWorld();
         Location location = caster.getLocation();
@@ -122,8 +122,8 @@ public class Fiery_Rage extends Spell implements Killable {
                 }
 
                 if (time == 0) {
-                    sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
-                    sessionData.getWalkSpeedModifiers().removeModifier(Enums.DmgModType.SPELL, 1.2f);
+                    sessionData.getDamageDealtModifiers().removeModifier(1.5f);
+                    sessionData.getWalkSpeedModifiers().removeModifier(1.2f);
 
                     world.playSound(caster.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1.2f);
                     world.playSound(caster.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.5f);
@@ -168,8 +168,8 @@ public class Fiery_Rage extends Spell implements Killable {
         }
 
         if (!activeTask.isCancelled()) {
-            sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
-            sessionData.getWalkSpeedModifiers().removeModifier(Enums.DmgModType.SPELL, 1.2f);
+            sessionData.getDamageDealtModifiers().removeModifier(1.5f);
+            sessionData.getWalkSpeedModifiers().removeModifier(1.2f);
 
             World world = caster.getWorld();
             Location location = caster.getLocation();

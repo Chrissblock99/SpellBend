@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.*;
 import me.chriss99.spellbend.util.ItemData;
@@ -233,14 +232,14 @@ public class SpellHandler {
         if (stunReverseTask != null) {
             stunReverseTask.cancel();
         } else {
-            walkSpeed.addModifier(Enums.DmgModType.SPELL, 0);
+            walkSpeed.addModifier(0);
             canNotJump.displaceValue(1);
         }
         stunReverseTask = new BukkitRunnable(){
             @Override
             public void run() {
                 stunReverseTask = null;
-                walkSpeed.removeModifier(Enums.DmgModType.SPELL, 0);
+                walkSpeed.removeModifier(0);
                 canNotJump.displaceValue(-1);
             }
         }.runTaskLater(plugin, timeInTicks);

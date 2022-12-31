@@ -16,7 +16,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -155,64 +154,85 @@ public class Test {
             }
         });
 
-        subCommands.put("value dmgMod get", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, String.class, Player.class}, new String[]{"dmgMod", "dmgModType", "player"}) {
+        subCommands.put("value modifier get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"modifier", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
-                String dmgModTypeString = ((String) arguments.get(1)).toUpperCase();
-                Player player = (Player) arguments.get(2);
+                String modifier = ((String) arguments.get(0)).toUpperCase();
+                Player player = (Player) arguments.get(1);
 
-                Enums.DmgModType[] dmgModTypes = Enums.DmgModType.values();
-                List<String> dmgModTypeStrings = new ArrayList<>(3);
-                for (Enums.DmgModType modType : dmgModTypes)
-                    dmgModTypeStrings.add(modType.toString().toUpperCase());
+                PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+                PercentageModifier percentageModifier = null;
+                switch (modifier) {
+                    case "DAMAGE_TAKEN" ->
+                            percentageModifier = sessionData.getDamageTakenModifiers();
+                    case "DAMAGE_DEALT" ->
+                            percentageModifier = sessionData.getDamageDealtModifiers();
+                    case "WALKSPEED" ->
+                            percentageModifier = sessionData.getWalkSpeedModifiers();
+                }
 
-                if (!dmgModTypeStrings.contains(dmgModTypeString) && !dmgModTypeString.equals("ALL")) {
-                    sender.sendMessage("§4" + dmgModTypeString + " is not a valid DmgModifier!");
+                if (percentageModifier == null) {
+                    sender.sendMessage(modifier + " is not a valid modifier!");
                     return true;
                 }
 
-                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
-                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
-                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
-                StringBuilder stringBuilder = new StringBuilder().append(dmgMod);
-                //noinspection SpellCheckingInspection
-                stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "").append("ifier ")
-                        .append(dmgModTypeString).append(" of ").append(player.getName()).append(": ")
-                        .append(percentageModifier.getModifier((dmgModTypeString.equals("ALL")) ? null : Enums.DmgModType.valueOf(dmgModTypeString)));
-                sender.sendMessage(stringBuilder.toString());
+                sender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
                 return true;
             }
         });
 
-        subCommands.put("value dmgMod add", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
+        subCommands.put("value modifier add", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class}, new String[]{"modifier", "player", "number"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
-                Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
-                Player player = (Player) arguments.get(2);
-                Float num = (Float) arguments.get(3);
+                String modifier = ((String) arguments.get(0)).toUpperCase();
+                Player player = (Player) arguments.get(1);
+                Float num = (Float) arguments.get(2);
 
-                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
-                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
-                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
-                percentageModifier.addModifier(dmgModType, num);
+                PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+                PercentageModifier percentageModifier = null;
+                switch (modifier) {
+                    case "DAMAGE_TAKEN" ->
+                        percentageModifier = sessionData.getDamageTakenModifiers();
+                    case "DAMAGE_DEALT" ->
+                        percentageModifier = sessionData.getDamageDealtModifiers();
+                    case "WALKSPEED" ->
+                        percentageModifier = sessionData.getWalkSpeedModifiers();
+                }
+
+                if (percentageModifier == null) {
+                    sender.sendMessage(modifier + " is not a valid modifier!");
+                    return true;
+                }
+
+                percentageModifier.addModifier(num);
                 return true;
             }
         });
 
-        subCommands.put("value dmgMod remove", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
+        subCommands.put("value modifier remove", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class}, new String[]{"modifier", "player", "number"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
-                Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
-                Player player = (Player) arguments.get(2);
-                Float num = (Float) arguments.get(3);
+                String modifier = ((String) arguments.get(0)).toUpperCase();
+                Player player = (Player) arguments.get(1);
+                Float num = (Float) arguments.get(2);
 
-                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
-                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
-                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
-                percentageModifier.removeModifier(dmgModType, num);
+                PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+                PercentageModifier percentageModifier = null;
+                switch (modifier) {
+                    case "DAMAGE_TAKEN" ->
+                            percentageModifier = sessionData.getDamageTakenModifiers();
+                    case "DAMAGE_DEALT" ->
+                            percentageModifier = sessionData.getDamageDealtModifiers();
+                    case "WALKSPEED" ->
+                            percentageModifier = sessionData.getWalkSpeedModifiers();
+                }
+
+                if (percentageModifier == null) {
+                    sender.sendMessage(modifier + " is not a valid modifier!");
+                    return true;
+                }
+
+                percentageModifier.removeModifier(num);
                 return true;
             }
         });
