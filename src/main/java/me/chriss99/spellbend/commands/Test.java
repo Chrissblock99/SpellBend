@@ -217,22 +217,6 @@ public class Test {
             }
         });
 
-        subCommands.put("value dmgMod set", new AdvancedSubCommand(new Class[]{Enums.Modifier.class, Enums.DmgModType.class, Player.class, Float.class}, new String[]{"dmgMod", "dmgModType", "player", "number"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Enums.Modifier dmgMod = (Enums.Modifier) arguments.get(0);
-                Enums.DmgModType dmgModType = (Enums.DmgModType) arguments.get(1);
-                Player player = (Player) arguments.get(2);
-                Float num = (Float) arguments.get(3);
-
-                PercentageModifier percentageModifier = (Enums.Modifier.DMGDEALT.equals(dmgMod)) ?
-                        PlayerSessionData.getPlayerSession(player).getDamageDealtModifiers() :
-                        PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers();
-                percentageModifier.setModifier(dmgModType, num);
-                return true;
-            }
-        });
-
         subCommands.put("value cooldown get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"spellType", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {

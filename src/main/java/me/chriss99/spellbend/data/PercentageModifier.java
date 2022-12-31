@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.harddata.Maps;
+import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -19,7 +20,8 @@ public class PercentageModifier {
 
     private final Player player;
     private final float[] modifiers;
-    private byte isZero = 0;
+    private final int[] activeModifiers;
+    private final int[] isZero;
     private final NamespacedKey key;
 
     public PercentageModifier(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name) {
@@ -31,33 +33,45 @@ public class PercentageModifier {
         if (gsonString == null) {
             Bukkit.getLogger().warning(player.getName() + "'s " + name + " were not setup when loading, fixing now!");
             modifiers = new float[]{1, 1, 1};
+            activeModifiers = new int[]{0, 0, 0};
+            isZero = new int[]{0, 0, 0};
             player.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(modifiers));
             return;
         }
 
-        Type type = new TypeToken<float[]>(){}.getType();
-        modifiers = gson.fromJson(gsonString, type);
+        Type type = new TypeToken<Data>(){}.getType();
+        Data data = gson.fromJson(gsonString, type);
+        modifiers = data.modifiers;
+        activeModifiers = data.activeModifiers;
+        isZero = data.isZero;
     }
 
     /**
-     * Gets the specified modifier of the player <br>
+     * Gets the specified modifier <br>
      * returns all of them multiplied together if given null <br>
-     * if isZero is true it returns 0
      *
      * @param modType The modifiers name, null returns all of them
-     * @return The modifier, 0 if isZero
+     * @return The modifier
      */
     public float getModifier(@Nullable Enums.DmgModType modType) {
-        if (isZero > 0)
+        Integer index = null;
+        if (modType != null)
+            index = Maps.modifierToIndexMap.get(modType);
+
+        if (index != null) {
+            if (isZero[index] == 0)
+                return 0;
+
+            return modifiers[index];
+        }
+
+        if (MathUtil.additiveArrayValue(isZero) != 0)
             return 0;
 
-        if (modType == null) {
-            float result = 1;
-            for (float num : modifiers)
-                result *= num;
-            return result;
-        }
-        return modifiers[Maps.modifierToIndexMap.get(modType)];
+        float result = 1;
+        for (float num : modifiers)
+            result *= num;
+        return result;
     }
 
     /**
@@ -66,96 +80,81 @@ public class PercentageModifier {
      * therefore it can be undone by dividing it by the same modifier
      * To do that call removeModifier()
      *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     * @throws IllegalArgumentException If the modifier is negative
      *
      * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
+     * @param modifier The modifier not negative
      */
     public void addModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+        if (modifier < 0)
+            throw new IllegalArgumentException("Modifier cannot be negative!");
+        int index = Maps.modifierToIndexMap.get(modType);
 
-        modifiers[Maps.modifierToIndexMap.get(modType)] *= modifier;
+        if (modifier != 1)
+            activeModifiers[index]++;
+
+        if (modifier == 0) {
+            isZero[index]++;
+            return;
+        }
+
+        modifiers[index] *= modifier;
     }
 
     /**
      * Removes the modifier from the specified type of the player
      * It does this by dividing the number with the modifier, undoing addModifier() in the process
      *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     * @throws IllegalArgumentException If the modifier is negative
      *
      * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
+     * @param modifier The modifier not negative
      */
     public void removeModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
-
-        modifiers[Maps.modifierToIndexMap.get(modType)] /= modifier;
-    }
-
-    /**
-     * Sets the modifier from the specified type of the player if it is larger <br>
-     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
-     * which should be used to undo this modifier with removeModifier() later in the process</b> <br>
-     * If the extending action didn't change anything, 1 will be returned
-     *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
-     *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
-     * @return An undo factor usable to undo the change later
-     */
-    public float extendModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
-
+        if (modifier < 0)
+            throw new IllegalArgumentException("Modifier cannot be negative!");
         int index = Maps.modifierToIndexMap.get(modType);
-        if (modifiers[index]<modifier) {
-            float oldModifiers = modifiers[index];
-            modifiers[index] = modifier;
-            return modifiers[index]/oldModifiers;
+
+        if (modifier != 1) {
+            activeModifiers[index]--;
+
+            if (activeModifiers[index] == 0)
+                modifiers[index] = 1;
         }
-        return 1;
-    }
 
-    /**
-     * Sets the Modifier from the specified type of the player <br>
-     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
-     * which should be used to undo this modifier with removeModifier() later in the process</b>
-     *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
-     *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
-     * @return An undo factor usable to undo the change later
-     */
-    public float setModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+        if (modifier == 0) {
+            isZero[index]--;
+            return;
+        }
 
-        int index = Maps.modifierToIndexMap.get(modType);
-        float oldModifiers = modifiers[index];
-        modifiers[index] = modifier;
-        return modifiers[index]/oldModifiers;
-    }
-
-    public void displaceIsZero(int displace) {
-        isZero += displace;
+        modifiers[index] /= modifier;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public byte getIsZero() {
-        return isZero;
-    }
-
     /**
      * Saves the players modifiers to their PersistentDataContainer
      */
     public void saveModifiers() {
-        player.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(modifiers));
+        player.getPersistentDataContainer().set(key, PersistentDataType.STRING,
+                gson.toJson(new Data(modifiers, activeModifiers, isZero)));
+    }
+
+    public static Data getDefaultData() {
+        return new Data(new float[]{1, 1, 1}, new int[]{0, 0, 0}, new int[]{0, 0, 0});
+    }
+
+    private static class Data {
+        public float[] modifiers;
+        public int[] activeModifiers;
+        public int[] isZero;
+
+        public Data(float[] modifiers, int[] activeModifiers, int[] isZero) {
+            this.modifiers = modifiers;
+            this.activeModifiers = activeModifiers;
+            this.isZero = isZero;
+        }
     }
 }

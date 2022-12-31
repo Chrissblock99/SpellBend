@@ -5,6 +5,7 @@ import me.chriss99.spellbend.data.PercentageModifier;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
+import me.chriss99.spellbend.harddata.Enums;
 import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.PlayerUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
@@ -50,11 +51,11 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         super(caster, spellType, "TEST", item);
         PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{0.5f, 1.5f, 0.25f, 10});
         walkSpeed = PlayerSessionData.getPlayerSession(caster).getWalkSpeedModifiers();
-        walkSpeed.displaceIsZero(1);
+        walkSpeed.addModifier(Enums.DmgModType.SPELL, 0);
         stunUndoTask = new BukkitRunnable(){
              @Override
             public void run() {
-                 walkSpeed.displaceIsZero(-1);
+                 walkSpeed.removeModifier(Enums.DmgModType.SPELL, 0);
              }
         }.runTaskLater(SpellBend.getInstance(), 45);
 
@@ -167,7 +168,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     @Override
     public void cancelSpell() {
         stunUndoTask.cancel();
-        walkSpeed.displaceIsZero(-1);
+        walkSpeed.removeModifier(Enums.DmgModType.SPELL, 0);
 
         if (windupTask != null) {
             windupTask.cancel();
