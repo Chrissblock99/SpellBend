@@ -122,9 +122,9 @@ public class PercentageModifier {
     }
 
     private static class Data {
-        public float modifier;
-        public int activeModifiers;
-        public int isZero;
+        public final float modifier;
+        public final int activeModifiers;
+        public final int isZero;
 
         public Data(float modifiers, int activeModifiers, int isZero) {
             this.modifier = modifiers;

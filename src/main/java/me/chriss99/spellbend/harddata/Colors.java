@@ -27,13 +27,13 @@ public class Colors {
         return (Color) MathUtil.randomEntry(new Color[]{yellow1, yellow2});
     }
 
-    public static Color blue1 = Color.fromRGB(0,255,255);
-    public static Color blue2 = Color.fromRGB(0,204,204);
-    public static Color blue3 = Color.fromRGB(0,153,153);
-    public static Color blue4 = Color.fromRGB(0,102,102);
-    public static Color blue5 = Color.fromRGB(0,51,51);
-    public static Color gold1 = Color.fromRGB(255,215,0);
-    public static Color gold2 = Color.fromRGB(220,180,0);
+    public static final Color blue1 = Color.fromRGB(0,255,255);
+    public static final Color blue2 = Color.fromRGB(0,204,204);
+    public static final Color blue3 = Color.fromRGB(0,153,153);
+    public static final Color blue4 = Color.fromRGB(0,102,102);
+    public static final Color blue5 = Color.fromRGB(0,51,51);
+    public static final Color gold1 = Color.fromRGB(255,215,0);
+    public static final Color gold2 = Color.fromRGB(220,180,0);
 
     public static Color getRandomBlue1to3() {
         return (Color) MathUtil.randomEntry(new Color[]{blue1, blue2, blue3});

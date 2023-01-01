@@ -21,9 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class Seismic_Shock extends Spell implements Killable, Stunable {
-    public static Vector[] ring1 = createRing1();
-    public static Vector[] ring2 = createRing2();
-    public static Vector[] ring3 = createRing3();
+    public static final Vector[] ring1 = createRing1();
+    public static final Vector[] ring2 = createRing2();
+    public static final Vector[] ring3 = createRing3();
 
     private final PercentageModifier walkSpeed;
     private final BukkitTask stunUndoTask;

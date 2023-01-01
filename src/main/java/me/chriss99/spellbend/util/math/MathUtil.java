@@ -78,6 +78,7 @@ public class MathUtil {
         return percentage >= Math.random();
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public static double lerp(double a, double b, double t) {
         return b + t * (a - b);
     }

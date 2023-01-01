@@ -167,7 +167,7 @@ public class Test {
                             percentageModifier = sessionData.getDamageTakenModifiers();
                     case "DAMAGE_DEALT" ->
                             percentageModifier = sessionData.getDamageDealtModifiers();
-                    case "WALKSPEED" ->
+                    case "WALK_SPEED" ->
                             percentageModifier = sessionData.getWalkSpeedModifiers();
                 }
 
@@ -195,7 +195,7 @@ public class Test {
                         percentageModifier = sessionData.getDamageTakenModifiers();
                     case "DAMAGE_DEALT" ->
                         percentageModifier = sessionData.getDamageDealtModifiers();
-                    case "WALKSPEED" ->
+                    case "WALK_SPEED" ->
                         percentageModifier = sessionData.getWalkSpeedModifiers();
                 }
 
@@ -223,7 +223,7 @@ public class Test {
                             percentageModifier = sessionData.getDamageTakenModifiers();
                     case "DAMAGE_DEALT" ->
                             percentageModifier = sessionData.getDamageDealtModifiers();
-                    case "WALKSPEED" ->
+                    case "WALK_SPEED" ->
                             percentageModifier = sessionData.getWalkSpeedModifiers();
                 }
 
