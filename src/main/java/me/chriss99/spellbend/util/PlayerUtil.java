@@ -52,7 +52,7 @@ public class PlayerUtil {
             double deltaZ = playerLocation.getZ()-location.getZ();
             double playerDistanceSquared = deltaX*deltaX + deltaY*deltaY + deltaZ*deltaZ;
             if (playerDistanceSquared<=distanceSquared)
-                playerToDistanceSquaredMap.put(player, distanceSquared);
+                playerToDistanceSquaredMap.put(player, playerDistanceSquared);
         }
         return playerToDistanceSquaredMap;
     }
