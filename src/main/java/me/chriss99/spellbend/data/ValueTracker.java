@@ -17,7 +17,8 @@ public class ValueTracker {
 
         value = player.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
         if (value == null) {
-            Bukkit.getLogger().warning(player.getName() + " did not have " + name + " set up, fixing!");
+            Bukkit.getLogger().warning(player.getName() + " did not have " + name + " set up when loading, fixing now!");
+            player.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, defaultValue);
             value = defaultValue;
         }
     }

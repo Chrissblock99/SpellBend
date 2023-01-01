@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class WalkSpeed extends PercentageModifier {
     public WalkSpeed(@NotNull Player player) {
-        super(player, PersistentDataKeys.walkSpeedModifiersKey, "walkSpeed");
+        super(player, PersistentDataKeys.walkSpeedModifiersKey, "walkSpeedModifiers");
     }
 
     /**

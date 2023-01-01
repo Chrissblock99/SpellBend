@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class Fiery_Rage extends Spell implements Killable {
     private BukkitTask windupTask;
     private BukkitTask activeTask;
-    private final Spell instance;
+
     private final PlayerSessionData sessionData;
 
     public static void register() {
@@ -35,7 +35,6 @@ public class Fiery_Rage extends Spell implements Killable {
 
     public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "AURA", item);
-        instance = this;
         sessionData = PlayerSessionData.getPlayerSession(caster);
         sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{1, 0, 10, 30});
         windup();
@@ -129,7 +128,7 @@ public class Fiery_Rage extends Spell implements Killable {
                     world.playSound(caster.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.5f);
 
                     activeTask.cancel();
-                    PlayerSessionData.getPlayerSession(caster).getSpellHandler().getActivePlayerSpells().remove(instance);
+                    naturalSpellEnd();
                 }
                 time--;
             }

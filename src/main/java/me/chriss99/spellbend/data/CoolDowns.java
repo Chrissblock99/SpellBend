@@ -89,7 +89,7 @@ public class CoolDowns {
         CoolDownEntry coolDownEntry = new CoolDownEntry(spellType, timeInSeconds, coolDownStage);
         coolDowns.put(spellType, coolDownEntry);
         if (spellType.equals(ItemData.getHeldSpellType(player)))
-            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerHasActiveVisibleCoolDown(spellType);
+            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().displayCooldown(spellType);
         return coolDownEntry;
     }
 
@@ -124,7 +124,7 @@ public class CoolDowns {
             coolDowns.put(spellType, newCoolDown);
 
         if (spellType.equals(ItemData.getHeldSpellType(player)))
-            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerHasActiveVisibleCoolDown(spellType);
+            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().displayCooldown(spellType);
         return getCoolDownEntry(spellType);
     }
 

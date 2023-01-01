@@ -32,13 +32,15 @@ public class PlayerSessionData {
     private final Currency crystals;
 
     private final ValueTracker canNotJump;
-    private final ValueTracker invisibility;
+    private final ValueTracker isInvisible;
 
     private final CoolDowns coolDowns;
     private final PercentageModifier damageDealtModifiers;
     private final PercentageModifier damageTakenModifiers;
     private final PercentageModifier walkSpeedModifiers;
     private final Health health;
+
+    private final ValueTracker isMovementStunned;
 
     public static void startManaRegenerator() {
         new BukkitRunnable(){
@@ -111,12 +113,14 @@ public class PlayerSessionData {
         data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
 
         data.set(PersistentDataKeys.canNotJumpKey, PersistentDataType.INTEGER, 0);
-        data.set(PersistentDataKeys.invisibilityKey, PersistentDataType.INTEGER, 0);
+        data.set(PersistentDataKeys.isInvisibleKey, PersistentDataType.INTEGER, 0);
 
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
         data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
         data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
         data.set(PersistentDataKeys.walkSpeedModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+
+        data.set(PersistentDataKeys.isMovementStunnedKey, PersistentDataType.INTEGER, 0);
     }
 
     private PlayerSessionData(@NotNull Player player) {
@@ -132,13 +136,15 @@ public class PlayerSessionData {
         crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
 
         canNotJump = new ValueTracker(player, PersistentDataKeys.canNotJumpKey, "canNotJump", 0);
-        invisibility = new Invisibility(player);
+        isInvisible = new IsInvisible(player);
 
         coolDowns = new CoolDowns(player);
         damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
         damageTakenModifiers = new PercentageModifier(player, PersistentDataKeys.damageTakenModifiersKey, "damageTakenModifiers");
         walkSpeedModifiers = new WalkSpeed(player);
         health = new Health(player);
+
+        isMovementStunned = new IsMovementStunned(player, walkSpeedModifiers, canNotJump);
     }
 
     public Player getPlayer() {
@@ -177,8 +183,8 @@ public class PlayerSessionData {
         return canNotJump;
     }
 
-    public ValueTracker getInvisibility() {
-        return invisibility;
+    public ValueTracker getIsInvisible() {
+        return isInvisible;
     }
 
     public CoolDowns getCoolDowns() {
@@ -201,6 +207,10 @@ public class PlayerSessionData {
         return health;
     }
 
+    public ValueTracker getIsMovementStunned() {
+        return isMovementStunned;
+    }
+
     public static Map<Player, PlayerSessionData> getPlayerSessions() {
         return playerSessions;
     }
@@ -214,21 +224,23 @@ public class PlayerSessionData {
         crystals.saveCurrency();
 
         canNotJump.saveValue();
-        invisibility.saveValue();
+        isInvisible.saveValue();
 
         coolDowns.saveCoolDowns();
         damageDealtModifiers.saveModifiers();
         damageTakenModifiers.saveModifiers();
         walkSpeedModifiers.saveModifiers();
+
+        isMovementStunned.saveValue();
     }
 
     /**
      * Saves the players sessionData and removes it from the sessionMap
      */
     public void endSession() {
-        saveSession();
         spellHandler.playerLeave();
-        playerDataBoard.playerNoLongerHasActiveVisibleCoolDown();
+        playerDataBoard.stopDisplayCooldown();
+        saveSession();
         playerSessions.remove(player);
     }
 

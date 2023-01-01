@@ -18,10 +18,10 @@ public class Temporary {
             String spellType = ItemData.getSpellType(newItem);
             if (PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
                 //noinspection ConstantConditions because if it would be null, then the type cannot be cooled down, and it would not reach this statement
-                PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerHasActiveVisibleCoolDown(spellType);
+                PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().displayCooldown(spellType);
                 //have to pass null here as the event isn't finished yet.
                 //therefore the item the player is currently holding is still the old one
-            else PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerNoLongerHasActiveVisibleCoolDown(null);
+            else PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().stopDisplayCooldown(null);
         }
     }
 }

@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.data.PercentageModifier;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
@@ -25,7 +24,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     public static final Vector[] ring2 = createRing2();
     public static final Vector[] ring3 = createRing3();
 
-    private final PercentageModifier walkSpeed;
+    private final PlayerSessionData sessionData;
     private final BukkitTask stunUndoTask;
     private BukkitTask windupTask;
     private BukkitTask activeTask;
@@ -48,13 +47,14 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
 
     public Seismic_Shock(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "TEST", item);
-        PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{0.5f, 1.5f, 0.25f, 10});
-        walkSpeed = PlayerSessionData.getPlayerSession(caster).getWalkSpeedModifiers();
-        walkSpeed.addModifier(0);
+        sessionData = PlayerSessionData.getPlayerSession(caster);
+        sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{0.5f, 1.5f, 0.25f, 10});
+        sessionData.getIsMovementStunned().displaceValue(1);
+
         stunUndoTask = new BukkitRunnable(){
              @Override
             public void run() {
-                 walkSpeed.removeModifier(0);
+                 sessionData.getIsMovementStunned().displaceValue(-1);
              }
         }.runTaskLater(SpellBend.getInstance(), 45);
 
@@ -152,6 +152,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
 
                 if (time == 0) {
                     activeTask.cancel();
+                    naturalSpellEnd();
                 }
 
                 time--;
@@ -167,7 +168,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     @Override
     public void cancelSpell() {
         stunUndoTask.cancel();
-        walkSpeed.removeModifier(0);
+        sessionData.getIsMovementStunned().displaceValue(-1);
 
         if (windupTask != null) {
             windupTask.cancel();

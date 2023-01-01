@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class Escape_Through_Time extends Spell implements Killable {
-    private final Escape_Through_Time instance;
     private final Location armorStandOrigin;
     private BukkitTask armorStandTask;
     private BukkitTask escapeTask;
@@ -43,7 +42,6 @@ public class Escape_Through_Time extends Spell implements Killable {
 
     public Escape_Through_Time(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "TRANSPORT", item);
-        instance = this;
         coolDown = PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{0, 0, 15, 5});
         armorStandOrigin = caster.getLocation();
         setupArmorStand();
@@ -83,7 +81,7 @@ public class Escape_Through_Time extends Spell implements Killable {
                     explode();
 
                     armorStandTask.cancel();
-                    spellHandler.getActivePlayerSpells().remove(instance);
+                    naturalSpellEnd();
                 }
                 time--;
             }
@@ -116,7 +114,7 @@ public class Escape_Through_Time extends Spell implements Killable {
                     escapeTask.cancel();
                     armorStandTask.cancel();
                     coolDown.skipToStage(Enums.CoolDownStage.COOLDOWN);
-                    spellHandler.getActivePlayerSpells().remove(instance);
+                    naturalSpellEnd();
                 }
                 time--;
             }
@@ -145,7 +143,6 @@ public class Escape_Through_Time extends Spell implements Killable {
 
     @Override
     public void casterDeath(@Nullable Entity Killer) {
-        explode();
         cancelSpell();
     }
 

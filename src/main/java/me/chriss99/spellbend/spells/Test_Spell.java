@@ -22,11 +22,11 @@ public class Test_Spell extends Spell implements Killable, Stunable {
     public Test_Spell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "TEST", item);
         PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{2, 2, 2, 2});
+        naturalSpellEnd();
     }
 
     @Override
     public void casterLeave() {
-
         cancelSpell();
     }
 
@@ -37,7 +37,6 @@ public class Test_Spell extends Spell implements Killable, Stunable {
 
     @Override
     public void casterDeath(@Nullable Entity killer) {
-
         cancelSpell();
     }
 

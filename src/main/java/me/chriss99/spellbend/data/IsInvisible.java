@@ -4,9 +4,9 @@ import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class Invisibility extends ValueTracker {
-    public Invisibility(@NotNull Player player) {
-        super(player, PersistentDataKeys.invisibilityKey, "invisibility", 0);
+public class IsInvisible extends ValueTracker {
+    public IsInvisible(@NotNull Player player) {
+        super(player, PersistentDataKeys.isInvisibleKey, "isInvisible", 0);
         updateInvisibility();
     }
 
