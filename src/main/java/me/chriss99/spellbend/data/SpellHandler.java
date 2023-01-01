@@ -92,6 +92,11 @@ public class SpellHandler {
         clickableSpellRunnables.remove(item);
     }
 
+    /**
+     * Either executes the spellName of the item or a mapped clickableSpellRunnable
+     *
+     * @param spellItem The spellItem clicked (HAS to be a spell)
+     */
     public void playerClickedSpellItem(@NotNull ItemStack spellItem) {
         String spellName = ItemData.getSpellName(spellItem);
         if (spellName == null) {
@@ -102,17 +107,26 @@ public class SpellHandler {
         playerClickedSpellItem(spellName, spellItem);
     }
 
+    /**
+     * Either executes the spellName of the item or a mapped clickableSpellRunnable
+     *
+     * @param spellName The spellName
+     * @param spellItem The clicked item (DOESN'T HAVE to be a spell)
+     */
     public void playerClickedSpellItem(@NotNull String spellName, @NotNull ItemStack spellItem) {
         String spellType = ItemData.getSpellType(spellItem);
-        if (spellType == null) {
-            Bukkit.getLogger().warning(player.getName() + " supposedly clicked a spellItem, but the item has no spellType!");
-            return;
-        }
 
         playerClickedSpellItem(spellName, spellType, spellItem);
     }
 
-    public void playerClickedSpellItem(@NotNull String spellName, @NotNull String spellType, @NotNull ItemStack spellItem) {
+    /**
+     * Either executes the spellName of the item or a mapped clickableSpellRunnable
+     *
+     * @param spellName The spellName
+     * @param spellType The spellType (can be null)
+     * @param spellItem The item clicked (DOESN'T HAVE to be a spell)
+     */
+    public void playerClickedSpellItem(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem) {
         Runnable clickableSpellRunnable = clickableSpellRunnables.get(spellItem);
         if (clickableSpellRunnable != null) {
             clickableSpellRunnable.run();
@@ -137,7 +151,7 @@ public class SpellHandler {
      * Creates a spell of named type and adds it to the players activeSpellSet.
      *
      * @param spellName The name of the spell
-     * @param spellItem The item used (doesn't HAVE to be a spell)
+     * @param spellItem The item used (DOESN'T HAVE to be a spell)
      * @return If the spell was cast or not
      */
     public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem) {
@@ -157,8 +171,8 @@ public class SpellHandler {
             return false;
         }
 
-        //noinspection ConstantConditions
-        return letPlayerCastSpell(spellItem.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING).toUpperCase(), spellItem, force);
+        //noinspection ConstantConditions because it can only get here if it is a spell, therefore the name is present and not null
+        return letPlayerCastSpell(ItemData.getSpellName(spellItem), spellItem, force);
     }
 
     /**
@@ -182,8 +196,8 @@ public class SpellHandler {
      * Creates a spell of named type and adds it to the players activeSpellSet.
      *
      * @param spellName The name of the spell
-     * @param spellType The spellType it should be used under
-     * @param spellItem The item used (doesn't HAVE to be a spell)
+     * @param spellType The spellType it should be used under (can be null, spell will overwrite with its own)
+     * @param spellItem The item used (DOESN'T HAVE to be a spell)
      * @param force To force the spell even if coolDowned
      * @return If the spell was cast or not
      */
@@ -289,8 +303,8 @@ public class SpellHandler {
 
         if (item.hasItemMeta()) {
             PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-            if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING) && data.has(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING))
-                return data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING) != null && data.get(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING) != null;
+            if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING))
+                return data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING) != null;
         }
         return false;
     }
