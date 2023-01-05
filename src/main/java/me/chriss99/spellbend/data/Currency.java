@@ -37,14 +37,15 @@ public class Currency {
 
     public void addCurrency(float currency) {
         this.currency += currency;
-        if (updateBoard)
-            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
-        if (updateActionBar)
-            PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
+        updateDisplay();
     }
 
     public void setCurrency(float currency) {
         this.currency = currency;
+        updateDisplay();
+    }
+
+    private void updateDisplay() {
         if (updateBoard)
             PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
         if (updateActionBar)

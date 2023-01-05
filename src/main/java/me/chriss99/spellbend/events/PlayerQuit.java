@@ -16,7 +16,7 @@ public class PlayerQuit implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerNoLongerHasActiveVisibleCoolDown();
+        PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().stopDisplayCooldown();
         PlayerSessionData.getPlayerSession(player).endSession();
     }
 }

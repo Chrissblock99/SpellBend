@@ -3,14 +3,11 @@ package me.chriss99.spellbend.data;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.harddata.Enums;
-import me.chriss99.spellbend.harddata.Maps;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 
@@ -18,8 +15,9 @@ public class PercentageModifier {
     private static final Gson gson = SpellBend.getGson();
 
     private final Player player;
-    private final float[] modifiers;
-    private byte isZero = 0;
+    private float modifier;
+    private int activeModifiers;
+    private int isZero;
     private final NamespacedKey key;
 
     public PercentageModifier(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name) {
@@ -30,132 +28,108 @@ public class PercentageModifier {
 
         if (gsonString == null) {
             Bukkit.getLogger().warning(player.getName() + "'s " + name + " were not setup when loading, fixing now!");
-            modifiers = new float[]{1, 1, 1};
-            player.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(modifiers));
+            modifier = 1;
+            activeModifiers = 0;
+            isZero = 0;
+            player.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(getDefaultData()));
             return;
         }
 
-        Type type = new TypeToken<float[]>(){}.getType();
-        modifiers = gson.fromJson(gsonString, type);
+        Type type = new TypeToken<Data>(){}.getType();
+        Data data = gson.fromJson(gsonString, type);
+        modifier = data.modifier;
+        activeModifiers = data.activeModifiers;
+        isZero = data.isZero;
     }
 
     /**
-     * Gets the specified modifier of the player <br>
-     * returns all of them multiplied together if given null <br>
-     * if isZero is true it returns 0
+     * Gets the modifier
      *
-     * @param modType The modifiers name, null returns all of them
-     * @return The modifier, 0 if isZero
+     * @return The modifier
      */
-    public float getModifier(@Nullable Enums.DmgModType modType) {
+    public float getModifier() {
         if (isZero > 0)
             return 0;
 
-        if (modType == null) {
-            float result = 1;
-            for (float num : modifiers)
-                result *= num;
-            return result;
-        }
-        return modifiers[Maps.modifierToIndexMap.get(modType)];
+        return modifier;
     }
 
     /**
-     * Adds the Modifier to the specified type of the player
+     * Adds the Modifier to the player
      * It does this by multiplying the number with the modifier
      * therefore it can be undone by dividing it by the same modifier
      * To do that call removeModifier()
      *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     * @throws IllegalArgumentException If the modifier is negative
      *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
+     * @param modifier The modifier not negative
      */
-    public void addModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+    public void addModifier(float modifier) {
+        if (modifier < 0)
+            throw new IllegalArgumentException("Modifier cannot be negative!");
+        if (modifier == 1)
+            return;
 
-        modifiers[Maps.modifierToIndexMap.get(modType)] *= modifier;
+        activeModifiers++;
+        if (modifier == 0) {
+            isZero++;
+            return;
+        }
+
+        this.modifier *= modifier;
     }
 
     /**
-     * Removes the modifier from the specified type of the player
+     * Removes the modifier from the player
      * It does this by dividing the number with the modifier, undoing addModifier() in the process
      *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
+     * @throws IllegalArgumentException If the modifier is negative
      *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
+     * @param modifier The modifier not negative
      */
-    public void removeModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
+    public void removeModifier(float modifier) {
+        if (modifier < 0)
+            throw new IllegalArgumentException("Modifier cannot be negative!");
+        if (modifier == 1)
+            return;
 
-        modifiers[Maps.modifierToIndexMap.get(modType)] /= modifier;
-    }
+        activeModifiers--;
+        if (activeModifiers == 0)
+            this.modifier = 1;
 
-    /**
-     * Sets the modifier from the specified type of the player if it is larger <br>
-     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
-     * which should be used to undo this modifier with removeModifier() later in the process</b> <br>
-     * If the extending action didn't change anything, 1 will be returned
-     *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
-     *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
-     * @return An undo factor usable to undo the change later
-     */
-    public float extendModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
-
-        int index = Maps.modifierToIndexMap.get(modType);
-        if (modifiers[index]<modifier) {
-            float oldModifiers = modifiers[index];
-            modifiers[index] = modifier;
-            return modifiers[index]/oldModifiers;
+        if (modifier == 0) {
+            isZero--;
+            return;
         }
-        return 1;
-    }
 
-    /**
-     * Sets the Modifier from the specified type of the player <br>
-     * <b>Because this can mathematically not be undone an undo factor will be returned <br>
-     * which should be used to undo this modifier with removeModifier() later in the process</b>
-     *
-     * @throws IllegalArgumentException If the modifier is smaller or equal to 0
-     *
-     * @param modType The type of the modifier
-     * @param modifier The modifier not smaller or equal to 0
-     * @return An undo factor usable to undo the change later
-     */
-    public float setModifier(@NotNull Enums.DmgModType modType, float modifier) {
-        if (modifier <= 0)
-            throw new IllegalArgumentException("Modifier cannot be smaller or equal to 0!");
-
-        int index = Maps.modifierToIndexMap.get(modType);
-        float oldModifiers = modifiers[index];
-        modifiers[index] = modifier;
-        return modifiers[index]/oldModifiers;
-    }
-
-    public void displaceIsZero(int displace) {
-        isZero += displace;
+        this.modifier /= modifier;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public byte getIsZero() {
-        return isZero;
-    }
-
     /**
      * Saves the players modifiers to their PersistentDataContainer
      */
     public void saveModifiers() {
-        player.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(modifiers));
+        player.getPersistentDataContainer().set(key, PersistentDataType.STRING,
+                gson.toJson(new Data(modifier, activeModifiers, isZero)));
+    }
+
+    public static Data getDefaultData() {
+        return new Data(1, 0, 0);
+    }
+
+    private static class Data {
+        public final float modifier;
+        public final int activeModifiers;
+        public final int isZero;
+
+        public Data(float modifiers, int activeModifiers, int isZero) {
+            this.modifier = modifiers;
+            this.activeModifiers = activeModifiers;
+            this.isZero = isZero;
+        }
     }
 }

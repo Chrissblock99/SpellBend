@@ -19,7 +19,7 @@ public class PlayerSessionData {
     private static final Gson gson = SpellBend.getGson();
     private static final Map<Player, PlayerSessionData> playerSessions = new HashMap<>();
 
-    //TODO might not be needed, but keep until good reasoning is found
+
     private final Player player;
 
     private final SpellHandler spellHandler;
@@ -31,11 +31,16 @@ public class PlayerSessionData {
     private final Currency gold;
     private final Currency crystals;
 
+    private final ValueTracker canNotJump;
+    private final ValueTracker isInvisible;
+
     private final CoolDowns coolDowns;
     private final PercentageModifier damageDealtModifiers;
     private final PercentageModifier damageTakenModifiers;
     private final PercentageModifier walkSpeedModifiers;
     private final Health health;
+
+    private final ValueTracker isMovementStunned;
 
     public static void startManaRegenerator() {
         new BukkitRunnable(){
@@ -81,6 +86,11 @@ public class PlayerSessionData {
      * @return The player's session, null if offline
      */
     public static @NotNull PlayerSessionData getPlayerSession(@NotNull Player player) {
+        if (!player.isOnline()) {
+            //noinspection DataFlowIssue
+            return null;
+        }
+
         PlayerSessionData playerSession = playerSessions.get(player);
         if (playerSession == null) {
             Bukkit.getLogger().warning(player.getName() + " was not loaded in PlayerSessions map, now fixing!");
@@ -97,13 +107,20 @@ public class PlayerSessionData {
      */
     public static void setupPlayerData(@NotNull Player player) {
         PersistentDataContainer data = player.getPersistentDataContainer();
+
         data.set(PersistentDataKeys.gemsKey, PersistentDataType.FLOAT, 150f);
         data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
         data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
+
+        data.set(PersistentDataKeys.canNotJumpKey, PersistentDataType.INTEGER, 0);
+        data.set(PersistentDataKeys.isInvisibleKey, PersistentDataType.INTEGER, 0);
+
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
-        data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
-        data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
-        data.set(PersistentDataKeys.walkSpeedModifiersKey, PersistentDataType.STRING, gson.toJson(new float[]{1, 1, 1}));
+        data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+        data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+        data.set(PersistentDataKeys.walkSpeedModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+
+        data.set(PersistentDataKeys.isMovementStunnedKey, PersistentDataType.INTEGER, 0);
     }
 
     private PlayerSessionData(@NotNull Player player) {
@@ -118,11 +135,16 @@ public class PlayerSessionData {
         gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
         crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
 
+        canNotJump = new ValueTracker(player, PersistentDataKeys.canNotJumpKey, "canNotJump", 0);
+        isInvisible = new IsInvisible(player);
+
         coolDowns = new CoolDowns(player);
         damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
         damageTakenModifiers = new PercentageModifier(player, PersistentDataKeys.damageTakenModifiersKey, "damageTakenModifiers");
-        walkSpeedModifiers = new WalkSpeed(player, PersistentDataKeys.walkSpeedModifiersKey, "walkSpeedModifiers");
+        walkSpeedModifiers = new WalkSpeed(player);
         health = new Health(player);
+
+        isMovementStunned = new IsMovementStunned(player, walkSpeedModifiers, canNotJump);
     }
 
     public Player getPlayer() {
@@ -157,6 +179,14 @@ public class PlayerSessionData {
         return crystals;
     }
 
+    public ValueTracker getCanNotJump() {
+        return canNotJump;
+    }
+
+    public ValueTracker getIsInvisible() {
+        return isInvisible;
+    }
+
     public CoolDowns getCoolDowns() {
         return coolDowns;
     }
@@ -177,6 +207,10 @@ public class PlayerSessionData {
         return health;
     }
 
+    public ValueTracker getIsMovementStunned() {
+        return isMovementStunned;
+    }
+
     public static Map<Player, PlayerSessionData> getPlayerSessions() {
         return playerSessions;
     }
@@ -189,21 +223,25 @@ public class PlayerSessionData {
         gold.saveCurrency();
         crystals.saveCurrency();
 
+        canNotJump.saveValue();
+        isInvisible.saveValue();
+
         coolDowns.saveCoolDowns();
         damageDealtModifiers.saveModifiers();
         damageTakenModifiers.saveModifiers();
         walkSpeedModifiers.saveModifiers();
+
+        isMovementStunned.saveValue();
     }
 
     /**
      * Saves the players sessionData and removes it from the sessionMap
      */
     public void endSession() {
-        saveSession();
         spellHandler.playerLeave();
-        playerDataBoard.playerNoLongerHasActiveVisibleCoolDown();
-        //noinspection SuspiciousMethodCalls
-        playerSessions.remove(this);
+        playerDataBoard.stopDisplayCooldown();
+        saveSession();
+        playerSessions.remove(player);
     }
 
     public static void endAllSessions() {

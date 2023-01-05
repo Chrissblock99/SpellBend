@@ -46,8 +46,8 @@ public class Health {
             throw new IllegalArgumentException("Damage cannot be negative!");
 
         double damage = rawDamage;
-        damage *= (attacker instanceof Player attackerPlayer) ? PlayerSessionData.getPlayerSession(attackerPlayer).getDamageDealtModifiers().getModifier(null) : 1;
-        damage *= PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers().getModifier(null);
+        damage *= (attacker instanceof Player attackerPlayer) ? PlayerSessionData.getPlayerSession(attackerPlayer).getDamageDealtModifiers().getModifier() : 1;
+        damage *= PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers().getModifier();
 
         double healthBefore = getHealth();
         damageEntries.add(0, new DamageEntry(attacker,

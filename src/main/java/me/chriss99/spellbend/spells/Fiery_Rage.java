@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class Fiery_Rage extends Spell implements Killable {
     private BukkitTask windupTask;
     private BukkitTask activeTask;
-    private final Spell instance;
+
     private final PlayerSessionData sessionData;
 
     public static void register() {
@@ -35,7 +35,6 @@ public class Fiery_Rage extends Spell implements Killable {
 
     public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
         super(caster, spellType, "AURA", item);
-        instance = this;
         sessionData = PlayerSessionData.getPlayerSession(caster);
         sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{1, 0, 10, 30});
         windup();
@@ -89,8 +88,8 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     private void activate() {
-        sessionData.getDamageDealtModifiers().addModifier(Enums.DmgModType.SPELL, 1.5f);
-        sessionData.getWalkSpeedModifiers().addModifier(Enums.DmgModType.SPELL, 1.2f);
+        sessionData.getDamageDealtModifiers().addModifier(1.5f);
+        sessionData.getWalkSpeedModifiers().addModifier(1.2f);
 
         World world = caster.getWorld();
         Location location = caster.getLocation();
@@ -122,14 +121,14 @@ public class Fiery_Rage extends Spell implements Killable {
                 }
 
                 if (time == 0) {
-                    sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
-                    sessionData.getWalkSpeedModifiers().removeModifier(Enums.DmgModType.SPELL, 1.2f);
+                    sessionData.getDamageDealtModifiers().removeModifier(1.5f);
+                    sessionData.getWalkSpeedModifiers().removeModifier(1.2f);
 
                     world.playSound(caster.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1.2f);
                     world.playSound(caster.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.5f);
 
                     activeTask.cancel();
-                    PlayerSessionData.getPlayerSession(caster).getSpellHandler().getActivePlayerSpells().remove(instance);
+                    naturalSpellEnd();
                 }
                 time--;
             }
@@ -168,8 +167,8 @@ public class Fiery_Rage extends Spell implements Killable {
         }
 
         if (!activeTask.isCancelled()) {
-            sessionData.getDamageDealtModifiers().removeModifier(Enums.DmgModType.SPELL, 1.5f);
-            sessionData.getWalkSpeedModifiers().removeModifier(Enums.DmgModType.SPELL, 1.2f);
+            sessionData.getDamageDealtModifiers().removeModifier(1.5f);
+            sessionData.getWalkSpeedModifiers().removeModifier(1.2f);
 
             World world = caster.getWorld();
             Location location = caster.getLocation();

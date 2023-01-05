@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.spells;
 
+import me.chriss99.spellbend.data.PlayerSessionData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,14 @@ public abstract class Spell {
         this.caster = caster;
         this.spellType = Objects.requireNonNullElse(spellType, standardSpellType);
         this.item = item;
+    }
+
+    /**
+     * Removes the spell from the players active spells
+     * <b>Is supposed to be called when the spell ends with its normal process</b>
+     */
+    protected void naturalSpellEnd() {
+        PlayerSessionData.getPlayerSession(caster).getSpellHandler().getActivePlayerSpells().remove(this);
     }
 
     public @NotNull Player getCaster() {

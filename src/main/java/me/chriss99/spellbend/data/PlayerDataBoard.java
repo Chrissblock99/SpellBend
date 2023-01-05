@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerDataBoard {
-    private static final Map<Player, String> playersHavingActiveVisibleCoolDown = new HashMap<>();
+    private static final Map<Player, String> playersDisplayingCoolDown = new HashMap<>();
 
     private final Player player;
 
@@ -35,12 +35,12 @@ public class PlayerDataBoard {
         new BukkitRunnable(){
             @Override
             public void run() {
-                for (Map.Entry<Player, String> entry : playersHavingActiveVisibleCoolDown.entrySet()) {
+                for (Map.Entry<Player, String> entry : playersDisplayingCoolDown.entrySet()) {
                     Player player = entry.getKey();
                     String spellType = entry.getValue();
 
                     if (!player.isOnline()) {
-                        playersHavingActiveVisibleCoolDown.remove(player);
+                        playersDisplayingCoolDown.remove(player);
                         Bukkit.getLogger().warning(player.getName() + " registered in playersHoldingCoolDownedItems is offline, removing from Map!");
                         return;
                     }
@@ -61,16 +61,16 @@ public class PlayerDataBoard {
     /**
      * Adds the player to the map of all players holding a coolDowned item.
      */
-    public void playerHasActiveVisibleCoolDown(@NotNull String spellType) {
-        playersHavingActiveVisibleCoolDown.put(player, spellType);
+    public void displayCooldown(@NotNull String spellType) {
+        playersDisplayingCoolDown.put(player, spellType);
         updateBoard(spellType);
     }
 
     /**
      * Removes the player from the map of all players holding a coolDowned item.
      */
-    public void playerNoLongerHasActiveVisibleCoolDown() {
-        playersHavingActiveVisibleCoolDown.remove(player);
+    public void stopDisplayCooldown() {
+        playersDisplayingCoolDown.remove(player);
         updateBoard(false);
     }
 
@@ -79,8 +79,8 @@ public class PlayerDataBoard {
      *
      * @param spellType The spellType to update the board with
      */
-    public void playerNoLongerHasActiveVisibleCoolDown(@Nullable String spellType) {
-        playersHavingActiveVisibleCoolDown.remove(player);
+    public void stopDisplayCooldown(@Nullable String spellType) {
+        playersDisplayingCoolDown.remove(player);
         updateBoard(spellType, false);
     }
 
@@ -154,7 +154,7 @@ public class PlayerDataBoard {
             //iason was here
             //makes it not recall itself infinitely if used correctly
             if (deRegister)
-                playerNoLongerHasActiveVisibleCoolDown();
+                stopDisplayCooldown();
             return;
         }
         CoolDownEntry coolDownEntry = sessionData.getCoolDowns().getCoolDownEntry(heldCoolDownedSpellType);
@@ -168,7 +168,7 @@ public class PlayerDataBoard {
 
             //makes it not recall itself infinitely if used correctly
             if (deRegister)
-                playerNoLongerHasActiveVisibleCoolDown();
+                stopDisplayCooldown();
             return;
         }
 

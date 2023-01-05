@@ -24,7 +24,7 @@ public class PlayerJoin implements Listener {
 
         String heldSpellType = ItemData.getHeldSpellType(player);
         if (heldSpellType != null)
-            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().playerHasActiveVisibleCoolDown(heldSpellType);
+            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().displayCooldown(heldSpellType);
         else PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
     }
 }
