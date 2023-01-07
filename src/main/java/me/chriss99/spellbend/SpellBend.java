@@ -50,6 +50,7 @@ public final class SpellBend extends JavaPlugin {
         Ember_Blast.register();
         Escape_Through_Time.register();
         Seismic_Shock.register();
+        Burrow.register();
     }
 
     public static void registerAllCommands() {
