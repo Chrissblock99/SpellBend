@@ -143,7 +143,7 @@ public class PlayerDataBoard {
                         player.getStatistic(Statistic.PLAYER_KILLS)/player.getStatistic(Statistic.DEATHS)));
         line.setScore(5);
         line = obj.getScore("§3§m-------------§r  "); line.setScore(4);
-        line = obj.getScore("  §b§nSpellBend§b.minehut.gg"); line.setScore(3);
+        line = obj.getScore("  §b§nSpellBendV3§b.minehut.gg"); line.setScore(3);
         line = obj.getScore("§3§m-------------§r   "); line.setScore(2);
 
         if (heldCoolDownedSpellType == null) {
