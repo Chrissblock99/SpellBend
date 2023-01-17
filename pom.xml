@@ -13,7 +13,7 @@
 
     <description>remaking the skript game as a java plugin</description>
     <properties>
-        <java.version>1.17</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -77,6 +77,12 @@
             <artifactId>api</artifactId>
             <version>5.4</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>1.10.5</version>
         </dependency>
     </dependencies>
 </project>
