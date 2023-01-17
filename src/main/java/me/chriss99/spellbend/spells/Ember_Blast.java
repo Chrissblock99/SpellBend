@@ -2,20 +2,13 @@ package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDowns;
-import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
-import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -28,7 +21,6 @@ public class Ember_Blast extends Spell { //TODO this
     private BukkitTask windupTask;
     private final Spell instance;
     private final CoolDowns coolDowns;
-    private Fireball fireball;
 
     public static void register() {
         SpellHandler.registerSpell("ember_blast", 35, new SpellSubClassBuilder() {
@@ -54,10 +46,10 @@ public class Ember_Blast extends Spell { //TODO this
             @Override
             public void run() {
                 for (int i = 0;i<3;i++) {
-                    /*double radians = time * MathUtil.DEGTORAD;
+                    /*double radiants = time * MathUtil.DEGTORAD;
                     Location location = caster.getEyeLocation();
                     Location location1 = location.clone();
-                    Vector vector = new Vector(Math.cos(radians) * 1.25, Math.sin(radians) * 1.25, 1);
+                    Vector vector = new Vector(Math.cos(radiants) * 1.25, Math.sin(radiants) * 1.25, 1);
                     vector.rotateAroundY(location.getYaw()*MathUtil.DEGTORAD*(-1));
 
                     Vector sideVec = new Vector(1, 0, 0).rotateAroundY(location.getYaw()*MathUtil.DEGTORAD*(-1));
@@ -74,10 +66,10 @@ public class Ember_Blast extends Spell { //TODO this
                     caster.getWorld().spawnParticle(Particle.FLAME, location, 1, 0.02, 0.02, 0.02, 0);*/
 
 
-                    double radians = time * MathUtil.DEGTORAD;
+                    double radiants = time * MathUtil.DEGTORAD;
                     Location location = caster.getEyeLocation();
                     Bukkit.getLogger().info(location.toString());
-                    Quaterniond quaternion = new Quaterniond(Math.cos(radians) * 1.25, Math.sin(radians) * 1.25, 0, 0);
+                    Quaterniond quaternion = new Quaterniond(Math.cos(radiants) * 1.25, Math.sin(radiants) * 1.25, 1, 0);
                     Bukkit.getLogger().info(quaternion.toString());
                     quaternion.mul(new Quaterniond().rotationY(location.getYaw()*MathUtil.DEGTORAD)).mul(new Quaterniond().rotationX(location.getPitch()*MathUtil.DEGTORAD));
                     Bukkit.getLogger().info(quaternion.toString());
@@ -89,30 +81,12 @@ public class Ember_Blast extends Spell { //TODO this
                     time += 6;
                 }
 
-                if (time >= 720) { //TODO Does this iterate one too much ?
+                if (time == 720) {
                     windupTask.cancel();
-                    activate();
+                    //activate();
                 }
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 1);
-    }
-
-    private void activate() {
-        fireball = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getDirection()), Fireball.class, (projectile) -> projectile.setVelocity(caster.getEyeLocation().getDirection()),CreatureSpawnEvent.SpawnReason.CUSTOM);
-        SpellHandler.addProjectileConsumer(fireball, this::fireBallHit);
-
-        naturalSpellEnd(); //TODO execute this when the fireball existence time limit has run out (which we define for the sake of cooldowns)
-    }
-
-    private void fireBallHit(@NotNull ProjectileHitEvent event) {
-        Entity hitEntity = event.getHitEntity();
-        if (hitEntity instanceof LivingEntity livingEntity && LivingEntityUtil.entityIsSpellAffectAble(livingEntity))
-            LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 2.5, item);
-
-        fireball.getLocation(); //visuals on this location (an immediately exploding firework is used)
-
-        SpellHandler.removeProjectileConsumer(fireball);
-        naturalSpellEnd();
     }
 
     @Override
