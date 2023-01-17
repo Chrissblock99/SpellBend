@@ -1,4 +1,4 @@
-package me.chriss99.spellbend.events;
+package me.chriss99.spellbend.events.paper;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import me.chriss99.spellbend.SpellBend;

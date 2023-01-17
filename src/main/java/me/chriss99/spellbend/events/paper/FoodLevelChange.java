@@ -1,4 +1,4 @@
-package me.chriss99.spellbend.events;
+package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
 import org.bukkit.GameMode;
