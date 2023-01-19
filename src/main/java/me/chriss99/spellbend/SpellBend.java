@@ -26,11 +26,15 @@ public final class SpellBend extends JavaPlugin {
         PlayerDataBoard.startUpdater();
         ActionBarController.startUpdater();
         PlayerSessionData.startManaRegenerator();
+
+        Bukkit.getLogger().info("SpellBend enabled!");
     }
 
     @Override
     public void onDisable() {
         PlayerSessionData.endAllSessions();
+
+        Bukkit.getLogger().info("SpellBend disabled!");
     }
 
     public static void registerAllPaperEvents() {
