@@ -4,5 +4,7 @@ main: me.chriss99.spellbend.SpellBend
 api-version: 1.17
 authors: [ Chriss99 ]
 description: remaking the skript game as a java plugin
+depend:
+  - ProtocolLib
 commands:
   test:
