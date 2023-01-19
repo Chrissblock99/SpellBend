@@ -10,6 +10,7 @@ import me.chriss99.spellbend.spells.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public final class SpellBend extends JavaPlugin {
     private static SpellBend instance;
@@ -19,7 +20,7 @@ public final class SpellBend extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        registerAllEvents();
+        registerAllPaperEvents();
         registerAllSpells();
         registerAllCommands();
         PlayerDataBoard.startUpdater();
@@ -32,7 +33,7 @@ public final class SpellBend extends JavaPlugin {
         PlayerSessionData.endAllSessions();
     }
 
-    public static void registerAllEvents() {
+    public static void registerAllPaperEvents() {
         new PlayerInteractBlock();
         new PlayerInteractEntity();
         new PlayerJoin();
@@ -56,7 +57,7 @@ public final class SpellBend extends JavaPlugin {
         new Test();
     }
 
-    public static void registerEvent(Listener listener) {
+    public static void registerPaperEvent(@NotNull Listener listener) {
         Bukkit.getServer().getPluginManager().registerEvents(listener, instance);
     }
 
