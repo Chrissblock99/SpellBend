@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public class PlayerInteractEntity implements Listener {
     public PlayerInteractEntity() {
-        SpellBend.registerEvent(this);
+        SpellBend.registerPaperEvent(this);
     }
 
     @EventHandler

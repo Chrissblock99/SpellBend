@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 
 public class PlayerJump implements Listener {
     public PlayerJump() {
-        SpellBend.registerEvent(this);
+        SpellBend.registerPaperEvent(this);
     }
 
     @EventHandler

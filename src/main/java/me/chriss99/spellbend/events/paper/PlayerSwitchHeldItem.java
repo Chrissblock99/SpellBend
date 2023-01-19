@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 
 public class PlayerSwitchHeldItem implements Listener {
     public PlayerSwitchHeldItem() {
-        SpellBend.registerEvent(this);
+        SpellBend.registerPaperEvent(this);
     }
 
     @EventHandler

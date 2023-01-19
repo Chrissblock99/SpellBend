@@ -9,7 +9,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public class FoodLevelChange implements Listener {
     public FoodLevelChange() {
-        SpellBend.registerEvent(this);
+        SpellBend.registerPaperEvent(this);
     }
 
     @EventHandler
