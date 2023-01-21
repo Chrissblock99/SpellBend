@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class SpellBend extends JavaPlugin {
     private static SpellBend instance;
-    private static final Gson gson = new Gson();
     private static ProtocolManager protocolManager;
+    private static final Gson gson = new Gson();
 
     @Override
     public void onEnable() {
@@ -83,6 +83,10 @@ public final class SpellBend extends JavaPlugin {
 
     public static SpellBend getInstance() {
         return instance;
+    }
+
+    public static ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 
     public static Gson getGson() {
