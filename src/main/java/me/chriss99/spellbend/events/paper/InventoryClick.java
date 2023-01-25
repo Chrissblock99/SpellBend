@@ -1,4 +1,4 @@
-package me.chriss99.spellbend.events;
+package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.temporary.Temporary;
@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 
 public class InventoryClick implements Listener {
     public InventoryClick() {
-        SpellBend.registerEvent(this);
+        SpellBend.registerPaperEvent(this);
     }
 
     @EventHandler

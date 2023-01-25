@@ -7,7 +7,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 public class ValueTracker {
-    private final Player player;
+    protected final Player player;
     private final NamespacedKey key;
     private Integer value;
 

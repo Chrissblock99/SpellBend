@@ -6,13 +6,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class IsMovementStunned extends ValueTracker {
     private final PercentageModifier walkSpeedModifiers;
-    private final ValueTracker canNotJump;
+    private final MultiValueTracker jumpEffect;
     private boolean subsAreIncreased = false;
 
-    public IsMovementStunned(@NotNull Player player, @NotNull PercentageModifier walkSpeedModifiers, @NotNull ValueTracker canNotJump) {
+    public IsMovementStunned(@NotNull Player player, @NotNull PercentageModifier walkSpeedModifiers, @NotNull MultiValueTracker jumpEffect) {
         super(player, PersistentDataKeys.isMovementStunnedKey, "isMovementStunned", 0);
         this.walkSpeedModifiers = walkSpeedModifiers;
-        this.canNotJump = canNotJump;
+        this.jumpEffect = jumpEffect;
         updateStun();
     }
 
@@ -25,11 +25,13 @@ public class IsMovementStunned extends ValueTracker {
     private void updateStun() {
         if (valueIsLargerZero() && !subsAreIncreased) {
             walkSpeedModifiers.addModifier(0);
-            canNotJump.displaceValue(1);
+            jumpEffect.addValue(128);
+            player.setFoodLevel(6);
             subsAreIncreased = true;
         } else if (subsAreIncreased) {
             walkSpeedModifiers.removeModifier(0);
-            canNotJump.displaceValue(-1);
+            jumpEffect.removeValue(128);
+            player.setFoodLevel(20);
             subsAreIncreased = false;
         }
     }

@@ -1,4 +1,4 @@
-package me.chriss99.spellbend.events;
+package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
 import org.bukkit.GameMode;
@@ -9,7 +9,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public class FoodLevelChange implements Listener {
     public FoodLevelChange() {
-        SpellBend.registerEvent(this);
+        SpellBend.registerPaperEvent(this);
     }
 
     @EventHandler
@@ -20,6 +20,5 @@ public class FoodLevelChange implements Listener {
             return;
 
         event.setCancelled(true);
-        player.setFoodLevel(20);
     }
 }

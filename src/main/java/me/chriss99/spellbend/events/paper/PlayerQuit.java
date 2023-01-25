@@ -1,4 +1,4 @@
-package me.chriss99.spellbend.events;
+package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerQuit implements Listener {
     public PlayerQuit() {
-        SpellBend.registerEvent(this);
+        SpellBend.registerPaperEvent(this);
     }
 
     @EventHandler
