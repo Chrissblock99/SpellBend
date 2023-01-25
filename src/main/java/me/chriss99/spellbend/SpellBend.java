@@ -55,8 +55,8 @@ public final class SpellBend extends JavaPlugin {
     }
 
     public static void registerAllPacketListeners() {
-        new PlayClientPosition();
-        new PlayClientPositionLook();
+        //new PlayClientPosition();
+        //new PlayClientPositionLook();
     }
 
     public static void registerAllSpells() {
