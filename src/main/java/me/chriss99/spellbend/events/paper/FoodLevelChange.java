@@ -20,6 +20,5 @@ public class FoodLevelChange implements Listener {
             return;
 
         event.setCancelled(true);
-        player.setFoodLevel(20);
     }
 }

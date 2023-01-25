@@ -26,10 +26,12 @@ public class IsMovementStunned extends ValueTracker {
         if (valueIsLargerZero() && !subsAreIncreased) {
             walkSpeedModifiers.addModifier(0);
             jumpEffect.addValue(128);
+            player.setFoodLevel(6);
             subsAreIncreased = true;
         } else if (subsAreIncreased) {
             walkSpeedModifiers.removeModifier(0);
             jumpEffect.removeValue(128);
+            player.setFoodLevel(20);
             subsAreIncreased = false;
         }
     }
