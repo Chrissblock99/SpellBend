@@ -1,0 +1,75 @@
+package me.chriss99.spellbend.data;
+
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class MultiValueTracker {
+    private final Player player;
+    private final NamespacedKey key;
+    private final List<Integer> values;
+
+    public MultiValueTracker(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name, int[] defaultArray) {
+        this.player = player;
+        this.key = key;
+
+        int[] value = player.getPersistentDataContainer().get(key, PersistentDataType.INTEGER_ARRAY);
+        if (value == null) {
+            Bukkit.getLogger().warning(player.getName() + " did not have " + name + " set up when loading, fixing now!");
+            player.getPersistentDataContainer().set(key, PersistentDataType.INTEGER_ARRAY, defaultArray);
+            value = defaultArray;
+        }
+
+        this.values = Arrays.stream(value).boxed().collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    public void addValue(int value) {
+        if (values.size() == 0) {
+            values.add(value);
+            return;
+        }
+
+        for (int i = 0;i<values.size();i++) {
+            if (values.get(i)>value)
+                continue;
+            values.add(i ,value);
+            return;
+        }
+
+        values.add(value);
+    }
+
+    public void removeValue(int value) {
+        //has to cast to Integer cause otherwise it will take the int as an index
+        values.remove((Integer) value);
+    }
+
+    /**
+     * @return a COPY of the values (edits of this won't affect the real list)
+     */
+    public List<Integer> getValues() {
+        return new LinkedList<>(values);
+    }
+
+    public @NotNull Player getPlayer() {
+        return player;
+    }
+
+    public Integer largestValue() {
+        if (values.size() == 0)
+            return null;
+
+        return values.get(0);
+    }
+
+    public void saveValue() {
+        player.getPersistentDataContainer().set(key, PersistentDataType.INTEGER_ARRAY, values.stream().mapToInt(i->i).toArray());
+    }
+}
