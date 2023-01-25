@@ -14,7 +14,7 @@ public class PersistentDataKeys {
     public static final NamespacedKey crystalsKey = new NamespacedKey(plugin, "crystals");
 
     public static final NamespacedKey isMovementStunnedKey = new NamespacedKey(plugin, "isMovementStunned");
-    public static final NamespacedKey canNotJumpKey = new NamespacedKey(plugin, "canNotJump");
+    public static final NamespacedKey jumpEffect = new NamespacedKey(plugin, "jumpEffect");
     public static final NamespacedKey isInvisibleKey = new NamespacedKey(plugin, "isInvisible");
 
     public static final NamespacedKey coolDownsKey = new NamespacedKey(plugin, "coolDowns");
