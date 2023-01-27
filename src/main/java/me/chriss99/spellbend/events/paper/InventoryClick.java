@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.temporary.Temporary;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +21,6 @@ public class InventoryClick implements Listener {
         if (player.getInventory().getHeldItemSlot() != event.getSlot())
             return;
 
-        Temporary.playerSwitchHeldItem(player, clickedInv.getItem(event.getSlot()), event.getCursor());
+        PlayerSwitchHeldItem.processPlayerSwitchHeldItem(player, clickedInv.getItem(event.getSlot()), event.getCursor());
     }
 }
