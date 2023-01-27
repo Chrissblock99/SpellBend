@@ -19,7 +19,6 @@ public class PlayerUtil {
      * @param distance The distance
      * @return The playerToDistanceMap
      */
-    //TODO check if this actually works
     public static Map<Player, Double> getPlayersNearLocation(@NotNull Location location, double distance) {
         Chunk centerChunk = location.getChunk();
         World world = location.getWorld();
