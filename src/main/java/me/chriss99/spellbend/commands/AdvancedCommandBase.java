@@ -35,10 +35,10 @@ public abstract class AdvancedCommandBase extends BukkitCommand implements Comma
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] arguments) {
-        final List<AdvancedSubCommand> validSubCommands = new ArrayList<>();
+        final List<AdvancedSubCommand> validSubCommands = new LinkedList<>();
         String path = "";
         String latestValidPath = "";
-        String potentialErrorMessage = "§4No Error was found.";
+        String potentialErrorMessage = "§cNo Error was found.";
         List<String> argumentList = new ArrayList<>(Arrays.asList(arguments));
 
         if (subCommands.containsKey(path)) validSubCommands.add(subCommands.get(path));
@@ -51,16 +51,16 @@ public abstract class AdvancedCommandBase extends BukkitCommand implements Comma
                 if (((path.equals("")) ? (0) : (path.split(" ").length)) + cmd.arguments.length == argumentList.size()) {
                     latestValidPath = path;
                     validSubCommands.add(cmd);
-                } else potentialErrorMessage = ("§4Wrong amount of arguments, this subCommand requires " + cmd.arguments.length + " arguments!");
+                } else potentialErrorMessage = ("§cWrong amount of arguments, this subCommand requires " + cmd.arguments.length + " arguments!");
             }
         }
         for (String string : latestValidPath.split(" ")) argumentList.remove(string);
 
         if (validSubCommands.size() == 0) {
-            sender.sendMessage("§4Wrong command usage, no valid subCommand found! This is a potential error:");
+            sender.sendMessage("§cWrong command usage, no valid subCommand found! This is a potential error:");
             sender.sendMessage(potentialErrorMessage);
 
-            if (potentialErrorMessage.equals("§4No Error was found.")) {
+            if (potentialErrorMessage.equals("§cNo Error was found.")) {
                 sender.sendMessage("Valid subCommands are:");
                 for (Map.Entry<String, AdvancedSubCommand> entry: subCommands.entrySet()) {
                     sender.sendMessage("/" + command + " " + entry.getKey() + " " + entry.getValue().argumentString);
