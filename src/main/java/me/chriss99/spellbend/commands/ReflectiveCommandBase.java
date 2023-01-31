@@ -14,7 +14,7 @@ import java.util.List;
 
 public abstract class ReflectiveCommandBase extends BukkitCommand implements CommandExecutor {
     private final HashMap<String[], ArrayList<Method>> pathToMethodsMap = new HashMap<>();
-    private int longestpath = 0;
+    private int longestPath = 0;
 
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases) {
         super(commandName, description,
@@ -23,8 +23,8 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         for (Method method : getClass().getDeclaredMethods())
             if (method.isAnnotationPresent(ReflectCommand.class)) {
                 String[] path = method.getAnnotation(ReflectCommand.class).path();
-                if (longestpath < path.length)
-                    longestpath = path.length;
+                if (longestPath < path.length)
+                    longestPath = path.length;
 
                 ArrayList<Method> methods = pathToMethodsMap.get(path);
 
@@ -50,7 +50,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         LinkedList<Method> methods = new LinkedList<>();
         String[] path;
 
-        for (int i = 0; i < arguments.length && i < longestpath; i++) {
+        for (int i = 0; i < arguments.length && i < longestPath; i++) {
             path = new String[i+1];
             System.arraycopy(arguments, 0, path, 0, path.length);
 
