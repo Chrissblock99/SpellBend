@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.Objects;
 
 @SuppressWarnings("rawtypes")
-public class CustomizableStringToClassParser {
+public class CustomClassParser {
     private final HashMap<Class, StringToClassParser> parsers;
 
     /**
      * Initializes the parser map with the default parser map
      */
-    public CustomizableStringToClassParser() {
+    public CustomClassParser() {
          parsers = defaultParserMap();
     }
 
@@ -23,7 +23,7 @@ public class CustomizableStringToClassParser {
      *
      * @param parsers The custom parser map
      */
-    public CustomizableStringToClassParser(HashMap<Class, StringToClassParser> parsers) {
+    public CustomClassParser(HashMap<Class, StringToClassParser> parsers) {
         this.parsers = parsers;
     }
 
@@ -61,7 +61,7 @@ public class CustomizableStringToClassParser {
      * @param <C> The class the parser parses to
      * @return Itself
      */
-    public <C> CustomizableStringToClassParser addParser(Class<C> parseTo, StringToClassParser<C> parser) {
+    public <C> CustomClassParser addParser(Class<C> parseTo, StringToClassParser<C> parser) {
         parsers.put(parseTo, parser);
         return this;
     }
@@ -72,7 +72,7 @@ public class CustomizableStringToClassParser {
      * @param parseTo The Class instance of the class that should no longer be parsed to
      * @return Itself
      */
-    public CustomizableStringToClassParser removeParser(Class<?> parseTo) {
+    public CustomClassParser removeParser(Class<?> parseTo) {
         parsers.remove(parseTo);
         return this;
     }
