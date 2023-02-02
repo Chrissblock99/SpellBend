@@ -8,7 +8,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +65,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] arguments) {
-        Diagnostics diagnostics = Diagnostics.createEmpty();
+        Diagnostics diagnostics = new Diagnostics();
         //these can have the same parameter count, but will have different parameter types, though those types might not be distinguishable in string from
         LinkedList<Method> methods = getPathMatchingMethods(arguments, diagnostics);
 
@@ -88,13 +87,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         if (parsedMethods.size() == 1) {
             ParsedMethod parsedMethod = parsedMethods.get(0);
             try {
-                parsedMethod.method.invoke(this, parsedMethod.parameters);
+                parsedMethod.method().invoke(this, parsedMethod.parameters());
             } catch (IllegalAccessException e) {
                 sender.sendMessage("§cThe programmer of this subCommand used the ReflectiveCommandBase incorrectly!\n§4IllegalAccessException: §c" + e.getMessage());
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
                 Throwable cause = e.getCause();
-                sender.sendMessage("§cThe method \"" + parsedMethod.method.getName() + "\" threw an exception!\n§4" +
+                sender.sendMessage("§cThe method \"" + parsedMethod.method().getName() + "\" threw an exception!\n§4" +
                         cause.getClass().getSimpleName() + ": §c" + cause.getMessage());
                 e.printStackTrace();
             }
@@ -105,24 +104,15 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return true;
     }
 
-    private @NotNull String multipleMethodsParsedMessage(@NotNull Diagnostics diagnostics) {
-        //noinspection SpellCheckingInspection
-        return "§cmultiple methods parsed!";
-    }
-
-    private @NotNull String noMethodsParsedMessage(@NotNull Diagnostics diagnostics) {
-        return "§cno methods parsed!";
-    }
-
     private @NotNull LinkedList<ParsedMethod> successfullyParsedMethods(@NotNull LinkedList<Method> methods, @NotNull String[] arguments, @NotNull Diagnostics diagnostics) {
         LinkedList<ParsedMethod> parsedMethods = new LinkedList<>();
+        diagnostics.setMethodParsingLog(new LinkedList<>());
 
         for (Method method : methods) {
             String[] parameterStrings = new String[method.getParameterCount()];
             System.arraycopy(arguments, arguments.length-parameterStrings.length, parameterStrings, 0, parameterStrings.length);
 
-            Object[] parameters = parseMethodParameters(method, parameterStrings, diagnostics.methodParsingLog);
-
+            Object[] parameters = parseMethodParameters(method, parameterStrings, diagnostics.getMethodParsingLog());
             if (parameters != null)
                 parsedMethods.add(new ParsedMethod(method, parameters));
         }
@@ -153,8 +143,26 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return parameters;
     }
 
-    private @NotNull String noPathMatchingMethodsMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        return "§cno methods matching path!";
+    private @NotNull String noMethodsParsedMessage(@NotNull Diagnostics diagnostics) {
+        return "§cno methods parsed!";
+    }
+
+    private @NotNull String multipleMethodsParsedMessage(@NotNull Diagnostics diagnostics) {
+        //noinspection SpellCheckingInspection
+        return "§cmultiple methods parsed!";
+    }
+
+    private @NotNull LinkedList<Method> methodsMatchingParameterCount(final @NotNull LinkedList<Method> methods, final int argumentCount, final @NotNull Diagnostics diagnostics) {
+        methods.removeIf(method -> {
+            //noinspection ResultOfMethodCallIgnored
+            diagnostics.getMethodParsingLog();
+            return method.getParameterCount() != argumentCount - method.getAnnotation(ReflectCommand.class).path().split(" ").length;
+        });
+        return methods;
+    }
+
+    private @NotNull String noMethodsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
+        return "§cno methods matching parameter count!";
     }
 
     private @NotNull LinkedList<Method> getPathMatchingMethods(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
@@ -169,35 +177,16 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
                 methods.addAll(methodsMatchingPath);
         }
 
+        diagnostics.setMatchingPaths(new ArrayList<>(methods));
         return methods;
     }
 
-    private @NotNull String noMethodsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        return "§cno methods matching parameter count!";
-    }
-
-    private @NotNull LinkedList<Method> methodsMatchingParameterCount(final @NotNull LinkedList<Method> methods, final int argumentCount, final @NotNull Diagnostics diagnostics) {
-        methods.removeIf(method -> {
-            //noinspection ResultOfMethodCallIgnored
-            diagnostics.methodParsingLog();
-            return method.getParameterCount() != argumentCount - method.getAnnotation(ReflectCommand.class).path().split(" ").length;
-        });
-        return methods;
+    private @NotNull String noPathMatchingMethodsMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
+        return "§cno methods matching path!";
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] arguments) {
         return execute(sender, alias, arguments);
-    }
-
-    private record ParsedMethod(@NotNull Method method, @NotNull Object[] parameters) {}
-
-    private record ParsingLog(@NotNull Method method, @NotNull String[] parameterStrings, @Nullable Class<?>[] parameterTypes, @NotNull Object[] parameters) {}
-
-    private record Diagnostics(LinkedList<ParsingLog> methodParsingLog) {
-        @Contract(" -> new")
-        public static @NotNull Diagnostics createEmpty() {
-            return new Diagnostics(new LinkedList<>());
-        }
     }
 }
