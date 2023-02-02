@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.commands;
 
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.util.CustomizableStringToClassParser;
+import me.chriss99.spellbend.util.CustomClassParser;
 import me.chriss99.spellbend.util.NoSuchParserException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -13,7 +13,7 @@ import java.util.logging.Level;
 
 public abstract class AdvancedCommandBase extends BukkitCommand implements CommandExecutor {
     private final Map<String, AdvancedSubCommand> subCommands;
-    private static final CustomizableStringToClassParser parser = new CustomizableStringToClassParser();
+    private static final CustomClassParser parser = new CustomClassParser();
     private final String command;
     private final String usage;
 

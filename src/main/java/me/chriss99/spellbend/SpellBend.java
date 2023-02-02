@@ -4,12 +4,13 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.google.gson.Gson;
+import me.chriss99.spellbend.commands.ReflectTest;
 import me.chriss99.spellbend.commands.Test;
 import me.chriss99.spellbend.data.ActionBarController;
 import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.events.paper.*;
-import me.chriss99.spellbend.events.protocollib.*;
+//import me.chriss99.spellbend.events.protocollib.*;
 import me.chriss99.spellbend.spells.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -70,6 +71,7 @@ public final class SpellBend extends JavaPlugin {
 
     public static void registerAllCommands() {
         new Test();
+        new ReflectTest();
     }
 
     public static void registerPaperEvent(@NotNull Listener listener) {
