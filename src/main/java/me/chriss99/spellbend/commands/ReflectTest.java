@@ -51,7 +51,7 @@ public class ReflectTest extends ReflectiveCommandBase {
     }
 
     @ReflectCommand(path = "memory")
-    public void memory(Player commandSender, Player player) {
+    public void memory(CommandSender commandSender, Player player) {
         commandSender.sendMessage("Spells:");
         Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
         if (playerSpells.size() == 0) {
@@ -61,6 +61,20 @@ public class ReflectTest extends ReflectiveCommandBase {
 
         for (Spell spell : playerSpells) {
             commandSender.sendMessage(spell.getClass().getName());
+        }
+    }
+
+    @ReflectCommand(path = "memory")
+    public void memory(Player sendTo, Player player) {
+        sendTo.sendMessage("Spells:");
+        Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
+        if (playerSpells.size() == 0) {
+            sendTo.sendMessage("none");
+            return;
+        }
+
+        for (Spell spell : playerSpells) {
+            sendTo.sendMessage(spell.getClass().getName());
         }
     }
 

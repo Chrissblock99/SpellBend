@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -37,12 +36,10 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
                 continue;
             PreParsingMethod preParsingMethod = new PreParsingMethod(method);
 
-            LinkedList<String> cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path());
-            int pathLength = cleanPath.size();
-            if (longestPath < pathLength)
-                longestPath = pathLength;
+            if (longestPath < preParsingMethod.getPathSize())
+                longestPath = preParsingMethod.getPathSize();
 
-            String path = String.join(" ", cleanPath);
+            String path = preParsingMethod.getPath();
             ArrayList<PreParsingMethod> samePathMethods = pathToPreParsingMethodsMap.get(path);
 
             if (samePathMethods == null) {
@@ -110,7 +107,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
                 Throwable cause = e.getCause();
-                sender.sendMessage("§cThe method \"" + parsedMethod.preParsedMethod().getMethod().getName() + "\" threw an exception!\n§4" +
+                sender.sendMessage("§cThe subCommand method \"" + parsedMethod.preParsedMethod().getMethod().getName() + "\" threw an exception!\n§4" +
                         cause.getClass().getSimpleName() + ": §c" + cause.getMessage());
                 e.printStackTrace();
             }
@@ -171,9 +168,9 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
 
     private @NotNull LinkedList<PreParsingMethod> methodsMatchingParameterCount(final @NotNull LinkedList<PreParsingMethod> methodParsingPresets, final int argumentCount, final @NotNull Diagnostics diagnostics) {
         methodParsingPresets.removeIf(preParsingMethod -> {
-            LinkedList<String> cleanPath = getCleanPathFromString(preParsingMethod.getMethod().getAnnotation(ReflectCommand.class).path());
 
-            return preParsingMethod.getParsingParameterTypes().length != argumentCount - cleanPath.size();
+            //noinspection CodeBlock2Expr
+            return preParsingMethod.getParsingParameterTypes().length != argumentCount - preParsingMethod.getPathSize();
         });
         return methodParsingPresets;
     }
@@ -204,28 +201,28 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         for (int i = potentialPaths.size(); i < arguments.length && i < longestPath; i++)
             potentialPaths.add(String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)));
 
-        for (Map.Entry<String, ArrayList<PreParsingMethod>> pathToMethod : pathToPreParsingMethodsMap.entrySet()) {
-
+        HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> matchingMethods = new HashSet<>(pathToPreParsingMethodsMap.entrySet());
+        //noinspection unchecked
+        HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> newMatchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) matchingMethods.clone();
+        for (String potentialPath : potentialPaths) {
+            newMatchingMethods.removeIf(pathToMethod -> potentialPath.equals(pathToMethod.getKey().substring(1, potentialPath.length())));
+            if (newMatchingMethods.isEmpty())
+                break;
+            //noinspection unchecked
+            matchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) newMatchingMethods.clone();
         }
 
-        return "§cno methods matching path!";
-    }
+        List<PreParsingMethod> sortedMostPathMatchingMethods = new LinkedList<>();
+        for (Map.Entry<String, ArrayList<PreParsingMethod>> pathToMethods : matchingMethods)
+            sortedMostPathMatchingMethods.addAll(pathToMethods.getValue());
+        sortedMostPathMatchingMethods.sort(Comparator.comparing(PreParsingMethod::getArguments));
 
-    private @NotNull String getMethodArguments(@NotNull Method method) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append(String.join(" ", getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path()))).append(" ");
-        for (Parameter parameter : method.getParameters())
-            stringBuilder.append("<").append(parameter.getName()).append("> ");
-        stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "");
+        StringBuilder stringBuilder = new StringBuilder().append("§cNo subCommands matched the given path! Most matching subCommands:§r");
+        for (PreParsingMethod preParsingMethod : sortedMostPathMatchingMethods)
+            stringBuilder.append(preParsingMethod.getArguments()).append("\n");
+        stringBuilder.replace(stringBuilder.length()-2, stringBuilder.length(), "");
 
         return stringBuilder.toString();
-    }
-
-    private @NotNull LinkedList<String> getCleanPathFromString(@NotNull String path) {
-        LinkedList<String> splitPath = new LinkedList<>(Arrays.asList(path.split(" ")));
-        splitPath.removeAll(List.of(""));
-        return splitPath;
     }
 
     @Override

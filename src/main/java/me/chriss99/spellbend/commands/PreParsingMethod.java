@@ -7,18 +7,29 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class PreParsingMethod {
     private final Method method;
+    private final String path;
+    private final int pathSize;
+    private final String arguments;
     private final Class<?>[] parsingParameterTypes;
     private final Class<?> senderParameterType;
 
     public PreParsingMethod(@NotNull Method method) {
         this.method = method;
+
+        LinkedList<String> cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path());
+        pathSize = cleanPath.size();
+        path = String.join(" ", cleanPath);
+
         Parameter[] parameters = method.getParameters();
         if (parameters.length == 0) {
             parsingParameterTypes = new Class[0];
             senderParameterType = null;
+            arguments = generateMethodArguments();
             return;
         }
 
@@ -27,15 +38,47 @@ public class PreParsingMethod {
                 parsingParameterTypes = new Class[0];
             else parsingParameterTypes = Arrays.copyOfRange(method.getParameterTypes(), 1, parameters.length);
             senderParameterType = parameters[0].getType();
+            arguments = generateMethodArguments();
             return;
         }
 
         parsingParameterTypes = method.getParameterTypes();
         senderParameterType = null;
+        arguments = generateMethodArguments();
+    }
+
+    private @NotNull String generateMethodArguments() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(path).append(" ");
+        Parameter[] parameters = method.getParameters();
+        for (int i = (senderParameterType == null) ? 0 : 1; i < parameters.length; i++)
+            stringBuilder.append("<").append(parameters[i].getName()).append("> ");
+        stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "");
+
+        return stringBuilder.toString();
+    }
+
+    public static @NotNull LinkedList<String> getCleanPathFromString(@NotNull String path) {
+        LinkedList<String> splitPath = new LinkedList<>(Arrays.asList(path.split(" ")));
+        splitPath.removeAll(List.of(""));
+        return splitPath;
     }
 
     public Method getMethod() {
         return method;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public int getPathSize() {
+        return pathSize;
+    }
+
+    public String getArguments() {
+        return arguments;
     }
 
     public Class<?>[] getParsingParameterTypes() {
