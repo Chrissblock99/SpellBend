@@ -84,6 +84,12 @@ public class CustomClassParser {
         parsers.put(String.class, (parseFrom, parseTo) -> parseFrom);
         //noinspection unchecked
         parsers.put(Enum.class, (parseFrom, parseTo) -> Enum.valueOf(parseTo, parseFrom.toUpperCase()));
+        parsers.put(Character.class, (parseFrom, parseTo) -> {
+            char[] chars = parseFrom.toCharArray();
+            if (chars.length != 1)
+                throw new IllegalArgumentException("\"" + parseFrom + "\" has to only be one character!");
+            return chars[0];
+        });
         parsers.put(Double.class, (parseFrom, parseTo) -> Double.valueOf(parseFrom));
         parsers.put(Float.class, (parseFrom, parseTo) -> Float.valueOf(parseFrom));
         parsers.put(Long.class, (parseFrom, parseTo) -> Long.valueOf(parseFrom));
@@ -91,6 +97,19 @@ public class CustomClassParser {
         parsers.put(Short.class, (parseFrom, parseTo) -> Short.valueOf(parseFrom));
         parsers.put(Byte.class, (parseFrom, parseTo) -> Byte.valueOf(parseFrom));
         parsers.put(Boolean.class, (parseFrom, parseTo) -> Boolean.valueOf(parseFrom));
+        parsers.put(char.class, (parseFrom, parseTo) -> {
+            char[] chars = parseFrom.toCharArray();
+            if (chars.length != 1)
+                throw new IllegalArgumentException("\"" + parseFrom + "\" has to only be one character!");
+            return chars[0];
+        });
+        parsers.put(double.class, (parseFrom, parseTo) -> Double.valueOf(parseFrom));
+        parsers.put(float.class, (parseFrom, parseTo) -> Float.valueOf(parseFrom));
+        parsers.put(long.class, (parseFrom, parseTo) -> Long.valueOf(parseFrom));
+        parsers.put(int.class, (parseFrom, parseTo) -> Integer.valueOf(parseFrom));
+        parsers.put(short.class, (parseFrom, parseTo) -> Short.valueOf(parseFrom));
+        parsers.put(byte.class, (parseFrom, parseTo) -> Byte.valueOf(parseFrom));
+        parsers.put(boolean.class, (parseFrom, parseTo) -> Boolean.valueOf(parseFrom));
 
         return parsers;
     }
