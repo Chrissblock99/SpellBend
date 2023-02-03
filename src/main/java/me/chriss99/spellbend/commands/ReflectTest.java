@@ -4,6 +4,7 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.spells.Spell;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -21,17 +22,45 @@ public class ReflectTest extends ReflectiveCommandBase {
                 player.sendMessage("\"/reflectTest noParams\" executed!");
     }
 
+    @ReflectCommand(path = "")
+    public void noPath() {
+        for (World world : Bukkit.getWorlds())
+            for (Player player : world.getPlayers())
+                player.sendMessage("\"/reflectTest\" executed!");
+    }
+
+    @ReflectCommand(path = "senderOnly")
+    public void senderOnly(CommandSender commandSender) {
+        for (World world : Bukkit.getWorlds())
+            for (Player player : world.getPlayers())
+                player.sendMessage("\"/reflectTest senderOnly\" executed by " + commandSender.getName() + "!");
+    }
+
+    @ReflectCommand(path = "playerOnly")
+    public void playerOnly(Player commandSender) {
+        for (World world : Bukkit.getWorlds())
+            for (Player player : world.getPlayers())
+                player.sendMessage("\"/reflectTest playerOnly\" executed by " + commandSender.getName() + "!");
+    }
+
+    @ReflectCommand(path = "playerOnly")
+    public void playerOnly(Player commandSender, int value) {
+        for (World world : Bukkit.getWorlds())
+            for (Player player : world.getPlayers())
+                player.sendMessage("\"/reflectTest playerOnly\" executed by " + commandSender.getName() + " with value " + value + "!");
+    }
+
     @ReflectCommand(path = "memory")
-    public void memory_spell(Player sender, Player player) {
-        sender.sendMessage("Spells:");
+    public void memory(Player commandSender, Player player) {
+        commandSender.sendMessage("Spells:");
         Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
         if (playerSpells.size() == 0) {
-            sender.sendMessage("none");
+            commandSender.sendMessage("none");
             return;
         }
 
         for (Spell spell : playerSpells) {
-            sender.sendMessage(spell.getClass().getName());
+            commandSender.sendMessage(spell.getClass().getName());
         }
     }
 

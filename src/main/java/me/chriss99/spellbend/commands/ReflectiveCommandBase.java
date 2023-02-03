@@ -8,16 +8,18 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.logging.Level;
 
 public abstract class ReflectiveCommandBase extends BukkitCommand implements CommandExecutor {
-    private final HashMap<String, ArrayList<Method>> pathToMethodsMap = new HashMap<>();
+    private final LinkedHashMap<String, ArrayList<PreParsingMethod>> pathToPreParsingMethodsMap = new LinkedHashMap<>();
     private int longestPath = 0;
     private final CustomClassParser classParser;
 
@@ -33,24 +35,26 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         for (Method method : getClass().getDeclaredMethods()) {
             if (!method.isAnnotationPresent(ReflectCommand.class))
                 continue;
+            PreParsingMethod preParsingMethod = new PreParsingMethod(method);
 
-            String path = method.getAnnotation(ReflectCommand.class).path();
-            int pathLength = path.split(" ").length;
+            LinkedList<String> cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path());
+            int pathLength = cleanPath.size();
             if (longestPath < pathLength)
                 longestPath = pathLength;
 
-            ArrayList<Method> methods = pathToMethodsMap.get(path);
+            String path = String.join(" ", cleanPath);
+            ArrayList<PreParsingMethod> samePathMethods = pathToPreParsingMethodsMap.get(path);
 
-            if (methods == null) {
-                pathToMethodsMap.put(path, new ArrayList<>(List.of(method)));
+            if (samePathMethods == null) {
+                pathToPreParsingMethodsMap.put(path, new ArrayList<>(List.of(preParsingMethod)));
                 continue;
             }
 
-            for (Method listMethod : methods)
-                if (Arrays.equals(method.getParameterTypes(), listMethod.getParameterTypes()))
-                    throw new IllegalStateException("Methods \"" + method.getName() + "\" and " + listMethod.getName() + " have the same path and parameterTypes!");
+            for (PreParsingMethod listMethod : samePathMethods)
+                if (Arrays.equals(preParsingMethod.getParsingParameterTypes(), listMethod.getParsingParameterTypes()))
+                    throw new IllegalStateException("Methods \"" + method.getName() + "\" and " + listMethod.getMethod().getName() + " have the same path and parsingParameterTypes!");
 
-            methods.add(method);
+            samePathMethods.add(preParsingMethod);
         }
 
         PluginCommand pluginCommand = SpellBend.getInstance().getCommand(commandName);
@@ -67,17 +71,17 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] arguments) {
         Diagnostics diagnostics = new Diagnostics();
         //these can have the same parameter count, but will have different parameter types, though those types might not be distinguishable in string from
-        LinkedList<Method> methods = getPathMatchingMethods(arguments, diagnostics);
+        LinkedList<PreParsingMethod> preParsingMethods = getPathMatchingMethods(arguments, diagnostics);
 
-        if (methods.isEmpty()) {
+        if (preParsingMethods.isEmpty()) {
             sender.sendMessage(noPathMatchingMethodsMessage(arguments, diagnostics));
             return true;
         }
-        if (methodsMatchingParameterCount(methods, arguments.length, diagnostics).isEmpty()) {
+        if (methodsMatchingParameterCount(preParsingMethods, arguments.length, diagnostics).isEmpty()) {
             sender.sendMessage(noMethodsMatchingParameterCountMessage(arguments, diagnostics));
             return true;
         }
-        LinkedList<ParsedMethod> parsedMethods = successfullyParsedMethods(methods, arguments, diagnostics);
+        LinkedList<ParsedMethod> parsedMethods = successfullyParsedMethods(preParsingMethods, arguments, diagnostics);
 
         if (parsedMethods.isEmpty()) {
             sender.sendMessage(noMethodsParsedMessage(diagnostics));
@@ -86,14 +90,27 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
 
         if (parsedMethods.size() == 1) {
             ParsedMethod parsedMethod = parsedMethods.get(0);
+            if (Player.class.equals(parsedMethod.preParsedMethod().getSenderParameterType()))
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage("§cOnly players can use this subCommand!");
+                    return true;
+                }
+
+            Object[] parameters = new Object[parsedMethod.preParsedMethod().getMethod().getParameterCount()];
+            boolean methodHasSenderParameter = parsedMethod.preParsedMethod().getSenderParameterType() != null;
+            if (methodHasSenderParameter)
+                parameters[0] = sender;
+
+            System.arraycopy(parsedMethod.parameters(), 0, parameters, (methodHasSenderParameter) ? 1 : 0, parsedMethod.parameters().length);
+
             try {
-                parsedMethod.method().invoke(this, parsedMethod.parameters());
+                parsedMethod.preParsedMethod().getMethod().invoke(this, parameters);
             } catch (IllegalAccessException e) {
                 sender.sendMessage("§cThe programmer of this subCommand used the ReflectiveCommandBase incorrectly!\n§4IllegalAccessException: §c" + e.getMessage());
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
                 Throwable cause = e.getCause();
-                sender.sendMessage("§cThe method \"" + parsedMethod.method().getName() + "\" threw an exception!\n§4" +
+                sender.sendMessage("§cThe method \"" + parsedMethod.preParsedMethod().getMethod().getName() + "\" threw an exception!\n§4" +
                         cause.getClass().getSimpleName() + ": §c" + cause.getMessage());
                 e.printStackTrace();
             }
@@ -104,24 +121,24 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return true;
     }
 
-    private @NotNull LinkedList<ParsedMethod> successfullyParsedMethods(@NotNull LinkedList<Method> methods, @NotNull String[] arguments, @NotNull Diagnostics diagnostics) {
+    private @NotNull LinkedList<ParsedMethod> successfullyParsedMethods(@NotNull LinkedList<PreParsingMethod> preParsingMethods, @NotNull String[] arguments, @NotNull Diagnostics diagnostics) {
         LinkedList<ParsedMethod> parsedMethods = new LinkedList<>();
         diagnostics.setMethodParsingLog(new LinkedList<>());
 
-        for (Method method : methods) {
-            String[] parameterStrings = new String[method.getParameterCount()];
+        for (PreParsingMethod preParsingMethod : preParsingMethods) {
+            String[] parameterStrings = new String[preParsingMethod.getParsingParameterTypes().length];
             System.arraycopy(arguments, arguments.length-parameterStrings.length, parameterStrings, 0, parameterStrings.length);
 
-            Object[] parameters = parseMethodParameters(method, parameterStrings, diagnostics.getMethodParsingLog());
+            Object[] parameters = parseMethodParameters(preParsingMethod, parameterStrings, diagnostics.getMethodParsingLog());
             if (parameters != null)
-                parsedMethods.add(new ParsedMethod(method, parameters));
+                parsedMethods.add(new ParsedMethod(preParsingMethod, parameters));
         }
 
         return parsedMethods;
     }
 
-    private @Nullable Object[] parseMethodParameters(@NotNull Method method, final @NotNull String[] parameterStrings, final @NotNull LinkedList<ParsingLog> methodParsingLog) {
-        Class<?>[] parameterTypes = method.getParameterTypes().clone();
+    private @Nullable Object[] parseMethodParameters(@NotNull PreParsingMethod preParsingMethod, final @NotNull String[] parameterStrings, final @NotNull LinkedList<ParsingLog> methodParsingLog) {
+        Class<?>[] parameterTypes = preParsingMethod.getParsingParameterTypes().clone();
         Object[] parameters = new Object[parameterTypes.length];
         boolean encounteredException = false;
 
@@ -135,11 +152,11 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             }
 
         if (encounteredException) {
-            methodParsingLog.add(new ParsingLog(method, parameterStrings, parameterTypes, parameters));
+            methodParsingLog.add(new ParsingLog(preParsingMethod, parameterStrings, parameterTypes, parameters));
             return null;
         }
 
-        methodParsingLog.add(new ParsingLog(method, parameterStrings, null, parameters));
+        methodParsingLog.add(new ParsingLog(preParsingMethod, parameterStrings, null, parameters));
         return parameters;
     }
 
@@ -152,37 +169,63 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return "§cmultiple methods parsed!";
     }
 
-    private @NotNull LinkedList<Method> methodsMatchingParameterCount(final @NotNull LinkedList<Method> methods, final int argumentCount, final @NotNull Diagnostics diagnostics) {
-        methods.removeIf(method -> {
-            //noinspection ResultOfMethodCallIgnored
-            diagnostics.getMethodParsingLog();
-            return method.getParameterCount() != argumentCount - method.getAnnotation(ReflectCommand.class).path().split(" ").length;
+    private @NotNull LinkedList<PreParsingMethod> methodsMatchingParameterCount(final @NotNull LinkedList<PreParsingMethod> methodParsingPresets, final int argumentCount, final @NotNull Diagnostics diagnostics) {
+        methodParsingPresets.removeIf(preParsingMethod -> {
+            LinkedList<String> cleanPath = getCleanPathFromString(preParsingMethod.getMethod().getAnnotation(ReflectCommand.class).path());
+
+            return preParsingMethod.getParsingParameterTypes().length != argumentCount - cleanPath.size();
         });
-        return methods;
+        return methodParsingPresets;
     }
 
     private @NotNull String noMethodsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
         return "§cno methods matching parameter count!";
     }
 
-    private @NotNull LinkedList<Method> getPathMatchingMethods(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        LinkedList<Method> methods = new LinkedList<>();
+    private @NotNull LinkedList<PreParsingMethod> getPathMatchingMethods(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
+        LinkedList<PreParsingMethod> methods = new LinkedList<>();
+        ArrayList<String> potentialPaths = new ArrayList<>(longestPath);
 
         for (int i = 0; i < arguments.length && i < longestPath; i++) {
-            String[] path = new String[i+1];
-            System.arraycopy(arguments, 0, path, 0, path.length);
+            String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i+1));
+            potentialPaths.add(path);
 
-            ArrayList<Method> methodsMatchingPath = pathToMethodsMap.get(String.join(" ", path));
+            ArrayList<PreParsingMethod> methodsMatchingPath = pathToPreParsingMethodsMap.get(path);
             if (methodsMatchingPath != null)
                 methods.addAll(methodsMatchingPath);
         }
 
-        diagnostics.setMatchingPaths(new ArrayList<>(methods));
+        diagnostics.setPotentialPaths(potentialPaths);
         return methods;
     }
 
     private @NotNull String noPathMatchingMethodsMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
+        ArrayList<String> potentialPaths = diagnostics.getPotentialPaths();
+        for (int i = potentialPaths.size(); i < arguments.length && i < longestPath; i++)
+            potentialPaths.add(String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)));
+
+        for (Map.Entry<String, ArrayList<PreParsingMethod>> pathToMethod : pathToPreParsingMethodsMap.entrySet()) {
+
+        }
+
         return "§cno methods matching path!";
+    }
+
+    private @NotNull String getMethodArguments(@NotNull Method method) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(String.join(" ", getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path()))).append(" ");
+        for (Parameter parameter : method.getParameters())
+            stringBuilder.append("<").append(parameter.getName()).append("> ");
+        stringBuilder.replace(stringBuilder.length()-1, stringBuilder.length(), "");
+
+        return stringBuilder.toString();
+    }
+
+    private @NotNull LinkedList<String> getCleanPathFromString(@NotNull String path) {
+        LinkedList<String> splitPath = new LinkedList<>(Arrays.asList(path.split(" ")));
+        splitPath.removeAll(List.of(""));
+        return splitPath;
     }
 
     @Override
