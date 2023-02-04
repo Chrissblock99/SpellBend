@@ -34,7 +34,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         for (Method method : getClass().getDeclaredMethods()) {
             if (!method.isAnnotationPresent(ReflectCommand.class))
                 continue;
-            PreParsingMethod preParsingMethod = new PreParsingMethod(method);
+            PreParsingMethod preParsingMethod = new PreParsingMethod(method, commandName);
 
             if (longestPath < preParsingMethod.getPathSize())
                 longestPath = preParsingMethod.getPathSize();
@@ -167,16 +167,19 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     }
 
     private @NotNull LinkedList<PreParsingMethod> methodsMatchingParameterCount(final @NotNull LinkedList<PreParsingMethod> methodParsingPresets, final int argumentCount, final @NotNull Diagnostics diagnostics) {
-        methodParsingPresets.removeIf(preParsingMethod -> {
-
-            //noinspection CodeBlock2Expr
-            return preParsingMethod.getParsingParameterTypes().length != argumentCount - preParsingMethod.getPathSize();
-        });
+        methodParsingPresets.removeIf(preParsingMethod -> preParsingMethod.getParsingParameterTypes().length != argumentCount - preParsingMethod.getPathSize());
         return methodParsingPresets;
     }
 
     private @NotNull String noMethodsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        return "§cno methods matching parameter count!";
+        String path = diagnostics.getPotentialPaths().get(diagnostics.getPotentialPaths().size()-1);
+        //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
+
+        StringBuilder stringBuilder = new StringBuilder().append("§cWrong parameter count! Possible subcommand parameters:§r");
+        for (PreParsingMethod preParsingMethod : pathToPreParsingMethodsMap.get(path))
+            stringBuilder.append("\n").append(preParsingMethod.getArguments());
+
+        return stringBuilder.toString();
     }
 
     private @NotNull LinkedList<PreParsingMethod> getPathMatchingMethods(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
@@ -219,8 +222,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
 
         StringBuilder stringBuilder = new StringBuilder().append("§cNo subCommands matched the given path! Most matching subCommands:§r");
         for (PreParsingMethod preParsingMethod : sortedMostPathMatchingMethods)
-            stringBuilder.append(preParsingMethod.getArguments()).append("\n");
-        stringBuilder.replace(stringBuilder.length()-2, stringBuilder.length(), "");
+            stringBuilder.append("\n").append(preParsingMethod.getArguments());
 
         return stringBuilder.toString();
     }

@@ -6,7 +6,6 @@ import java.util.Objects;
 
 public class Diagnostics {
     private ArrayList<String> potentialPaths = null;
-
     private LinkedList<ParsingLog> methodParsingLog = null;
 
     public Diagnostics() {}

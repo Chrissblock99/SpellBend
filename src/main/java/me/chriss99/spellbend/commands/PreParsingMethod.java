@@ -18,7 +18,7 @@ public class PreParsingMethod {
     private final Class<?>[] parsingParameterTypes;
     private final Class<?> senderParameterType;
 
-    public PreParsingMethod(@NotNull Method method) {
+    public PreParsingMethod(@NotNull Method method, @NotNull String commandName) {
         this.method = method;
 
         LinkedList<String> cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path());
@@ -29,7 +29,7 @@ public class PreParsingMethod {
         if (parameters.length == 0) {
             parsingParameterTypes = new Class[0];
             senderParameterType = null;
-            arguments = generateMethodArguments();
+            arguments = generateMethodArguments(commandName);
             return;
         }
 
@@ -38,19 +38,17 @@ public class PreParsingMethod {
                 parsingParameterTypes = new Class[0];
             else parsingParameterTypes = Arrays.copyOfRange(method.getParameterTypes(), 1, parameters.length);
             senderParameterType = parameters[0].getType();
-            arguments = generateMethodArguments();
+            arguments = generateMethodArguments(commandName);
             return;
         }
 
         parsingParameterTypes = method.getParameterTypes();
         senderParameterType = null;
-        arguments = generateMethodArguments();
+        arguments = generateMethodArguments(commandName);
     }
 
-    private @NotNull String generateMethodArguments() {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        stringBuilder.append(path).append(" ");
+    private @NotNull String generateMethodArguments(@NotNull String commandName) {
+        StringBuilder stringBuilder = new StringBuilder().append(commandName).append(" ").append(path).append(" ");
         Parameter[] parameters = method.getParameters();
         for (int i = (senderParameterType == null) ? 0 : 1; i < parameters.length; i++)
             stringBuilder.append("<").append(parameters[i].getName()).append("> ");
