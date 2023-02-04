@@ -39,7 +39,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             if (longestPath < preParsingMethod.getPathSize())
                 longestPath = preParsingMethod.getPathSize();
 
-            String path = preParsingMethod.getPath();
+            String path = preParsingMethod.getPath().toUpperCase();
             ArrayList<PreParsingMethod> samePathMethods = pathToPreParsingMethodsMap.get(path);
 
             if (samePathMethods == null) {
@@ -187,7 +187,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         ArrayList<String> potentialPaths = new ArrayList<>(longestPath);
 
         for (int i = 0; i < arguments.length && i < longestPath; i++) {
-            String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i+1));
+            String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)).toUpperCase();
             potentialPaths.add(path);
 
             ArrayList<PreParsingMethod> methodsMatchingPath = pathToPreParsingMethodsMap.get(path);
