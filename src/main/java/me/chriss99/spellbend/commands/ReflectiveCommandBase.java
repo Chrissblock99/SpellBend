@@ -208,7 +208,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         //noinspection unchecked
         HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> newMatchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) matchingMethods.clone();
         for (String potentialPath : potentialPaths) {
-            newMatchingMethods.removeIf(pathToMethod -> potentialPath.equals(pathToMethod.getKey().substring(1, potentialPath.length())));
+            newMatchingMethods.removeIf(pathToMethod -> {
+                try {
+                    return potentialPath.equals(pathToMethod.getKey().substring(1, potentialPath.length()));
+                } catch (StringIndexOutOfBoundsException sioobe) {
+                    return false;
+                }
+            });
             if (newMatchingMethods.isEmpty())
                 break;
             //noinspection unchecked
