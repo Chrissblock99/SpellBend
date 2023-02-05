@@ -22,10 +22,23 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     private int maxPathLength = 0;
     private final CustomClassParser classParser;
 
+    /**
+     * @param commandName The name of the command
+     * @param description The description of the command
+     * @param aliases The possible aliases (doesn't work)
+     */
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases) {
         this(commandName, description, aliases, new CustomClassParser());
     }
 
+    /**
+     * @param commandName The name of the command
+     * @param description The description of the command
+     * @param aliases The possible aliases (doesn't work)
+     * @param classParser The classParser to parse the arguments (needed if arguments contain non-standard classes)
+     *
+     * @throws IllegalStateException When two methods have the same annotated path and arguments
+     */
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases, @NotNull CustomClassParser classParser) {
         super(commandName, description,
                 "If this shows up, someone has not updated the usageMessage in ReflectiveCommandBase yet. Please notify a developer immediately!", aliases);
@@ -64,6 +77,15 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         pluginCommand.setExecutor(this);
     }
 
+    /**
+     * Gets called whenever the command is called <br>
+     * Handles the individual methods to find which subCommand is used, parse the arguments to it and give error feedback
+     *
+     * @param sender Source object which is executing this command
+     * @param alias The alias of the command used
+     * @param arguments All arguments passed to the command, split via ' '
+     * @return true, always, error feedback is handled here
+     */
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] arguments) {
         Diagnostics diagnostics = new Diagnostics();
@@ -118,6 +140,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return true;
     }
 
+    /**
+     * Generates all possible paths and returns a list of all subCommands with any of those paths
+     *
+     * @param arguments The arguments given
+     * @param diagnostics The diagnostics object
+     * @return All subCommands matching with a possible path
+     */
     private @NotNull LinkedList<SubCommand> getPathMatchingSubCommands(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
         LinkedList<SubCommand> methods = new LinkedList<>();
         ArrayList<String> possiblePaths = new ArrayList<>(maxPathLength);
@@ -135,6 +164,15 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return methods;
     }
 
+    /**
+     * Creates a copy of the subCommands and iterates through all possible paths from shortest (most general) to longest (most specific)<br>
+     * On each iteration it removes all subCommands from the copy, which don't match the current path <br>
+     * If the copy is left empty, it continues with the copy of the last iteration <br>
+     * Therefore it always uses the most specific subCommand collection
+     *
+     * @param possiblePaths The possible paths
+     * @return The error message
+     */
     private @NotNull String noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
         HashSet<Map.Entry<String, ArrayList<SubCommand>>> matchingPathToSubCommandsEntries = new HashSet<>(pathToSubCommandsMap.entrySet());
         //noinspection unchecked
@@ -165,6 +203,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return stringBuilder.toString();
     }
 
+    /**
+     * Removes all subCommands from the list which path length plus parameter count don't match the argument count
+     *
+     * @param SubCommands The subCommands to filter through
+     * @param argumentCount The argument count
+     * @return The filtered list
+     */
     private @NotNull LinkedList<SubCommand> subCommandsMatchingParameterCount(final @NotNull LinkedList<SubCommand> SubCommands, final int argumentCount) {
         SubCommands.removeIf(subCommand -> argumentCount !=  subCommand.getPathLength() + subCommand.getParsingParameterTypes().length);
         return SubCommands;
