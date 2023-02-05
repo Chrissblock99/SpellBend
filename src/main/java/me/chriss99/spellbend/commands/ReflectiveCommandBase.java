@@ -71,7 +71,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         LinkedList<PreParsingMethod> preParsingMethods = getPathMatchingMethods(arguments, diagnostics);
 
         if (preParsingMethods.isEmpty()) {
-            sender.sendMessage(noPathMatchingMethodsMessage(arguments, diagnostics));
+            sender.sendMessage(noPathMatchingMethodsMessage(diagnostics.getPotentialPaths()));
             return true;
         }
         if (methodsMatchingParameterCount(preParsingMethods, arguments.length, diagnostics).isEmpty()) {
@@ -175,7 +175,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         String path = diagnostics.getPotentialPaths().get(diagnostics.getPotentialPaths().size()-1);
         //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
 
-        StringBuilder stringBuilder = new StringBuilder().append("§cWrong parameter count! Possible subcommand parameters:§r");
+        StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subcommand parameters:§r");
         for (PreParsingMethod preParsingMethod : pathToPreParsingMethodsMap.get(path))
             stringBuilder.append("\n").append(preParsingMethod.getArguments());
 
@@ -199,11 +199,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return methods;
     }
 
-    private @NotNull String noPathMatchingMethodsMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        ArrayList<String> potentialPaths = diagnostics.getPotentialPaths();
-        for (int i = potentialPaths.size(); i < arguments.length && i < longestPath; i++)
-            potentialPaths.add(String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)));
-
+    private @NotNull String noPathMatchingMethodsMessage(final @NotNull ArrayList<String> potentialPaths) {
         HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> matchingMethods = new HashSet<>(pathToPreParsingMethodsMap.entrySet());
         //noinspection unchecked
         HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> newMatchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) matchingMethods.clone();
@@ -226,7 +222,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             sortedMostPathMatchingMethods.addAll(pathToMethods.getValue());
         sortedMostPathMatchingMethods.sort(Comparator.comparing(PreParsingMethod::getArguments));
 
-        StringBuilder stringBuilder = new StringBuilder().append("§cNo subCommands matched the given path! Most matching subCommands:§r");
+        StringBuilder stringBuilder = new StringBuilder("§cNo subCommands matched the given path! Most matching subCommands:§r");
         for (PreParsingMethod preParsingMethod : sortedMostPathMatchingMethods)
             stringBuilder.append("\n").append(preParsingMethod.getArguments());
 
