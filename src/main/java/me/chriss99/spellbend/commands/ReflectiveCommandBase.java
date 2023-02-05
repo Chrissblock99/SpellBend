@@ -79,7 +79,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
 
     /**
      * Gets called whenever the command is called <br>
-     * Handles the individual methods to find which subCommand is used, parse the arguments to it and give error feedback
+     * Handles the individual methods to find which subCommand is used, parse the arguments to and execute it and give error feedback
      *
      * @param sender Source object which is executing this command
      * @param alias The alias of the command used
@@ -107,36 +107,36 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             return true;
         }
 
-        if (parsedSubCommands.size() == 1) {
-            ParsedSubCommand parsedSubCommand = parsedSubCommands.get(0);
-            if (Player.class.equals(parsedSubCommand.subCommand().getSenderParameterType()))
-                if (!(sender instanceof Player)) {
-                    sender.sendMessage("§cOnly players can use this subCommand!");
-                    return true;
-                }
-
-            Object[] parameters = new Object[parsedSubCommand.subCommand().getMethod().getParameterCount()];
-            boolean methodHasSenderParameter = parsedSubCommand.subCommand().getSenderParameterType() != null;
-            if (methodHasSenderParameter)
-                parameters[0] = sender;
-
-            System.arraycopy(parsedSubCommand.parameters(), 0, parameters, (methodHasSenderParameter) ? 1 : 0, parsedSubCommand.parameters().length);
-
-            try {
-                parsedSubCommand.subCommand().getMethod().invoke(this, parameters);
-            } catch (IllegalAccessException iae) {
-                sender.sendMessage("§cThe programmer of this subCommand used the ReflectiveCommandBase incorrectly!\n§4IllegalAccessException: §c" + iae.getMessage());
-                iae.printStackTrace();
-            } catch (InvocationTargetException e) {
-                Throwable cause = e.getCause();
-                sender.sendMessage("§cThe subCommand method \"" + parsedSubCommand.subCommand().getMethod().getName() + "\" threw an exception!\n§4" +
-                        cause.getClass().getSimpleName() + ": §c" + cause.getMessage());
-                e.printStackTrace();
-            }
+        if (parsedSubCommands.size() > 1) {
+            sender.sendMessage(multipleSubCommandsParsedMessage(diagnostics));
             return true;
         }
 
-        sender.sendMessage(multipleSubCommandsParsedMessage(diagnostics));
+        ParsedSubCommand parsedSubCommand = parsedSubCommands.get(0);
+        if (Player.class.equals(parsedSubCommand.subCommand().getSenderParameterType()) && !(sender instanceof Player)) {
+            sender.sendMessage("§cOnly players can use this subCommand!");
+            return true;
+        }
+
+
+        Object[] parameters = new Object[parsedSubCommand.subCommand().getMethod().getParameterCount()];
+        boolean methodHasSenderParameter = parsedSubCommand.subCommand().getSenderParameterType() != null;
+        if (methodHasSenderParameter)
+            parameters[0] = sender;
+
+        System.arraycopy(parsedSubCommand.parameters(), 0, parameters, (methodHasSenderParameter) ? 1 : 0, parsedSubCommand.parameters().length);
+
+        try {
+            parsedSubCommand.subCommand().getMethod().invoke(this, parameters);
+        } catch (IllegalAccessException iae) {
+            sender.sendMessage("§cThe programmer of this subCommand used the ReflectiveCommandBase incorrectly!\n§4IllegalAccessException: §c" + iae.getMessage());
+            iae.printStackTrace();
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            sender.sendMessage("§cThe subCommand method \"" + parsedSubCommand.subCommand().getMethod().getName() + "\" threw an exception!\n§4" +
+                    cause.getClass().getSimpleName() + ": §c" + cause.getMessage());
+            e.printStackTrace();
+        }
         return true;
     }
 
