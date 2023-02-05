@@ -25,7 +25,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     /**
      * @param commandName The name of the command
      * @param description The description of the command
-     * @param aliases The possible aliases (doesn't work)
+     * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
      */
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases) {
         this(commandName, description, aliases, new CustomClassParser());
@@ -34,7 +34,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     /**
      * @param commandName The name of the command
      * @param description The description of the command
-     * @param aliases The possible aliases (doesn't work)
+     * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
      * @param classParser The classParser to parse the arguments (needed if arguments contain non-standard classes)
      *
      * @throws IllegalStateException When two methods have the same annotated path and arguments
