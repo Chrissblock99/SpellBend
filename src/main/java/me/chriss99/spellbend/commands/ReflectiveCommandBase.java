@@ -136,25 +136,25 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     }
 
     private @NotNull String noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
-        HashSet<Map.Entry<String, ArrayList<SubCommand>>> matchingPathToSubCommandsEntrys = new HashSet<>(pathToSubCommandsMap.entrySet());
+        HashSet<Map.Entry<String, ArrayList<SubCommand>>> matchingPathToSubCommandsEntries = new HashSet<>(pathToSubCommandsMap.entrySet());
         //noinspection unchecked
-        HashSet<Map.Entry<String, ArrayList<SubCommand>>> newMatchingPathToSubCommandsEntrys = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) matchingPathToSubCommandsEntrys.clone();
+        HashSet<Map.Entry<String, ArrayList<SubCommand>>> newMatchingPathToSubCommandsEntries = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) matchingPathToSubCommandsEntries.clone();
         for (String potentialPath : possiblePaths) {
-            newMatchingPathToSubCommandsEntrys.removeIf(pathToSubCommands -> {
+            newMatchingPathToSubCommandsEntries.removeIf(pathToSubCommands -> {
                 try {
                     return potentialPath.equals(pathToSubCommands.getKey().substring(1, potentialPath.length()));
                 } catch (StringIndexOutOfBoundsException sioobe) {
                     return false;
                 }
             });
-            if (newMatchingPathToSubCommandsEntrys.isEmpty())
+            if (newMatchingPathToSubCommandsEntries.isEmpty())
                 break;
             //noinspection unchecked
-            matchingPathToSubCommandsEntrys = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) newMatchingPathToSubCommandsEntrys.clone();
+            matchingPathToSubCommandsEntries = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) newMatchingPathToSubCommandsEntries.clone();
         }
 
         List<SubCommand> sortedMostPathMatchingMethods = new LinkedList<>();
-        for (Map.Entry<String, ArrayList<SubCommand>> pathToMethods : matchingPathToSubCommandsEntrys)
+        for (Map.Entry<String, ArrayList<SubCommand>> pathToMethods : matchingPathToSubCommandsEntries)
             sortedMostPathMatchingMethods.addAll(pathToMethods.getValue());
         sortedMostPathMatchingMethods.sort(Comparator.comparing(SubCommand::getArguments));
 
