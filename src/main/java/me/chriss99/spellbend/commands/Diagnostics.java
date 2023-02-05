@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Diagnostics {
     private ArrayList<String> possiblePaths = null;
-    private LinkedList<ParsingLog> methodParsingLog = null;
+    private LinkedList<ParsingLog> SubCommandParsingLog = null;
 
     public Diagnostics() {}
 
@@ -14,16 +14,16 @@ public class Diagnostics {
         this.possiblePaths = potentialPaths;
     }
 
-    public void setMethodParsingLog(LinkedList<ParsingLog> methodParsingLog) {
-        this.methodParsingLog = methodParsingLog;
+    public void setSubCommandParsingLog(LinkedList<ParsingLog> subCommandParsingLog) {
+        this.SubCommandParsingLog = subCommandParsingLog;
     }
 
     public ArrayList<String> getPossiblePaths() {
         return possiblePaths;
     }
 
-    public LinkedList<ParsingLog> getMethodParsingLog() {
-        return methodParsingLog;
+    public LinkedList<ParsingLog> getSubCommandParsingLog() {
+        return SubCommandParsingLog;
     }
 
     @Override
@@ -32,19 +32,19 @@ public class Diagnostics {
         if (obj == null || obj.getClass() != this.getClass()) return false;
         var that = (Diagnostics) obj;
         return Objects.equals(this.possiblePaths, that.possiblePaths) &&
-                Objects.equals(this.methodParsingLog, that.methodParsingLog);
+                Objects.equals(this.SubCommandParsingLog, that.SubCommandParsingLog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(possiblePaths, methodParsingLog);
+        return Objects.hash(possiblePaths, SubCommandParsingLog);
     }
 
     @Override
     public String toString() {
         return "Diagnostics[" +
                 "possiblePaths=" + possiblePaths + ", " +
-                "methodParsingLog=" + methodParsingLog + ']';
+                "methodParsingLog=" + SubCommandParsingLog + ']';
     }
 
 }

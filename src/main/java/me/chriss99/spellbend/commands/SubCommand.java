@@ -10,19 +10,19 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PreParsingMethod {
+public class SubCommand {
     private final Method method;
     private final String path;
-    private final int pathSize;
+    private final int pathLength;
     private final String arguments;
     private final Class<?>[] parsingParameterTypes;
     private final Class<?> senderParameterType;
 
-    public PreParsingMethod(@NotNull Method method, @NotNull String commandName) {
+    public SubCommand(@NotNull Method method, @NotNull String commandName) {
         this.method = method;
 
         LinkedList<String> cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path());
-        pathSize = cleanPath.size();
+        pathLength = cleanPath.size();
         path = String.join(" ", cleanPath);
 
         Parameter[] parameters = method.getParameters();
@@ -71,8 +71,8 @@ public class PreParsingMethod {
         return path;
     }
 
-    public int getPathSize() {
-        return pathSize;
+    public int getPathLength() {
+        return pathLength;
     }
 
     public String getArguments() {
