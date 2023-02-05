@@ -118,6 +118,69 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return true;
     }
 
+    private @NotNull LinkedList<PreParsingMethod> getPathMatchingMethods(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
+        LinkedList<PreParsingMethod> methods = new LinkedList<>();
+        ArrayList<String> potentialPaths = new ArrayList<>(longestPath);
+
+        for (int i = 0; i < arguments.length && i < longestPath; i++) {
+            String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)).toUpperCase();
+            potentialPaths.add(path);
+
+            ArrayList<PreParsingMethod> methodsMatchingPath = pathToPreParsingMethodsMap.get(path);
+            if (methodsMatchingPath != null)
+                methods.addAll(methodsMatchingPath);
+        }
+
+        diagnostics.setPotentialPaths(potentialPaths);
+        return methods;
+    }
+
+    private @NotNull String noPathMatchingMethodsMessage(final @NotNull ArrayList<String> potentialPaths) {
+        HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> matchingMethods = new HashSet<>(pathToPreParsingMethodsMap.entrySet());
+        //noinspection unchecked
+        HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> newMatchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) matchingMethods.clone();
+        for (String potentialPath : potentialPaths) {
+            newMatchingMethods.removeIf(pathToMethod -> {
+                try {
+                    return potentialPath.equals(pathToMethod.getKey().substring(1, potentialPath.length()));
+                } catch (StringIndexOutOfBoundsException sioobe) {
+                    return false;
+                }
+            });
+            if (newMatchingMethods.isEmpty())
+                break;
+            //noinspection unchecked
+            matchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) newMatchingMethods.clone();
+        }
+
+        List<PreParsingMethod> sortedMostPathMatchingMethods = new LinkedList<>();
+        for (Map.Entry<String, ArrayList<PreParsingMethod>> pathToMethods : matchingMethods)
+            sortedMostPathMatchingMethods.addAll(pathToMethods.getValue());
+        sortedMostPathMatchingMethods.sort(Comparator.comparing(PreParsingMethod::getArguments));
+
+        StringBuilder stringBuilder = new StringBuilder("§cNo subCommands matched the given path! Most matching subCommands:§r");
+        for (PreParsingMethod preParsingMethod : sortedMostPathMatchingMethods)
+            stringBuilder.append("\n").append(preParsingMethod.getArguments());
+
+        return stringBuilder.toString();
+    }
+
+    private @NotNull LinkedList<PreParsingMethod> methodsMatchingParameterCount(final @NotNull LinkedList<PreParsingMethod> methodParsingPresets, final int argumentCount, final @NotNull Diagnostics diagnostics) {
+        methodParsingPresets.removeIf(preParsingMethod -> preParsingMethod.getParsingParameterTypes().length != argumentCount - preParsingMethod.getPathSize());
+        return methodParsingPresets;
+    }
+
+    private @NotNull String noMethodsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
+        String path = diagnostics.getPotentialPaths().get(diagnostics.getPotentialPaths().size()-1);
+        //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
+
+        StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subcommand parameters:§r");
+        for (PreParsingMethod preParsingMethod : pathToPreParsingMethodsMap.get(path))
+            stringBuilder.append("\n").append(preParsingMethod.getArguments());
+
+        return stringBuilder.toString();
+    }
+
     private @NotNull LinkedList<ParsedMethod> successfullyParsedMethods(@NotNull LinkedList<PreParsingMethod> preParsingMethods, @NotNull String[] arguments, @NotNull Diagnostics diagnostics) {
         LinkedList<ParsedMethod> parsedMethods = new LinkedList<>();
         diagnostics.setMethodParsingLog(new LinkedList<>());
@@ -164,69 +227,6 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     private @NotNull String multipleMethodsParsedMessage(@NotNull Diagnostics diagnostics) {
         //noinspection SpellCheckingInspection
         return "§cmultiple methods parsed!";
-    }
-
-    private @NotNull LinkedList<PreParsingMethod> methodsMatchingParameterCount(final @NotNull LinkedList<PreParsingMethod> methodParsingPresets, final int argumentCount, final @NotNull Diagnostics diagnostics) {
-        methodParsingPresets.removeIf(preParsingMethod -> preParsingMethod.getParsingParameterTypes().length != argumentCount - preParsingMethod.getPathSize());
-        return methodParsingPresets;
-    }
-
-    private @NotNull String noMethodsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        String path = diagnostics.getPotentialPaths().get(diagnostics.getPotentialPaths().size()-1);
-        //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
-
-        StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subcommand parameters:§r");
-        for (PreParsingMethod preParsingMethod : pathToPreParsingMethodsMap.get(path))
-            stringBuilder.append("\n").append(preParsingMethod.getArguments());
-
-        return stringBuilder.toString();
-    }
-
-    private @NotNull LinkedList<PreParsingMethod> getPathMatchingMethods(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        LinkedList<PreParsingMethod> methods = new LinkedList<>();
-        ArrayList<String> potentialPaths = new ArrayList<>(longestPath);
-
-        for (int i = 0; i < arguments.length && i < longestPath; i++) {
-            String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)).toUpperCase();
-            potentialPaths.add(path);
-
-            ArrayList<PreParsingMethod> methodsMatchingPath = pathToPreParsingMethodsMap.get(path);
-            if (methodsMatchingPath != null)
-                methods.addAll(methodsMatchingPath);
-        }
-
-        diagnostics.setPotentialPaths(potentialPaths);
-        return methods;
-    }
-
-    private @NotNull String noPathMatchingMethodsMessage(final @NotNull ArrayList<String> potentialPaths) {
-        HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> matchingMethods = new HashSet<>(pathToPreParsingMethodsMap.entrySet());
-        //noinspection unchecked
-        HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>> newMatchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) matchingMethods.clone();
-        for (String potentialPath : potentialPaths) {
-            newMatchingMethods.removeIf(pathToMethod -> {
-                try {
-                    return potentialPath.equals(pathToMethod.getKey().substring(1, potentialPath.length()));
-                } catch (StringIndexOutOfBoundsException sioobe) {
-                    return false;
-                }
-            });
-            if (newMatchingMethods.isEmpty())
-                break;
-            //noinspection unchecked
-            matchingMethods = (HashSet<Map.Entry<String, ArrayList<PreParsingMethod>>>) newMatchingMethods.clone();
-        }
-
-        List<PreParsingMethod> sortedMostPathMatchingMethods = new LinkedList<>();
-        for (Map.Entry<String, ArrayList<PreParsingMethod>> pathToMethods : matchingMethods)
-            sortedMostPathMatchingMethods.addAll(pathToMethods.getValue());
-        sortedMostPathMatchingMethods.sort(Comparator.comparing(PreParsingMethod::getArguments));
-
-        StringBuilder stringBuilder = new StringBuilder("§cNo subCommands matched the given path! Most matching subCommands:§r");
-        for (PreParsingMethod preParsingMethod : sortedMostPathMatchingMethods)
-            stringBuilder.append("\n").append(preParsingMethod.getArguments());
-
-        return stringBuilder.toString();
     }
 
     @Override
