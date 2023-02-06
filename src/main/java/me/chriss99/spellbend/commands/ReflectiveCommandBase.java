@@ -272,12 +272,33 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     }
 
     private @NotNull String noSubCommandsParsedMessage(@NotNull Diagnostics diagnostics) {
-        return "§cno methods parsed!";
+        StringBuilder stringBuilder = new StringBuilder("§cIncorrect parameters!§r");
+        for (ParsingLog parsingLog : diagnostics.getSubCommandParsingLog())
+            addParsingFailures(stringBuilder, parsingLog);
+        return stringBuilder.toString();
+    }
+
+    private void addParsingFailures(@NotNull StringBuilder stringBuilder, @NotNull ParsingLog parsingLog) {
+        if (parsingLog.parameterTypes() == null)
+            return;
+
+        stringBuilder.append("\n").append(parsingLog.subCommand().getArguments());
+        for (int i = 0; i < parsingLog.parameters().length; i++) {
+            if (!(parsingLog.parameters()[i] instanceof Exception) || parsingLog.parameterTypes()[i] == null)
+                continue;
+
+            stringBuilder.append("\n  \"").append(parsingLog.parameterStrings()[i]).append("\" -> ")
+                    .append(parsingLog.subCommand().getParsingParameterTypes()[i].getSimpleName()).append("\n  §4")
+                    .append(parsingLog.parameterTypes()[i].getSimpleName()).append(": §c")
+                    .append(((Exception) parsingLog.parameters()[i]).getMessage()).append("§r");
+        }
     }
 
     private @NotNull String multipleSubCommandsParsedMessage(@NotNull Diagnostics diagnostics) {
-        //noinspection SpellCheckingInspection
-        return "§cmultiple methods parsed!";
+        StringBuilder stringBuilder = new StringBuilder("§cThe parameters were parsable to multiple subCommands! There is no way to fix this currently, sorry.§r");
+        for (ParsingLog parsingLog : diagnostics.getSubCommandParsingLog())
+            stringBuilder.append("\n").append(parsingLog.subCommand().getArguments());
+        return stringBuilder.toString();
     }
 
     @Override
