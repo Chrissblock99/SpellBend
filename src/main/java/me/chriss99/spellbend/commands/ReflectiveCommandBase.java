@@ -106,7 +106,6 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             sender.sendMessage(noSubCommandsParsedMessage(diagnostics));
             return true;
         }
-
         if (parsedSubCommands.size() > 1) {
             sender.sendMessage(multipleSubCommandsParsedMessage(diagnostics));
             return true;
@@ -148,20 +147,20 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @return All subCommands matching with a possible path
      */
     private @NotNull LinkedList<SubCommand> getPathMatchingSubCommands(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        LinkedList<SubCommand> methods = new LinkedList<>();
+        LinkedList<SubCommand> subCommands = new LinkedList<>();
         ArrayList<String> possiblePaths = new ArrayList<>(maxPathLength);
 
         for (int i = 0; i < arguments.length && i < maxPathLength; i++) {
             String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)).toUpperCase();
             possiblePaths.add(path);
 
-            ArrayList<SubCommand> methodsMatchingPath = pathToSubCommandsMap.get(path);
-            if (methodsMatchingPath != null)
-                methods.addAll(methodsMatchingPath);
+            ArrayList<SubCommand> SubCommandsMatchingPath = pathToSubCommandsMap.get(path);
+            if (SubCommandsMatchingPath != null)
+                subCommands.addAll(SubCommandsMatchingPath);
         }
 
         diagnostics.setPossiblePaths(possiblePaths);
-        return methods;
+        return subCommands;
     }
 
     /**
