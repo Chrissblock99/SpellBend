@@ -164,15 +164,29 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     }
 
     /**
+     * Formats and creates the error feedback message for the case that no subCommands match the given arguments
+     *
+     * @param possiblePaths The pre-generated possible paths, from shortest to longest
+     * @return The error message
+     */
+    private @NotNull String noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
+        StringBuilder stringBuilder = new StringBuilder("§cNo subCommands matched the given path! Most matching subCommands:§r");
+        for (SubCommand subCommand : mostPathMatchingSubCommands(possiblePaths))
+            stringBuilder.append("\n").append(subCommand.getArguments());
+
+        return stringBuilder.toString();
+    }
+
+    /**
      * Creates a copy of the subCommands and iterates through all possible paths from shortest (most general) to longest (most specific)<br>
      * On each iteration it removes all subCommands from the copy, which don't match the current path <br>
      * If the copy is left empty, it continues with the copy of the last iteration <br>
      * Therefore it always uses the most specific subCommand collection
      *
-     * @param possiblePaths The possible paths
-     * @return The error message
+     * @param possiblePaths The pre-generated possible paths, from shortest to longest
+     * @return An alphabetically sorted list of the most matching subCommands
      */
-    private @NotNull String noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
+    private LinkedList<SubCommand> mostPathMatchingSubCommands(final @NotNull ArrayList<String> possiblePaths) {
         HashSet<Map.Entry<String, ArrayList<SubCommand>>> matchingPathToSubCommandsEntries = new HashSet<>(pathToSubCommandsMap.entrySet());
         //noinspection unchecked
         HashSet<Map.Entry<String, ArrayList<SubCommand>>> newMatchingPathToSubCommandsEntries = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) matchingPathToSubCommandsEntries.clone();
@@ -190,16 +204,11 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             matchingPathToSubCommandsEntries = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) newMatchingPathToSubCommandsEntries.clone();
         }
 
-        List<SubCommand> sortedMostPathMatchingSubCommands = new LinkedList<>();
+        LinkedList<SubCommand> sortedMostPathMatchingSubCommands = new LinkedList<>();
         for (Map.Entry<String, ArrayList<SubCommand>> pathToMethods : matchingPathToSubCommandsEntries)
             sortedMostPathMatchingSubCommands.addAll(pathToMethods.getValue());
         sortedMostPathMatchingSubCommands.sort(Comparator.comparing(SubCommand::getArguments));
-
-        StringBuilder stringBuilder = new StringBuilder("§cNo subCommands matched the given path! Most matching subCommands:§r");
-        for (SubCommand subCommand : sortedMostPathMatchingSubCommands)
-            stringBuilder.append("\n").append(subCommand.getArguments());
-
-        return stringBuilder.toString();
+        return sortedMostPathMatchingSubCommands;
     }
 
     /**
