@@ -190,13 +190,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             matchingPathToSubCommandsEntries = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) newMatchingPathToSubCommandsEntries.clone();
         }
 
-        List<SubCommand> sortedMostPathMatchingMethods = new LinkedList<>();
+        List<SubCommand> sortedMostPathMatchingSubCommands = new LinkedList<>();
         for (Map.Entry<String, ArrayList<SubCommand>> pathToMethods : matchingPathToSubCommandsEntries)
-            sortedMostPathMatchingMethods.addAll(pathToMethods.getValue());
-        sortedMostPathMatchingMethods.sort(Comparator.comparing(SubCommand::getArguments));
+            sortedMostPathMatchingSubCommands.addAll(pathToMethods.getValue());
+        sortedMostPathMatchingSubCommands.sort(Comparator.comparing(SubCommand::getArguments));
 
         StringBuilder stringBuilder = new StringBuilder("§cNo subCommands matched the given path! Most matching subCommands:§r");
-        for (SubCommand subCommand : sortedMostPathMatchingMethods)
+        for (SubCommand subCommand : sortedMostPathMatchingSubCommands)
             stringBuilder.append("\n").append(subCommand.getArguments());
 
         return stringBuilder.toString();
@@ -215,11 +215,9 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     }
 
     private @NotNull String noSubCommandsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
-        String path = diagnostics.getPossiblePaths().get(diagnostics.getPossiblePaths().size()-1);
         //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
-
         StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subcommand parameters:§r");
-        for (SubCommand subCommand : pathToSubCommandsMap.get(path))
+        for (SubCommand subCommand : diagnostics.getPathMatchingSubCommands())
             stringBuilder.append("\n").append(subCommand.getArguments());
 
         return stringBuilder.toString();
