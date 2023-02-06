@@ -170,7 +170,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @return The error message
      */
     private @NotNull String noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
-        StringBuilder stringBuilder = new StringBuilder("§cNo subCommands matched the given path! Most matching subCommands:§r");
+        StringBuilder stringBuilder = new StringBuilder("§cInvalid path! Most matching subCommands:§r");
         for (SubCommand subCommand : mostPathMatchingSubCommands(possiblePaths))
             stringBuilder.append("\n").append(subCommand.getArguments());
 
@@ -186,16 +186,16 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @param possiblePaths The pre-generated possible paths, from shortest to longest
      * @return An alphabetically sorted list of the most matching subCommands
      */
-    private LinkedList<SubCommand> mostPathMatchingSubCommands(final @NotNull ArrayList<String> possiblePaths) {
+    private @NotNull LinkedList<SubCommand> mostPathMatchingSubCommands(final @NotNull ArrayList<String> possiblePaths) {
         HashSet<Map.Entry<String, ArrayList<SubCommand>>> matchingPathToSubCommandsEntries = new HashSet<>(pathToSubCommandsMap.entrySet());
         //noinspection unchecked
         HashSet<Map.Entry<String, ArrayList<SubCommand>>> newMatchingPathToSubCommandsEntries = (HashSet<Map.Entry<String, ArrayList<SubCommand>>>) matchingPathToSubCommandsEntries.clone();
         for (String potentialPath : possiblePaths) {
             newMatchingPathToSubCommandsEntries.removeIf(pathToSubCommands -> {
                 try {
-                    return potentialPath.equals(pathToSubCommands.getKey().substring(1, potentialPath.length()));
+                    return !potentialPath.equals(pathToSubCommands.getKey().substring(0, potentialPath.length()));
                 } catch (StringIndexOutOfBoundsException sioobe) {
-                    return false;
+                    return true;
                 }
             });
             if (newMatchingPathToSubCommandsEntries.isEmpty())
@@ -225,8 +225,8 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
 
     private @NotNull String noSubCommandsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
         //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
-        StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subcommand parameters:§r");
-        for (SubCommand subCommand : diagnostics.getPathMatchingSubCommands())
+        StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subCommands:§r");
+        for (SubCommand subCommand : mostPathMatchingSubCommands(diagnostics.getPossiblePaths()))
             stringBuilder.append("\n").append(subCommand.getArguments());
 
         return stringBuilder.toString();
