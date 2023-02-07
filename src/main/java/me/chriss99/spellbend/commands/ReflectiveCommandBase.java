@@ -295,7 +295,8 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     }
 
     private @NotNull String multipleSubCommandsParsedMessage(@NotNull Diagnostics diagnostics) {
-        StringBuilder stringBuilder = new StringBuilder("§cThe parameters were parsable to multiple subCommands! There is no way to fix this currently, sorry.§r");
+        StringBuilder stringBuilder = new StringBuilder("§cThe parameters were parsable to multiple subCommands! There is no way to fix this currently, sorry.\n" +
+                "Tip: floats can be differentiated from integers with a \".0\" at the end.§r");
         for (ParsingLog parsingLog : diagnostics.getSubCommandParsingLog())
             stringBuilder.append("\n").append(parsingLog.subCommand().getArguments());
         return stringBuilder.toString();

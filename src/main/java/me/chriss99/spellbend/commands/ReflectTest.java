@@ -22,6 +22,16 @@ public class ReflectTest extends ReflectiveCommandBase {
                 player.sendMessage("\"/reflectTest noParams\" executed!");
     }
 
+    @ReflectCommand(path = "value")
+    public void value_double(double value) {
+        Bukkit.getLogger().info("\"/reflectTest value\" executed with double " + value + "!");
+    }
+
+    @ReflectCommand(path = "value")
+    public void value_double(int value) {
+        Bukkit.getLogger().info("\"/reflectTest value\" executed with int " + value + "!");
+    }
+
     @ReflectCommand(path = "")
     public void noPath() {
         for (World world : Bukkit.getWorlds())
