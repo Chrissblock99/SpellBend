@@ -167,7 +167,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * Formats and creates the error feedback message for the case that no subCommands match the given arguments
      *
      * @param possiblePaths The pre-generated possible paths, from shortest to longest
-     * @return The error message
+     * @return The error feedback
      */
     private @NotNull String noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
         StringBuilder stringBuilder = new StringBuilder("§cInvalid path! Most matching subCommands:§r");
@@ -223,6 +223,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return SubCommands;
     }
 
+    /**
+     * Generates the error feedback for the case that no methods match the parameter count. <br>
+     * This does the same thing as noPathMatchingSubCommandsMessage()
+     *
+     * @param possiblePaths The pre-generated possible paths, from shortest to longest
+     * @return The error feedback
+     */
     private @NotNull String noSubCommandsMatchingParameterCountMessage(final @NotNull ArrayList<String> possiblePaths) {
         //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
         StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subCommands:§r");
@@ -232,6 +239,15 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return stringBuilder.toString();
     }
 
+    /**
+     * Converts a subCommand list to a list of parsedSubCommands<br>
+     * This uses parseSubCommandParameters() and only includes subCommands that passed this function successfully
+     *
+     * @param subCommands The subcommands to parse
+     * @param arguments The given arguments
+     * @param diagnostics The diagnostics object
+     * @return A list of all successfully parsed SubCommands including parameters
+     */
     private @NotNull LinkedList<ParsedSubCommand> successfullyParsedSubCommands(@NotNull LinkedList<SubCommand> subCommands, @NotNull String[] arguments, @NotNull Diagnostics diagnostics) {
         LinkedList<ParsedSubCommand> parsedSubCommands = new LinkedList<>();
         diagnostics.setSubCommandParsingLog(new LinkedList<>());
@@ -248,6 +264,15 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return parsedSubCommands;
     }
 
+    /**
+     * Parses the given parameter strings into the types of the subCommand and returns it<br>
+     * If an exception is encountered during the process it returns null
+     *
+     * @param subCommand The subCommand to parse
+     * @param parameterStrings The parameters in string form
+     * @param SubCommandParsingLog The parsingLog list
+     * @return The parsed parameters or null if not successful
+     */
     private @Nullable Object[] parseSubCommandParameters(@NotNull SubCommand subCommand, final @NotNull String[] parameterStrings, final @NotNull LinkedList<ParsingLog> SubCommandParsingLog) {
         Class<?>[] parameterTypes = subCommand.getParsingParameterTypes().clone();
         Object[] parameters = new Object[parameterTypes.length];
@@ -271,6 +296,12 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return parameters;
     }
 
+    /**
+     * Generates the error feedback for the case that no subCommands could be parsed
+     *
+     * @param subCommandParsingLog The list of parsingLogs
+     * @return The error feedback
+     */
     private @NotNull String noSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
         StringBuilder stringBuilder = new StringBuilder("§cIncorrect parameters!§r");
         for (ParsingLog parsingLog : subCommandParsingLog)
@@ -278,6 +309,12 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return stringBuilder.toString();
     }
 
+    /**
+     * Appends the error information of the parsingLog to the given stringBuilder
+     *
+     * @param stringBuilder The stringBuilder to add to
+     * @param parsingLog The parsingLog object
+     */
     private void addParsingFailures(@NotNull StringBuilder stringBuilder, @NotNull ParsingLog parsingLog) {
         if (parsingLog.parameterTypes() == null)
             return;
@@ -294,6 +331,12 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         }
     }
 
+    /**
+     * Generates the error feedback for the case that multiple subCommands could be parsed
+     *
+     * @param subCommandParsingLog The list of parsingLogs
+     * @return The error feedback
+     */
     private @NotNull String multipleSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
         StringBuilder stringBuilder = new StringBuilder("§cThe parameters were parsable to multiple subCommands! There is no way to fix this currently, sorry.\n" +
                 "Tip: floats can be differentiated from integers with a \".0\" at the end.§r");
