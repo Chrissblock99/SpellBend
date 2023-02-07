@@ -97,17 +97,17 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
             return true;
         }
         if (subCommandsMatchingParameterCount(subCommands, arguments.length).isEmpty()) {
-            sender.sendMessage(noSubCommandsMatchingParameterCountMessage(arguments, diagnostics));
+            sender.sendMessage(noSubCommandsMatchingParameterCountMessage(diagnostics.getPossiblePaths()));
             return true;
         }
         LinkedList<ParsedSubCommand> parsedSubCommands = successfullyParsedSubCommands(subCommands, arguments, diagnostics);
 
         if (parsedSubCommands.isEmpty()) {
-            sender.sendMessage(noSubCommandsParsedMessage(diagnostics));
+            sender.sendMessage(noSubCommandsParsedMessage(diagnostics.getSubCommandParsingLog()));
             return true;
         }
         if (parsedSubCommands.size() > 1) {
-            sender.sendMessage(multipleSubCommandsParsedMessage(diagnostics));
+            sender.sendMessage(multipleSubCommandsParsedMessage(diagnostics.getSubCommandParsingLog()));
             return true;
         }
 
@@ -223,10 +223,10 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return SubCommands;
     }
 
-    private @NotNull String noSubCommandsMatchingParameterCountMessage(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
+    private @NotNull String noSubCommandsMatchingParameterCountMessage(final @NotNull ArrayList<String> possiblePaths) {
         //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
         StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subCommands:§r");
-        for (SubCommand subCommand : mostPathMatchingSubCommands(diagnostics.getPossiblePaths()))
+        for (SubCommand subCommand : mostPathMatchingSubCommands(possiblePaths))
             stringBuilder.append("\n").append(subCommand.getArguments());
 
         return stringBuilder.toString();
@@ -271,9 +271,9 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return parameters;
     }
 
-    private @NotNull String noSubCommandsParsedMessage(@NotNull Diagnostics diagnostics) {
+    private @NotNull String noSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
         StringBuilder stringBuilder = new StringBuilder("§cIncorrect parameters!§r");
-        for (ParsingLog parsingLog : diagnostics.getSubCommandParsingLog())
+        for (ParsingLog parsingLog : subCommandParsingLog)
             addParsingFailures(stringBuilder, parsingLog);
         return stringBuilder.toString();
     }
@@ -294,10 +294,10 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         }
     }
 
-    private @NotNull String multipleSubCommandsParsedMessage(@NotNull Diagnostics diagnostics) {
+    private @NotNull String multipleSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
         StringBuilder stringBuilder = new StringBuilder("§cThe parameters were parsable to multiple subCommands! There is no way to fix this currently, sorry.\n" +
                 "Tip: floats can be differentiated from integers with a \".0\" at the end.§r");
-        for (ParsingLog parsingLog : diagnostics.getSubCommandParsingLog())
+        for (ParsingLog parsingLog : subCommandParsingLog)
             stringBuilder.append("\n").append(parsingLog.subCommand().getArguments());
         return stringBuilder.toString();
     }
