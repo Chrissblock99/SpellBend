@@ -5,7 +5,7 @@ import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
-import me.chriss99.spellbend.harddata.Enums;
+import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.PlayerUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.sound.SoundStop;
@@ -113,7 +113,7 @@ public class Escape_Through_Time extends Spell implements Killable {
 
                     escapeTask.cancel();
                     armorStandTask.cancel();
-                    coolDown.skipToStage(Enums.CoolDownStage.COOLDOWN);
+                    coolDown.skipToStage(CoolDownStage.COOLDOWN);
                     naturalSpellEnd();
                 }
                 time--;
@@ -154,7 +154,7 @@ public class Escape_Through_Time extends Spell implements Killable {
     @Override
     public void cancelSpell() {
         if (coolDown != null)
-            coolDown.skipToStage(Enums.CoolDownStage.COOLDOWN);
+            coolDown.skipToStage(CoolDownStage.COOLDOWN);
             //only needed for extreme edge cases that currently (25.12.2022) never happen in the code
         else Bukkit.getLogger().warning(caster.getName() + " had Escape Through Time Active but no corresponding CoolDown of type " + spellType + " was found!");
 

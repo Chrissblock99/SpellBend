@@ -1,6 +1,6 @@
 package me.chriss99.spellbend.data;
 
-import me.chriss99.spellbend.harddata.Enums;
+import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.harddata.Maps;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class CoolDownEntry {
     private final String spellType;
     private final Date startDate;
     private final float[] timeInS;
-    private Enums.CoolDownStage coolDownStage;
+    private CoolDownStage coolDownStage;
 
     /**
      * Creates a CoolDownEntry
@@ -30,7 +30,7 @@ public class CoolDownEntry {
      *                0: WINDUP, 1: ACTIVE, 2: PASSIVE, 3: COOLDOWN
      * @param coolDownStage The coolDownStage to start in
      */
-    public CoolDownEntry(@NotNull String spellType, @NotNull Date startDate, float[] timeInS, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry(@NotNull String spellType, @NotNull Date startDate, float[] timeInS, @NotNull CoolDownStage coolDownStage) {
         if (timeInS.length != 4)
             throw new IllegalArgumentException("Not more or less than four coolDownStages can be specified!");
 
@@ -50,7 +50,7 @@ public class CoolDownEntry {
      *                0: WINDUP, 1: ACTIVE, 2: PASSIVE, 3: COOLDOWN
      * @param coolDownStage The coolDownStage to start in
      */
-    public CoolDownEntry(@NotNull String spellType, float[] timeInS, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry(@NotNull String spellType, float[] timeInS, @NotNull CoolDownStage coolDownStage) {
         if (timeInS.length != 4)
             throw new IllegalArgumentException("Not more or less than four coolDownStages can be specified!");
 
@@ -68,7 +68,7 @@ public class CoolDownEntry {
         float timeSinceStartInS = (new Date().getTime() - startDate.getTime()) / 1000f;
         while (i<3 && !(getTimeToStageInS(i + 1) > timeSinceStartInS))
             i++;
-        coolDownStage = Enums.CoolDownStage.values()[i];
+        coolDownStage = CoolDownStage.values()[i];
     }
 
     /**
@@ -92,7 +92,7 @@ public class CoolDownEntry {
         //we just assume the stage is updated WHICH CAN LEAD TO PROBLEMS, but I haven't found a fix yet
         int newIndex = Maps.coolDownStageToIndexMap.get(coolDownStage) + 1;
         if (newIndex != 4)
-            coolDownStage = Enums.CoolDownStage.values()[newIndex];
+            coolDownStage = CoolDownStage.values()[newIndex];
 
         return timeToSkip;
     }
@@ -110,7 +110,7 @@ public class CoolDownEntry {
         if (index < 0 || index > 3)
             throw new IllegalArgumentException("There are only four coolDownStages!");
 
-        return skipToStage(Enums.CoolDownStage.values()[index]);
+        return skipToStage(CoolDownStage.values()[index]);
     }
 
     /**
@@ -122,7 +122,7 @@ public class CoolDownEntry {
      * @param coolDownStage The coolDownStage
      * @return How much time was skipped
      */
-    public float skipToStage(@NotNull Enums.CoolDownStage coolDownStage) {
+    public float skipToStage(@NotNull CoolDownStage coolDownStage) {
         updateCoolDownStage();
         if (Maps.coolDownStageToIndexMap.get(coolDownStage)<Maps.coolDownStageToIndexMap.get(this.coolDownStage))
             throw new IllegalArgumentException("The CoolDownStage to skip to cannot be older than the current one!");
@@ -150,7 +150,7 @@ public class CoolDownEntry {
         if (index < 0 || index > 3)
             throw new IllegalArgumentException("There are only four coolDownStages!");
 
-        return transformToStage(Enums.CoolDownStage.values()[index]);
+        return transformToStage(CoolDownStage.values()[index]);
     }
 
     /**
@@ -159,7 +159,7 @@ public class CoolDownEntry {
      * @param coolDownStage The CoolDownStage to transform to
      * @return The skipped time
      */
-    public float transformToStage(@NotNull Enums.CoolDownStage coolDownStage) {
+    public float transformToStage(@NotNull CoolDownStage coolDownStage) {
         float transformedTime = skipToStage(coolDownStage);
         timeInS[Maps.coolDownStageToIndexMap.get(coolDownStage)] += transformedTime;
         return transformedTime;
@@ -216,7 +216,7 @@ public class CoolDownEntry {
      * @param coolDownStage The coolDownStage to get the StartDate of
      * @return The startDate of the CoolDownStage
      */
-    public @NotNull Date getStageStartDate(@NotNull Enums.CoolDownStage coolDownStage) {
+    public @NotNull Date getStageStartDate(@NotNull CoolDownStage coolDownStage) {
         return getStageStartDate(Maps.coolDownStageToIndexMap.get(coolDownStage));
     }
 
@@ -261,7 +261,7 @@ public class CoolDownEntry {
     /**
      * @return The time the coolDown takes to reach the named CoolDownStage
      */
-    public float getTimeToStageInS(@NotNull Enums.CoolDownStage coolDownStage) {
+    public float getTimeToStageInS(@NotNull CoolDownStage coolDownStage) {
         return getTimeToStageInS(Maps.coolDownStageToIndexMap.get(coolDownStage));
     }
 
@@ -298,7 +298,7 @@ public class CoolDownEntry {
      * @param coolDownStage The CoolDownStage to get the time of
      * @return The time the coolDown lasts at that stage
      */
-    public float getStageTimeInS(@NotNull Enums.CoolDownStage coolDownStage) {
+    public float getStageTimeInS(@NotNull CoolDownStage coolDownStage) {
         return timeInS[Maps.coolDownStageToIndexMap.get(coolDownStage)];
     }
 
@@ -313,7 +313,7 @@ public class CoolDownEntry {
     /**
      * @return The coolDownStage this is in
      */
-    public @NotNull Enums.CoolDownStage getCoolDownStage() {
+    public @NotNull CoolDownStage getCoolDownStage() {
         updateCoolDownStage();
         return coolDownStage;
     }

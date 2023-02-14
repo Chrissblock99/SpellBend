@@ -3,7 +3,7 @@ package me.chriss99.spellbend.data;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.harddata.Enums;
+import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.Bukkit;
@@ -72,7 +72,7 @@ public class CoolDowns {
      * @return The newly added CoolDownEntry
      */
     public CoolDownEntry setCoolDown(@NotNull String spellType, float[] timeInSeconds) {
-        return setCoolDown(spellType, timeInSeconds, Enums.CoolDownStage.WINDUP);
+        return setCoolDown(spellType, timeInSeconds, CoolDownStage.WINDUP);
     }
 
     /**
@@ -83,7 +83,7 @@ public class CoolDowns {
      * @param coolDownStage The CoolDownStage
      * @return The newly added CoolDownEntry
      */
-    public CoolDownEntry setCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry setCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull CoolDownStage coolDownStage) {
         spellType = spellType.toUpperCase();
 
         CoolDownEntry coolDownEntry = new CoolDownEntry(spellType, timeInSeconds, coolDownStage);
@@ -111,7 +111,7 @@ public class CoolDowns {
      * @param coolDownStage The CoolDownStage to start in
      * @return The now present CoolDownEntry
      */
-    public CoolDownEntry extendCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry extendCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull CoolDownStage coolDownStage) {
         removeExpiredCoolDowns();
 
         CoolDownEntry newCoolDown = new CoolDownEntry(spellType, timeInSeconds, coolDownStage);
@@ -137,7 +137,7 @@ public class CoolDowns {
      * @param coolDownStage The CoolDownType
      * @return The now present CoolDownEntry
      */
-    public CoolDownEntry addCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull Enums.CoolDownStage coolDownStage) {
+    public CoolDownEntry addCoolDown(@NotNull String spellType, float[] timeInSeconds, @NotNull CoolDownStage coolDownStage) {
         if (coolDowns.containsKey(spellType))
             Bukkit.getLogger().warning("CoolDown " + spellType + " is already present (" + coolDowns.get(spellType) + ") " +
                     "when trying to add (" + Arrays.toString(timeInSeconds) + ", " + coolDownStage + ") to " + player.getName() + ", assigning larger coolDown!");

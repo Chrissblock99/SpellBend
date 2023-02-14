@@ -5,7 +5,7 @@ import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
-import me.chriss99.spellbend.harddata.Enums;
+import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.*;
@@ -143,7 +143,7 @@ public class Fiery_Rage extends Spell implements Killable {
             return;
         }
 
-        entry.skipToStage(Enums.CoolDownStage.COOLDOWN);
+        entry.skipToStage(CoolDownStage.COOLDOWN);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class Fiery_Rage extends Spell implements Killable {
             return;
         }
 
-        entry.transformToStage(Enums.CoolDownStage.COOLDOWN);
+        entry.transformToStage(CoolDownStage.COOLDOWN);
         cancelSpell();
     }
 

@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.commands;
 
 import me.chriss99.spellbend.data.*;
-import me.chriss99.spellbend.harddata.Enums;
+import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
@@ -270,24 +270,24 @@ public class Test {
             }
         });
 
-        subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class, Float.class, Float.class, Float.class, Enums.CoolDownStage.class},
+        subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class, Float.class, Float.class, Float.class, CoolDownStage.class},
                 new String[]{"spellType", "player", "windupTime", "activeTime", "passiveTime", "coolDownTime", "coolDownStage"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
                 String spellType = (String) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 float[] timeInS = new float[]{(Float) arguments.get(2), (Float) arguments.get(3), (Float) arguments.get(4), (Float) arguments.get(5)};
-                Enums.CoolDownStage coolDownStage = (Enums.CoolDownStage) arguments.get(6);
+                CoolDownStage coolDownStage = (CoolDownStage) arguments.get(6);
 
                 PlayerSessionData.getPlayerSession(player).getCoolDowns().setCoolDown(spellType, timeInS, coolDownStage);
                 return true;
             }
         });
 
-        subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class}, new String[]{"currency", "player"}) {
+        subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{me.chriss99.spellbend.harddata.Currency.class, Player.class}, new String[]{"currency", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
+                me.chriss99.spellbend.harddata.Currency currencyEnum = (me.chriss99.spellbend.harddata.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
 
                 Currency currency;
@@ -302,10 +302,10 @@ public class Test {
             }
         });
 
-        subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
+        subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{me.chriss99.spellbend.harddata.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
+                me.chriss99.spellbend.harddata.Currency currencyEnum = (me.chriss99.spellbend.harddata.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);
 
@@ -321,10 +321,10 @@ public class Test {
             }
         });
 
-        subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{Enums.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
+        subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{me.chriss99.spellbend.harddata.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Enums.Currency currencyEnum = (Enums.Currency) arguments.get(0);
+                me.chriss99.spellbend.harddata.Currency currencyEnum = (me.chriss99.spellbend.harddata.Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);
 
