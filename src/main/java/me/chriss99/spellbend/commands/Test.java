@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.commands;
 
 import me.chriss99.spellbend.data.*;
+import me.chriss99.spellbend.harddata.Action;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.harddata.Currency;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
@@ -17,330 +18,211 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Map;
 
-public class Test {
-    private final Map<String, AdvancedSubCommand> subCommands = new HashMap<>();
-
+public class Test extends ReflectiveCommandBase{
     public Test() {
-        subCommands.put("item", new AdvancedSubCommand(new Class[0]) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                if (!(sender instanceof Player)) {
-                    sender.sendMessage("§4Only players can use this subCommand!");
-                    return true;
-                }
+        super("test", "test command for testing test stuff", new ArrayList<>());
+    }
 
-                Inventory inv = ((Player) sender).getInventory();
-                inv.addItem(Item.create(Material.CAMPFIRE, Component.text("§c§lFiery Rage"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"fiery_rage", "AURA"}));
-                inv.addItem(Item.create(Material.GOLDEN_HORSE_ARMOR, Component.text("§c§lEmber Blast"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"ember_blast", "BLAST"}));
-                inv.addItem(Item.create(Material.IRON_HORSE_ARMOR, Component.text("§c§lTest Spell"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"test_spell", "TEST"}));
-                return true;
+    @ReflectCommand(path = "item")
+    public void item(Player commandSender) {
+        Inventory inv = commandSender.getInventory();
+        inv.addItem(Item.create(Material.CAMPFIRE, Component.text("§c§lFiery Rage"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"fiery_rage", "AURA"}));
+        inv.addItem(Item.create(Material.GOLDEN_HORSE_ARMOR, Component.text("§c§lEmber Blast"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"ember_blast", "BLAST"}));
+        inv.addItem(Item.create(Material.IRON_HORSE_ARMOR, Component.text("§c§lTest Spell"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"test_spell", "TEST"}));
+    }
+
+    @ReflectCommand(path = "update sidebar")
+    public void update_sidebar(Player commandSender) {
+        PlayerSessionData.getPlayerSession(commandSender).getPlayerDataBoard().updateBoard();
+    }
+
+    @ReflectCommand(path = "memory spell")
+    public void memory_spell(CommandSender commandSender, Player player) {
+        commandSender.sendMessage("Spells:");
+        Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
+        if (playerSpells.size() == 0) {
+            commandSender.sendMessage("none");
+            return;
+        }
+        for (Spell spell : playerSpells)
+            commandSender.sendMessage(spell.getClass().getName());
+    }
+
+    @ReflectCommand(path = "memory tasks")
+    public void memory_tasks(CommandSender commandSender, String filter) {
+        boolean filtering = !filter.equalsIgnoreCase("all");
+        int printed = 0;
+
+        commandSender.sendMessage("Workers:");
+        List<BukkitWorker> workers = Bukkit.getScheduler().getActiveWorkers();
+        for (BukkitWorker worker : workers) {
+            if (filtering && !worker.getOwner().getName().equals(filter))
+                continue;
+            commandSender.sendMessage((worker.getOwner().getName() + " " + worker.getTaskId() + ": " + worker));
+            printed++;
+        }
+        if (printed == 0)
+            commandSender.sendMessage("none");
+
+        printed = 0;
+
+        commandSender.sendMessage("Tasks:");
+        List<BukkitTask> tasks = Bukkit.getScheduler().getPendingTasks();
+        for (BukkitTask task : tasks) {
+            if (filtering && !task.getOwner().getName().equals(filter))
+                continue;
+            commandSender.sendMessage((task.getOwner().getName() + " " + task.getTaskId() + ": " + task));
+            printed++;
+        }
+        if (printed == 0)
+            commandSender.sendMessage("none");
+    }
+
+    @ReflectCommand(path = "memory sessions")
+    public void memory_sessions(CommandSender commandSender) {
+        commandSender.sendMessage("Sessions:");
+        int printed = 0;
+        for (Map.Entry<Player, PlayerSessionData> entry : PlayerSessionData.getPlayerSessions().entrySet()) {
+            commandSender.sendMessage(entry.getKey().getName());
+            printed++;
+        }
+        if (printed == 0)
+            commandSender.sendMessage("none");
+    }
+
+    @ReflectCommand(path = "value item get spellName")
+    public void value_item_get_spellName(CommandSender commandSender, Player player) {
+        commandSender.sendMessage(player.getName() + "'s held item's spellName is " + ItemData.getHeldSpellName(player) + ".");
+    }
+
+    @ReflectCommand(path = "value item get spellType")
+    public void value_item_get_spellType(CommandSender commandSender, Player player) {
+        commandSender.sendMessage(player.getName() + "'s held item's spellType is " + ItemData.getHeldSpellType(player) + ".");
+    }
+
+    @ReflectCommand(path = "value item set spellName")
+    public void value_item_set_spellName(Player player, String spellName) {
+        ItemData.setSpellName(ItemData.getHeldItem(player), spellName);
+    }
+
+    @ReflectCommand(path = "value item set spellType")
+    public void value_item_set_spellType(Player player, String spellType) {
+        ItemData.setSpellType(ItemData.getHeldItem(player), spellType);
+    }
+
+    @ReflectCommand(path = "value modifier get")
+    public void value_modifier_get(CommandSender commandSender, String modifier, Player player) {
+        PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+        PercentageModifier percentageModifier = null;
+        switch (modifier.toUpperCase()) {
+            case "DAMAGE_TAKEN" ->
+                    percentageModifier = sessionData.getDamageTakenModifiers();
+            case "DAMAGE_DEALT" ->
+                    percentageModifier = sessionData.getDamageDealtModifiers();
+            case "WALK_SPEED" ->
+                    percentageModifier = sessionData.getWalkSpeedModifiers();
+        }
+
+        if (percentageModifier == null) {
+            commandSender.sendMessage(modifier + " is not a valid modifier!");
+            return;
+        }
+
+        commandSender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
+    }
+
+    @ReflectCommand(path = "value modifier")
+    public void value_modifier(CommandSender commandSender, Action action, String modifier, Player player, float number) {
+        PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+        PercentageModifier percentageModifier = null;
+        switch (modifier.toUpperCase()) {
+            case "DAMAGE_TAKEN" ->
+                    percentageModifier = sessionData.getDamageTakenModifiers();
+            case "DAMAGE_DEALT" ->
+                    percentageModifier = sessionData.getDamageDealtModifiers();
+            case "WALK_SPEED" ->
+                    percentageModifier = sessionData.getWalkSpeedModifiers();
+        }
+
+        if (percentageModifier == null) {
+            commandSender.sendMessage(modifier + " is not a valid modifier!");
+            return;
+        }
+
+        switch (action) {
+            case ADD -> percentageModifier.addModifier(number);
+            case REMOVE -> percentageModifier.removeModifier(number);
+            case GET -> commandSender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
+            default -> commandSender.sendMessage("Action: \"" + action + "\" is not supported by this subCommand!");
+        }
+    }
+
+    @ReflectCommand(path = "value cooldown get")
+    public void value_cooldown_get(CommandSender commandSender, String spellType, Player player) {
+        CoolDowns coolDowns = PlayerSessionData.getPlayerSession(player).getCoolDowns();
+
+        if (spellType.equals("ALL")) {
+            commandSender.sendMessage("active CoolDowns of " + player.getName() + ":");
+            Set<Map.Entry<String, CoolDownEntry>> entrySet = coolDowns.getCoolDowns().entrySet();
+            if (entrySet.size() == 0) {
+                commandSender.sendMessage("none");
+                return;
             }
-        });
-
-        subCommands.put("update sidebar", new AdvancedSubCommand(new Class[0]) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                if (!(sender instanceof Player)) {
-                    sender.sendMessage("§4Only players can use this subCommand!");
-                    return true;
-                }
-
-                PlayerSessionData.getPlayerSession((Player) sender).getPlayerDataBoard().updateBoard();
-                return true;
+            for (Map.Entry<String, CoolDownEntry> entry : entrySet) {
+                CoolDownEntry coolDownEntry = entry.getValue();
+                commandSender.sendMessage(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
             }
-        });
+            return;
+        }
 
-        subCommands.put("memory spell", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                sender.sendMessage("Spells:");
-                Set<Spell> playerSpells = PlayerSessionData.getPlayerSession((Player) arguments.get(0)).getSpellHandler().getActivePlayerSpells();
-                if (playerSpells.size() == 0) {
-                    sender.sendMessage("none");
-                    return true;
-                }
-                for (Spell spell : playerSpells) {
-                    sender.sendMessage(spell.getClass().getName());
-                }
-                return true;
-            }
-        });
+        CoolDownEntry coolDownEntry = coolDowns.getCoolDownEntry(spellType);
+        if (coolDownEntry == null) {
+            commandSender.sendMessage(spellType + " is not cooled down for " + player.getName());
+            return;
+        }
 
-        subCommands.put("memory tasks", new AdvancedSubCommand(new Class[]{String.class}, new String[]{"filter"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                boolean filtering = !arguments.get(0).equals("all");
-                String filter = null;
-                if (filtering) filter = (String) arguments.get(0);
-                int printed = 0;
+        commandSender.sendMessage("CoolDown " + spellType + " of " + player.getName() + ": "
+                + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
+    }
 
-                sender.sendMessage("Workers:");
-                List<BukkitWorker> workers = Bukkit.getScheduler().getActiveWorkers();
-                for (BukkitWorker worker : workers) {
-                    if (filtering) if (!worker.getOwner().getName().equals(filter)) continue;
-                    sender.sendMessage((worker.getOwner().getName() + " " + worker.getTaskId() + ": " + worker));
-                    printed++;
-                }
-                if (printed == 0) {
-                    sender.sendMessage("none");
-                }
-                printed = 0;
+    @ReflectCommand(path = "value cooldown set")
+    public void value_cooldown_set(String spellType, Player player, float windupTime, float activeTime, float passiveTime, float coolDownTime, CoolDownStage coolDownStage) {
+        float[] timeInS = new float[]{windupTime, activeTime, passiveTime, coolDownTime};
+        PlayerSessionData.getPlayerSession(player).getCoolDowns().setCoolDown(spellType, timeInS, coolDownStage);
+    }
 
-                sender.sendMessage("Tasks:");
-                List<BukkitTask> tasks = Bukkit.getScheduler().getPendingTasks();
-                for (BukkitTask task : tasks) {
-                    if (filtering) if (!task.getOwner().getName().equals(filter)) continue;
-                    sender.sendMessage((task.getOwner().getName() + " " + task.getTaskId() + ": " + task));
-                    printed ++;
-                }
-                if (printed == 0) {
-                    sender.sendMessage("none");
-                }
-                return true;
-            }
-        });
+    @ReflectCommand(path = "value currency get")
+    public void value_currency_get(CommandSender commandSender, Currency currency, Player player) {
+        CurrencyTracker currencyTracker = null;
+        switch (currency) {
+            case GEMS -> currencyTracker = PlayerSessionData.getPlayerSession(player).getGems();
+            case GOLD -> currencyTracker = PlayerSessionData.getPlayerSession(player).getGold();
+            case CRYSTALS -> currencyTracker = PlayerSessionData.getPlayerSession(player).getCrystals();
+        }
 
-        subCommands.put("memory sessions", new AdvancedSubCommand(new Class[0], new String[0]) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                sender.sendMessage("Sessions:");
-                int printed = 0;
-                for (Map.Entry<Player, PlayerSessionData> entry : PlayerSessionData.getPlayerSessions().entrySet()) {
-                    sender.sendMessage(entry.getKey().getName());
-                    printed++;
-                }
-                if (printed == 0) {
-                    sender.sendMessage("none");
-                }
-                return true;
-            }
-        });
+        commandSender.sendMessage(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency());
+    }
 
-        subCommands.put("value item get spellName", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Player player = (Player) arguments.get(0);
-                sender.sendMessage(player.getName() + "'s held item's spellName is " + ItemData.getHeldSpellName(player) + ".");
-                return true;
-            }
-        });
+    @ReflectCommand(path = "value currency")
+    public void value_currency(CommandSender commandSender, Action action, Currency currency, Player player, float number) {
+        CurrencyTracker currencyTracker = null;
+        switch (currency) {
+            case GEMS -> currencyTracker = PlayerSessionData.getPlayerSession(player).getGems();
+            case GOLD -> currencyTracker = PlayerSessionData.getPlayerSession(player).getGold();
+            case CRYSTALS -> currencyTracker = PlayerSessionData.getPlayerSession(player).getCrystals();
+        }
 
-        subCommands.put("value item get spellType", new AdvancedSubCommand(new Class[]{Player.class}, new String[]{"player"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Player player = (Player) arguments.get(0);
-                sender.sendMessage(player.getName() + "'s held item's spellType is " + ItemData.getHeldSpellType(player) + ".");
-                return true;
-            }
-        });
-
-        subCommands.put("value item set spellName", new AdvancedSubCommand(new Class[]{Player.class, String.class}, new String[]{"player", "spellName"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                ItemData.setSpellName(ItemData.getHeldItem((Player) arguments.get(0)), (String) arguments.get(1));
-                return true;
-            }
-        });
-
-        subCommands.put("value item set spellType", new AdvancedSubCommand(new Class[]{Player.class, String.class}, new String[]{"player", "spellType"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                ItemData.setSpellType(ItemData.getHeldItem((Player) arguments.get(0)), (String) arguments.get(1));
-                return true;
-            }
-        });
-
-        subCommands.put("value modifier get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"modifier", "player"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                String modifier = ((String) arguments.get(0)).toUpperCase();
-                Player player = (Player) arguments.get(1);
-
-                PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-                PercentageModifier percentageModifier = null;
-                switch (modifier) {
-                    case "DAMAGE_TAKEN" ->
-                            percentageModifier = sessionData.getDamageTakenModifiers();
-                    case "DAMAGE_DEALT" ->
-                            percentageModifier = sessionData.getDamageDealtModifiers();
-                    case "WALK_SPEED" ->
-                            percentageModifier = sessionData.getWalkSpeedModifiers();
-                }
-
-                if (percentageModifier == null) {
-                    sender.sendMessage(modifier + " is not a valid modifier!");
-                    return true;
-                }
-
-                sender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
-                return true;
-            }
-        });
-
-        subCommands.put("value modifier add", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class}, new String[]{"modifier", "player", "number"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                String modifier = ((String) arguments.get(0)).toUpperCase();
-                Player player = (Player) arguments.get(1);
-                Float num = (Float) arguments.get(2);
-
-                PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-                PercentageModifier percentageModifier = null;
-                switch (modifier) {
-                    case "DAMAGE_TAKEN" ->
-                        percentageModifier = sessionData.getDamageTakenModifiers();
-                    case "DAMAGE_DEALT" ->
-                        percentageModifier = sessionData.getDamageDealtModifiers();
-                    case "WALK_SPEED" ->
-                        percentageModifier = sessionData.getWalkSpeedModifiers();
-                }
-
-                if (percentageModifier == null) {
-                    sender.sendMessage(modifier + " is not a valid modifier!");
-                    return true;
-                }
-
-                percentageModifier.addModifier(num);
-                return true;
-            }
-        });
-
-        subCommands.put("value modifier remove", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class}, new String[]{"modifier", "player", "number"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                String modifier = ((String) arguments.get(0)).toUpperCase();
-                Player player = (Player) arguments.get(1);
-                Float num = (Float) arguments.get(2);
-
-                PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-                PercentageModifier percentageModifier = null;
-                switch (modifier) {
-                    case "DAMAGE_TAKEN" ->
-                            percentageModifier = sessionData.getDamageTakenModifiers();
-                    case "DAMAGE_DEALT" ->
-                            percentageModifier = sessionData.getDamageDealtModifiers();
-                    case "WALK_SPEED" ->
-                            percentageModifier = sessionData.getWalkSpeedModifiers();
-                }
-
-                if (percentageModifier == null) {
-                    sender.sendMessage(modifier + " is not a valid modifier!");
-                    return true;
-                }
-
-                percentageModifier.removeModifier(num);
-                return true;
-            }
-        });
-
-        subCommands.put("value cooldown get", new AdvancedSubCommand(new Class[]{String.class, Player.class}, new String[]{"spellType", "player"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                String spellType = ((String) arguments.get(0)).toUpperCase();
-                Player player = (Player) arguments.get(1);
-
-                CoolDowns coolDowns = PlayerSessionData.getPlayerSession(player).getCoolDowns();
-
-                if (spellType.equals("ALL")) {
-                    sender.sendMessage("active CoolDowns of " + player.getName() + ":");
-                    Set<Map.Entry<String, CoolDownEntry>> entrySet = coolDowns.getCoolDowns().entrySet();
-                    if (entrySet.size() == 0) {
-                        sender.sendMessage("none");
-                        return true;
-                    }
-                    for (Map.Entry<String, CoolDownEntry> entry : entrySet) {
-                        CoolDownEntry coolDownEntry = entry.getValue();
-                        sender.sendMessage(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
-                    }
-                    return true;
-                }
-                CoolDownEntry coolDownEntry = coolDowns.getCoolDownEntry(spellType);
-                if (coolDownEntry == null) {
-                    sender.sendMessage(arguments.get(0) + " is not cooled down for " + player.getName());
-                    return true;
-                }
-
-                sender.sendMessage("CoolDown " + arguments.get(0) + " of " + player.getName() + ": "
-                        + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
-                return true;
-            }
-        });
-
-        subCommands.put("value cooldown set", new AdvancedSubCommand(new Class[]{String.class, Player.class, Float.class, Float.class, Float.class, Float.class, CoolDownStage.class},
-                new String[]{"spellType", "player", "windupTime", "activeTime", "passiveTime", "coolDownTime", "coolDownStage"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                String spellType = (String) arguments.get(0);
-                Player player = (Player) arguments.get(1);
-                float[] timeInS = new float[]{(Float) arguments.get(2), (Float) arguments.get(3), (Float) arguments.get(4), (Float) arguments.get(5)};
-                CoolDownStage coolDownStage = (CoolDownStage) arguments.get(6);
-
-                PlayerSessionData.getPlayerSession(player).getCoolDowns().setCoolDown(spellType, timeInS, coolDownStage);
-                return true;
-            }
-        });
-
-        subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{Currency.class, Player.class}, new String[]{"currency", "player"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Currency currencyEnum = (Currency) arguments.get(0);
-                Player player = (Player) arguments.get(1);
-
-                CurrencyTracker currency;
-                switch (currencyEnum) {
-                    case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
-                    case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
-                    case CRYSTALS -> currency = PlayerSessionData.getPlayerSession(player).getCrystals();
-                    default -> currency = null; //this stupid line that never executes and if executed will only cause problems only exists SO THE JAVA COMPILER WON'T SCREAM AROUND THAT currency MIGHT NOT HAVE BEEN INITIALIZED
-                }
-                sender.sendMessage(player.getName() + "'s " + currencyEnum + " count is: " + currency.getCurrency());
-                return true;
-            }
-        });
-
-        subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Currency currencyEnum = (Currency) arguments.get(0);
-                Player player = (Player) arguments.get(1);
-                Float value = (Float) arguments.get(2);
-
-                CurrencyTracker currency;
-                switch (currencyEnum) {
-                    case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
-                    case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
-                    case CRYSTALS -> currency = PlayerSessionData.getPlayerSession(player).getCrystals();
-                    default -> currency = null; //this stupid line that never executes and if executed will only cause problems only exists SO THE JAVA COMPILER WON'T SCREAM AROUND THAT currency MIGHT NOT HAVE BEEN INITIALIZED
-                }
-                currency.addCurrency(value);
-                return true;
-            }
-        });
-
-        subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                Currency currencyEnum = (Currency) arguments.get(0);
-                Player player = (Player) arguments.get(1);
-                Float value = (Float) arguments.get(2);
-
-                CurrencyTracker currency;
-                switch (currencyEnum) {
-                    case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
-                    case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
-                    case CRYSTALS -> currency = PlayerSessionData.getPlayerSession(player).getCrystals();
-                    default -> currency = null; //this stupid line that never executes and if executed will only cause problems only exists SO THE JAVA COMPILER WON'T SCREAM AROUND THAT currency MIGHT NOT HAVE BEEN INITIALIZED
-                }
-                currency.setCurrency(value);
-                return true;
-            }
-        });
-
-        new AdvancedCommandBase("test", "/test item or /test memory <spell|tasks [filter]> or /test value <dmgMod|cooldown> <valueName> <player>", subCommands){};
+        switch (action) {
+            case ADD -> currencyTracker.addCurrency(number);
+            case REMOVE -> currencyTracker.addCurrency(-number);
+            case SET -> currencyTracker.setCurrency(number);
+            case GET -> commandSender.sendMessage(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency());
+            default -> commandSender.sendMessage("Action: \"" + action + "\" is not supported by this subCommand!");
+        }
     }
 }
