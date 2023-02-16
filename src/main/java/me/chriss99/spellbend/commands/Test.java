@@ -2,6 +2,7 @@ package me.chriss99.spellbend.commands;
 
 import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.CoolDownStage;
+import me.chriss99.spellbend.harddata.Currency;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
@@ -284,13 +285,13 @@ public class Test {
             }
         });
 
-        subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{me.chriss99.spellbend.harddata.Currency.class, Player.class}, new String[]{"currency", "player"}) {
+        subCommands.put("value currency get", new AdvancedSubCommand(new Class[]{Currency.class, Player.class}, new String[]{"currency", "player"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                me.chriss99.spellbend.harddata.Currency currencyEnum = (me.chriss99.spellbend.harddata.Currency) arguments.get(0);
+                Currency currencyEnum = (Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
 
-                Currency currency;
+                CurrencyTracker currency;
                 switch (currencyEnum) {
                     case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
                     case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
@@ -302,14 +303,14 @@ public class Test {
             }
         });
 
-        subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{me.chriss99.spellbend.harddata.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
+        subCommands.put("value currency add", new AdvancedSubCommand(new Class[]{Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                me.chriss99.spellbend.harddata.Currency currencyEnum = (me.chriss99.spellbend.harddata.Currency) arguments.get(0);
+                Currency currencyEnum = (Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);
 
-                Currency currency;
+                CurrencyTracker currency;
                 switch (currencyEnum) {
                     case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
                     case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();
@@ -321,14 +322,14 @@ public class Test {
             }
         });
 
-        subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{me.chriss99.spellbend.harddata.Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
+        subCommands.put("value currency set", new AdvancedSubCommand(new Class[]{Currency.class, Player.class, Float.class}, new String[]{"currency", "player", "value"}) {
             @Override
             public boolean onCommand(CommandSender sender, List<Object> arguments) {
-                me.chriss99.spellbend.harddata.Currency currencyEnum = (me.chriss99.spellbend.harddata.Currency) arguments.get(0);
+                Currency currencyEnum = (Currency) arguments.get(0);
                 Player player = (Player) arguments.get(1);
                 Float value = (Float) arguments.get(2);
 
-                Currency currency;
+                CurrencyTracker currency;
                 switch (currencyEnum) {
                     case GEMS -> currency = PlayerSessionData.getPlayerSession(player).getGems();
                     case GOLD -> currency = PlayerSessionData.getPlayerSession(player).getGold();

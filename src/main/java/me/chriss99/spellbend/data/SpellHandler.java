@@ -208,7 +208,7 @@ public class SpellHandler {
         spellName = spellName.toUpperCase();
 
         int manaCost = nameToManaCostMap.get(spellName);
-        Currency mana = sessionData.getMana();
+        CurrencyTracker mana = sessionData.getMana();
         if (mana.getCurrency()<manaCost) {
             sessionData.getActionBarController().displayMessage("&c&lNot enough mana!");
             return false;

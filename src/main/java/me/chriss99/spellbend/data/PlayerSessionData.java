@@ -26,10 +26,10 @@ public class PlayerSessionData {
     private final PlayerDataBoard playerDataBoard;
     private final ActionBarController actionBarController;
 
-    private final Currency mana;
-    private final Currency gems;
-    private final Currency gold;
-    private final Currency crystals;
+    private final CurrencyTracker mana;
+    private final CurrencyTracker gems;
+    private final CurrencyTracker gold;
+    private final CurrencyTracker crystals;
 
     private final MultiValueTracker jumpEffect;
     private final ValueTracker isInvisible;
@@ -47,7 +47,7 @@ public class PlayerSessionData {
             @Override
             public void run() {
                 for (Map.Entry<Player, PlayerSessionData> entry : playerSessions.entrySet()) {
-                    Currency mana = entry.getValue().getMana();
+                    CurrencyTracker mana = entry.getValue().getMana();
                     mana.setCurrency(Math.min(100, mana.getCurrency()+5));
                 }
             }
@@ -130,10 +130,10 @@ public class PlayerSessionData {
         playerDataBoard = new PlayerDataBoard(player);
         actionBarController = new ActionBarController(player);
 
-        mana = new Currency(player, 100, false, true);
-        gems = new Currency(player, PersistentDataKeys.gemsKey, "Gems", 150, true, false);
-        gold = new Currency(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
-        crystals = new Currency(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
+        mana = new CurrencyTracker(player, 100, false, true);
+        gems = new CurrencyTracker(player, PersistentDataKeys.gemsKey, "Gems", 150, true, false);
+        gold = new CurrencyTracker(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
+        crystals = new CurrencyTracker(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
 
         jumpEffect = new JumpEffect(player);
         isInvisible = new IsInvisible(player);
@@ -163,19 +163,19 @@ public class PlayerSessionData {
         return actionBarController;
     }
 
-    public Currency getMana() {
+    public CurrencyTracker getMana() {
         return mana;
     }
 
-    public Currency getGems() {
+    public CurrencyTracker getGems() {
         return gems;
     }
 
-    public Currency getGold() {
+    public CurrencyTracker getGold() {
         return gold;
     }
 
-    public Currency getCrystals() {
+    public CurrencyTracker getCrystals() {
         return crystals;
     }
 

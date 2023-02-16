@@ -6,14 +6,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-public class Currency {
+public class CurrencyTracker {
     private final Player player;
     private Float currency;
     private final NamespacedKey key;
     private final boolean updateBoard;
     private final boolean updateActionBar;
 
-    public Currency(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name, float defaultValue, boolean updateBoard, boolean updateActionBar) {
+    public CurrencyTracker(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name, float defaultValue, boolean updateBoard, boolean updateActionBar) {
         this.player = player;
         this.key = key;
         this.updateBoard = updateBoard;
@@ -26,7 +26,7 @@ public class Currency {
         }
     }
 
-    public Currency(@NotNull Player player, float defaultValue, boolean updateBoard, boolean updateActionBar) {
+    public CurrencyTracker(@NotNull Player player, float defaultValue, boolean updateBoard, boolean updateActionBar) {
         this.player = player;
         this.key = null;
         this.updateBoard = updateBoard;
