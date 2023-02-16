@@ -20,5 +20,6 @@ public interface StringToClassParser<C> {
      * @return The class which the Class instance represents, parsed from the string
      * @throws Exception Any exception that might happen during parsing
      */
+    @SuppressWarnings("RedundantThrows")
     @Nullable C parseStringToClass(@NotNull String parseFrom, @NotNull Class<C> parseTo) throws Exception;
 }

@@ -7,6 +7,7 @@ public class InteractableEntityManager {
         //noinspection IfStatementWithIdenticalBranches
         if (entity == null)
             return false;
+
         return false; //ToDo: this
     }
 }
