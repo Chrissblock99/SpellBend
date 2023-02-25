@@ -88,7 +88,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      */
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] arguments) {
-        Diagnostics diagnostics = new Diagnostics();
+        Diagnostics diagnostics = new Diagnostics(arguments, maxPathLength);
         //these can have the same parameter count, but will have different parameter types, though those types might not be distinguishable in string from
         LinkedList<SubCommand> subCommands = getPathMatchingSubCommands(arguments, diagnostics);
 
@@ -148,18 +148,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      */
     private @NotNull LinkedList<SubCommand> getPathMatchingSubCommands(final @NotNull String[] arguments, final @NotNull Diagnostics diagnostics) {
         LinkedList<SubCommand> subCommands = new LinkedList<>();
-        ArrayList<String> possiblePaths = new ArrayList<>(maxPathLength);
 
-        for (int i = 0; i < arguments.length && i < maxPathLength; i++) {
-            String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i+1)).toUpperCase();
-            possiblePaths.add(path);
-
+        for (String path : diagnostics.getPossiblePaths()) {
             ArrayList<SubCommand> SubCommandsMatchingPath = pathToSubCommandsMap.get(path);
             if (SubCommandsMatchingPath != null)
                 subCommands.addAll(SubCommandsMatchingPath);
         }
 
-        diagnostics.setPossiblePaths(possiblePaths);
         return subCommands;
     }
 

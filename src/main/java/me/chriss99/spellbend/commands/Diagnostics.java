@@ -1,17 +1,29 @@
 package me.chriss99.spellbend.commands;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Objects;
 
 public class Diagnostics {
-    private ArrayList<String> possiblePaths = null;
+    private final ArrayList<String> possiblePaths;
     private LinkedList<ParsingLog> SubCommandParsingLog = null;
 
-    public Diagnostics() {}
+    /**
+     * Constructs a Diagnostics object and automatically generates the possible paths
+     *
+     * @param arguments The arguments given to the command to diagnose
+     * @param maxPathLength The maximal amount of path arguments possible in the command
+     */
+    public Diagnostics(final @NotNull String[] arguments, int maxPathLength) {
+        possiblePaths = new ArrayList<>(maxPathLength);
 
-    public void setPossiblePaths(ArrayList<String> potentialPaths) {
-        this.possiblePaths = potentialPaths;
+        for (int i = 0; i < arguments.length && i < maxPathLength; i++) {
+            String path = String.join(" ", Arrays.copyOfRange(arguments, 0, i + 1)).toUpperCase();
+            possiblePaths.add(path);
+        }
     }
 
     public void setSubCommandParsingLog(LinkedList<ParsingLog> subCommandParsingLog) {
