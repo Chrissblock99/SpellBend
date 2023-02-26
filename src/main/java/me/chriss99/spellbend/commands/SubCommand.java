@@ -12,8 +12,7 @@ import java.util.List;
 
 public class SubCommand {
     private final Method method;
-    private final String path;
-    private final int pathLength;
+    private final String[] cleanPath;
     private final String arguments;
     private final Class<?>[] parsingParameterTypes;
     private final Class<?> senderParameterType;
@@ -21,9 +20,7 @@ public class SubCommand {
     public SubCommand(@NotNull Method method, @NotNull String commandName) {
         this.method = method;
 
-        LinkedList<String> cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path());
-        pathLength = cleanPath.size();
-        path = String.join(" ", cleanPath);
+        cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path()).toArray(new String[0]);
 
         Parameter[] parameters = method.getParameters();
         if (parameters.length == 0) {
@@ -48,7 +45,7 @@ public class SubCommand {
     }
 
     private @NotNull String generateMethodArguments(@NotNull String commandName) {
-        StringBuilder stringBuilder = new StringBuilder().append(commandName).append(" ").append(path).append(" ");
+        StringBuilder stringBuilder = new StringBuilder().append(commandName).append(" ").append(String.join(" ", cleanPath)).append(" ");
         Parameter[] parameters = method.getParameters();
         for (int i = (senderParameterType == null) ? 0 : 1; i < parameters.length; i++)
             stringBuilder.append("<").append(parameters[i].getName()).append("> ");
@@ -67,12 +64,16 @@ public class SubCommand {
         return method;
     }
 
+    public String[] getCleanPath() {
+        return cleanPath;
+    }
+
     public String getPath() {
-        return path;
+        return String.join(" ", cleanPath);
     }
 
     public int getPathLength() {
-        return pathLength;
+        return cleanPath.length;
     }
 
     public String getArguments() {
