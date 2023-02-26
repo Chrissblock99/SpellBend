@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map;
 
-public class Test extends ReflectiveCommandBase{
+public class Test extends ReflectiveCommandBase {
     public Test() {
         super("test", "test command for testing test stuff", new ArrayList<>());
     }
