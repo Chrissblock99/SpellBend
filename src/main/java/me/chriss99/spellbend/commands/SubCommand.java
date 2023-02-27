@@ -14,17 +14,16 @@ public class SubCommand {
     private final Method method;
     private final String[] cleanPath;
     private final String arguments;
-    private final Class<?>[] parsingParameterTypes;
+    private final Parameter[] parsingParameters;
     private final Class<?> senderParameterType;
 
     public SubCommand(@NotNull Method method, @NotNull String commandName) {
         this.method = method;
-
         cleanPath = getCleanPathFromString(method.getAnnotation(ReflectCommand.class).path()).toArray(new String[0]);
 
         Parameter[] parameters = method.getParameters();
         if (parameters.length == 0) {
-            parsingParameterTypes = new Class[0];
+            parsingParameters = new Parameter[0];
             senderParameterType = null;
             arguments = generateMethodArguments(commandName);
             return;
@@ -32,14 +31,14 @@ public class SubCommand {
 
         if ((parameters[0].getType().equals(CommandSender.class) || parameters[0].getType().equals(Player.class)) && parameters[0].getName().equals("commandSender")) {
             if (parameters.length == 1)
-                parsingParameterTypes = new Class[0];
-            else parsingParameterTypes = Arrays.copyOfRange(method.getParameterTypes(), 1, parameters.length);
+                parsingParameters = new Parameter[0];
+            else parsingParameters = Arrays.copyOfRange(method.getParameters(), 1, parameters.length);
             senderParameterType = parameters[0].getType();
             arguments = generateMethodArguments(commandName);
             return;
         }
 
-        parsingParameterTypes = method.getParameterTypes();
+        parsingParameters = method.getParameters();
         senderParameterType = null;
         arguments = generateMethodArguments(commandName);
     }
@@ -58,6 +57,22 @@ public class SubCommand {
         LinkedList<String> splitPath = new LinkedList<>(Arrays.asList(path.split(" ")));
         splitPath.removeAll(List.of(""));
         return splitPath;
+    }
+
+    /**
+     * Generates a class type list from the parsing parameters <br>
+     * <b>Please do not use this to get the nth Type, use getParsingParameters()[n].getType() instead</b> <br>
+     * This would be a valid way to do it, but its inefficient
+     *
+     * @return The class types the command wants to be given
+     */
+    public Class<?>[] getParsingParameterTypes() {
+        Class<?>[] parsingParameterTypes = new Class[parsingParameters.length];
+
+        for (int i = 0; i < parsingParameters.length; i++)
+            parsingParameterTypes[i] = parsingParameters[i].getType();
+
+        return parsingParameterTypes;
     }
 
     public Method getMethod() {
@@ -80,8 +95,8 @@ public class SubCommand {
         return arguments;
     }
 
-    public Class<?>[] getParsingParameterTypes() {
-        return parsingParameterTypes;
+    public Parameter[] getParsingParameters() {
+        return parsingParameters;
     }
 
     public Class<?> getSenderParameterType() {

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -214,7 +215,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @return The filtered list
      */
     private @NotNull LinkedList<SubCommand> subCommandsMatchingParameterCount(final @NotNull LinkedList<SubCommand> SubCommands, final int argumentCount) {
-        SubCommands.removeIf(subCommand -> argumentCount !=  subCommand.getPathLength() + subCommand.getParsingParameterTypes().length);
+        SubCommands.removeIf(subCommand -> argumentCount !=  subCommand.getPathLength() + subCommand.getParsingParameters().length);
         return SubCommands;
     }
 
@@ -248,7 +249,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         diagnostics.setSubCommandParsingLog(new LinkedList<>());
 
         for (SubCommand subCommand : subCommands) {
-            String[] parameterStrings = new String[subCommand.getParsingParameterTypes().length];
+            String[] parameterStrings = new String[subCommand.getParsingParameters().length];
             System.arraycopy(arguments, arguments.length-parameterStrings.length, parameterStrings, 0, parameterStrings.length);
 
             Object[] parameters = parseSubCommandParameters(subCommand, parameterStrings, diagnostics.getSubCommandParsingLog());
@@ -320,7 +321,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
                 continue;
 
             stringBuilder.append("\n  \"").append(parsingLog.parameterStrings()[i]).append("\" -> ")
-                    .append(parsingLog.subCommand().getParsingParameterTypes()[i].getSimpleName()).append("\n  §4")
+                    .append(parsingLog.subCommand().getParsingParameters()[i].getType().getSimpleName()).append("\n  §4")
                     .append(parsingLog.parameterTypes()[i].getSimpleName()).append(": §c")
                     .append(((Exception) parsingLog.parameters()[i]).getMessage()).append("§r");
         }
