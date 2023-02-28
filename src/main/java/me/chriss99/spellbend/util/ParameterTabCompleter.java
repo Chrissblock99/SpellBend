@@ -1,6 +1,5 @@
 package me.chriss99.spellbend.util;
 
-import me.chriss99.spellbend.harddata.Currency;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +53,8 @@ public class ParameterTabCompleter {
         OptionEnumerator enumerator = enumerators.get(commandParameter);
         if (enumerator == null)
             enumerator = enumerators.get(new CommandParameter(commandParameter.type, null));
+        if (enumerator == null && Enum.class.equals(commandParameter.type.getSuperclass()))
+            enumerators.get(new CommandParameter(Enum.class, null));
         if (enumerator == null)
             return List.of();
 
