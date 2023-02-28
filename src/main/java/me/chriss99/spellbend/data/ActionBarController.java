@@ -55,7 +55,7 @@ public class ActionBarController {
         }
 
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-        player.sendActionBar("§c♥ §6" + TextUtil.roundToNDecimalPlaces(sessionData.getHealth().getHealth()/2, 2) + "§c/§610 §4| §b★ §6" + Math.round(sessionData.getMana().getCurrency()) + "§9/§6100");
+        player.sendActionBar("§c❤ §6" + TextUtil.roundToNDecimalPlaces(sessionData.getHealth().getHealth()/2, 2) + "§c/§610 §4| §b★ §6" + Math.round(sessionData.getMana().getCurrency()) + "§9/§6100");
     }
 
     public Player getPlayer() {
