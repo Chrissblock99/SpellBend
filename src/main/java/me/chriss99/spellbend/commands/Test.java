@@ -158,7 +158,7 @@ public class Test extends ReflectiveCommandBase {
             case ADD -> percentageModifier.addModifier(number);
             case REMOVE -> percentageModifier.removeModifier(number);
             case GET -> commandSender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
-            default -> commandSender.sendMessage("Action: \"" + action + "\" is not supported by this subCommand!");
+            default -> commandSender.sendMessage("§cAction: \"" + action + "\" is not supported by this subCommand!");
         }
     }
 
@@ -222,7 +222,7 @@ public class Test extends ReflectiveCommandBase {
             case REMOVE -> currencyTracker.addCurrency(-number);
             case SET -> currencyTracker.setCurrency(number);
             case GET -> commandSender.sendMessage(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency());
-            default -> commandSender.sendMessage("Action: \"" + action + "\" is not supported by this subCommand!");
+            default -> commandSender.sendMessage("&cAction: \"" + action + "\" is not supported by this subCommand!");
         }
     }
 }
