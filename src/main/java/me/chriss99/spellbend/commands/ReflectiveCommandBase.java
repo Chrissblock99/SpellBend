@@ -2,11 +2,9 @@ package me.chriss99.spellbend.commands;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.util.CustomClassParser;
+import me.chriss99.spellbend.util.ParameterTabCompleter;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +16,7 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.logging.Level;
 
-public abstract class ReflectiveCommandBase extends BukkitCommand implements CommandExecutor {
+public abstract class ReflectiveCommandBase extends BukkitCommand implements CommandExecutor, TabCompleter {
     private final LinkedHashMap<String, ArrayList<SubCommand>> pathToSubCommandsMap = new LinkedHashMap<>();
     private int maxPathLength = 0;
     private final CustomClassParser classParser;
@@ -339,6 +337,37 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         for (ParsingLog parsingLog : subCommandParsingLog)
             stringBuilder.append("\n").append(parsingLog.subCommand().getArguments());
         return stringBuilder.toString();
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] arguments) {
+        Diagnostics diagnostics = new Diagnostics(
+                (arguments.length > 1 && arguments[arguments.length-1].equals("")) ?
+                        Arrays.copyOfRange(arguments, 0, arguments.length-2) :
+                        arguments,
+                maxPathLength);
+
+        List<String> completions = new LinkedList<>();
+        for (SubCommand subCommand : mostPathMatchingSubCommands(diagnostics.getPossiblePaths())) {
+            int argLength = arguments.length-1;
+
+            String[] path = subCommand.getCleanPath();
+            if (path.length > argLength) { //arguments contains "" when nothing has been typed for an argument
+                completions.add(path[argLength]);
+                continue;
+            }
+            int parameterLength = argLength-path.length;
+
+            Parameter[] parameters = subCommand.getParsingParameters();
+            if (parameters.length > parameterLength) {
+                Parameter parameter = parameters[parameterLength];
+                completions.add(parameter.getType().getSimpleName() + "<" + parameter.getName() + ">");
+
+                completions.addAll(new ParameterTabCompleter().enumerateOptions(parameter, arguments[argLength]));
+            }
+        }
+
+        return completions;
     }
 
     @Override
