@@ -20,17 +20,24 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
     private final LinkedHashMap<String, ArrayList<SubCommand>> pathToSubCommandsMap = new LinkedHashMap<>();
     private int maxPathLength = 0;
     private final CustomClassParser classParser;
+    private final ParameterTabCompleter tabCompleter;
 
     /**
+     * Initializes the CommandBase with the default classParser and tabCompleter
+     *
      * @param commandName The name of the command
      * @param description The description of the command
      * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
+     *
+     * @throws IllegalStateException When two methods have the same annotated path and arguments
      */
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases) {
-        this(commandName, description, aliases, new CustomClassParser());
+        this(commandName, description, aliases, new CustomClassParser(), new ParameterTabCompleter());
     }
 
     /**
+     * Initializes the CommandBase with the default tabCompleter
+     *
      * @param commandName The name of the command
      * @param description The description of the command
      * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
@@ -39,9 +46,39 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @throws IllegalStateException When two methods have the same annotated path and arguments
      */
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases, @NotNull CustomClassParser classParser) {
+        this(commandName, description, aliases, classParser, new ParameterTabCompleter());
+    }
+
+    /**
+     * Initializes the CommandBase with the default tabCompleter
+     *
+     * @param commandName The name of the command
+     * @param description The description of the command
+     * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
+     * @param tabCompleter The tabCompleter to use (useful for tab completion of non-standard classes)
+     *
+     * @throws IllegalStateException When two methods have the same annotated path and arguments
+     */
+    public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases, @NotNull ParameterTabCompleter tabCompleter) {
+        this(commandName, description, aliases, new CustomClassParser(), tabCompleter);
+    }
+
+    /**
+     * Initializes the CommandBase with a custom classParser and tabCompleter
+     *
+     * @param commandName The name of the command
+     * @param description The description of the command
+     * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
+     * @param classParser The classParser to parse the arguments (needed if arguments contain non-standard classes)
+     * @param tabCompleter The tabCompleter to use (useful for tab completion of non-standard classes)
+     *
+     * @throws IllegalStateException When two methods have the same annotated path and arguments
+     */
+    public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases, @NotNull CustomClassParser classParser, @NotNull ParameterTabCompleter tabCompleter) {
         super(commandName, description,
                 "If this shows up, someone has not updated the usageMessage in ReflectiveCommandBase yet. Please notify a developer immediately!", aliases);
         this.classParser = classParser;
+        this.tabCompleter = tabCompleter;
 
         for (Method method : getClass().getDeclaredMethods()) {
             if (!method.isAnnotationPresent(ReflectCommand.class))
@@ -339,6 +376,18 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         return stringBuilder.toString();
     }
 
+    /**
+     * Generates possible tab completions for the subCommands returned by mostMatchingSubCommands()
+     *
+     * @param sender Source of the command.  For players tab-completing a
+     *     command inside a command block, this will be the player, not
+     *     the command block.
+     * @param command Command which was executed
+     * @param label Alias of the command which was used
+     * @param arguments The arguments passed to the command, including final
+     *     partial argument to be completed
+     * @return The possible tab completions
+     */
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] arguments) {
         Diagnostics diagnostics = new Diagnostics(
@@ -346,24 +395,22 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
                         Arrays.copyOfRange(arguments, 0, arguments.length-2) :
                         arguments,
                 maxPathLength);
+        int argLength = arguments.length-1; //arguments contains "" when nothing has been typed for an argument
 
         List<String> completions = new LinkedList<>();
         for (SubCommand subCommand : mostPathMatchingSubCommands(diagnostics.getPossiblePaths())) {
-            int argLength = arguments.length-1;
-
             String[] path = subCommand.getCleanPath();
-            if (path.length > argLength) { //arguments contains "" when nothing has been typed for an argument
+            if (path.length > argLength) {
                 completions.add(path[argLength]);
                 continue;
             }
-            int parameterLength = argLength-path.length;
 
+            int parameterLength = argLength-path.length;
             Parameter[] parameters = subCommand.getParsingParameters();
             if (parameters.length > parameterLength) {
                 Parameter parameter = parameters[parameterLength];
-                completions.add(parameter.getType().getSimpleName() + "<" + parameter.getName() + ">");
-
-                completions.addAll(new ParameterTabCompleter().enumerateOptions(parameter, arguments[argLength]));
+                if (!completions.addAll(tabCompleter.enumerateOptions(parameter, arguments[argLength])))
+                    completions.add(parameter.getType().getSimpleName() + "<" + parameter.getName() + ">");
             }
         }
 
