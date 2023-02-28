@@ -7,9 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class ParameterTabCompleter {
     private final HashMap<CommandParameter, OptionEnumerator> enumerators;
@@ -54,7 +54,7 @@ public class ParameterTabCompleter {
         if (enumerator == null)
             enumerator = enumerators.get(new CommandParameter(commandParameter.type, null));
         if (enumerator == null && Enum.class.equals(commandParameter.type.getSuperclass()))
-            enumerators.get(new CommandParameter(Enum.class, null));
+            enumerator = enumerators.get(new CommandParameter(Enum.class, null));
         if (enumerator == null)
             return List.of();
 
@@ -88,11 +88,9 @@ public class ParameterTabCompleter {
         HashMap<CommandParameter, OptionEnumerator> enumerators = new HashMap<>();
 
         enumerators.put(new CommandParameter(Player.class, null), (type, input) -> Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
-        //noinspection unchecked
         enumerators.put(new CommandParameter(Enum.class, null), (type, input) -> {
             try {
-                //noinspection unchecked
-                return (List<String>) type.getMethod("values").invoke(type);
+                return Arrays.stream(((Enum<?>[]) type.getMethod("values").invoke(type))).map(Enum::toString).toList();
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 return List.of();
@@ -108,7 +106,7 @@ public class ParameterTabCompleter {
      * @param type The class type
      * @param name The parameter name
      */
-    public record CommandParameter(@NotNull Class<?> type, @Nullable String name, boolean enumCompare) {
+    public record CommandParameter(@NotNull Class<?> type, @Nullable String name) {
 
         /**
          * Constructs a CommandParameter from a Parameter
@@ -116,31 +114,7 @@ public class ParameterTabCompleter {
          * @param parameter The Parameter to copy from
          */
         public CommandParameter(@NotNull Parameter parameter) {
-            this(parameter.getType(), parameter.getName(), true);
-        }
-
-        /**
-         * Constructs a CommandParameter with enumCompare to true
-         *
-         * @param type The class type
-         * @param name The parameter name
-         */
-        public CommandParameter(@NotNull Class<?> type, @Nullable String name) {
-            this(type, name, true);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (!(o instanceof CommandParameter other))
-                return false;
-            if (Objects.equals(other.type, type) && Objects.equals(other.name, name))
-                return true;
-            if (other.enumCompare && enumCompare) {
-                return other.type.getSuperclass().equals(type) || type.getSuperclass().equals(other.type);
-            }
-            return false;
+            this(parameter.getType(), parameter.getName());
         }
     }
 }
