@@ -102,4 +102,9 @@ public class SubCommand {
     public Class<?> getSenderParameterType() {
         return senderParameterType;
     }
+
+    @Override
+    public @NotNull String toString() {
+        return "SubCommand(arguments=\"" + arguments + "\", method=" + method.toString() + ")";
+    }
 }
