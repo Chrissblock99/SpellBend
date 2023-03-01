@@ -51,7 +51,7 @@ public class Fiery_Rage extends Spell implements Killable {
             public void run() {
                 Location location = caster.getLocation();
                 location.setYaw(startRot + time);
-                caster.teleport(location);
+                caster.teleport(location);//TODO //BUG #7 position change while windup
 
                 Color color = Colors.getRandomOrange5or6();
                 Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, (float) MathUtil.random(1.3d, 2d));
