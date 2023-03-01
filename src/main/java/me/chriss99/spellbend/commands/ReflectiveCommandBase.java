@@ -390,12 +390,12 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      */
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] arguments) {
+        int argLength = arguments.length-1; //arguments contains "" when nothing has been typed for an argument
         Diagnostics diagnostics = new Diagnostics(
-                (arguments.length > 1 && arguments[arguments.length-1].equals("")) ?
-                        Arrays.copyOfRange(arguments, 0, arguments.length-2) :
+                (arguments.length > 1 && arguments[argLength].equals("")) ?
+                        Arrays.copyOfRange(arguments, 0, argLength) :
                         arguments,
                 maxPathLength);
-        int argLength = arguments.length-1; //arguments contains "" when nothing has been typed for an argument
 
         List<String> completions = new LinkedList<>();
         for (SubCommand subCommand : mostPathMatchingSubCommands(diagnostics.getPossiblePaths())) {
