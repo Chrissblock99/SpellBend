@@ -63,7 +63,7 @@ public class ItemData {
      * @return The modified item
      */
     public static @NotNull ItemStack setSpellType(@NotNull ItemStack item, @NotNull String spellType) {
-        if (!item.hasItemMeta()) //TODO, HACK: this does not seem like the correct way to do it
+        if (!item.hasItemMeta()) //TODO //HACK this does not seem like the correct way to do it
             item.setItemMeta(new ItemStack(Material.STONE).getItemMeta());
 
         ItemMeta meta = item.getItemMeta();
@@ -114,7 +114,7 @@ public class ItemData {
      * @return The modified item
      */
     public static @NotNull ItemStack setSpellName(@NotNull ItemStack item, @NotNull String spellName) {
-        if (!item.hasItemMeta()) //TODO, HACK: this does not seem like the correct way to do it
+        if (!item.hasItemMeta()) //TODO //HACK this does not seem like the correct way to do it
             item.setItemMeta(new ItemStack(Material.STONE).getItemMeta());
 
         ItemMeta meta = item.getItemMeta();
