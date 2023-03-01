@@ -2,11 +2,9 @@ package me.chriss99.spellbend.commands;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.util.CustomClassParser;
+import me.chriss99.spellbend.util.ParameterTabCompleter;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -18,21 +16,28 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.logging.Level;
 
-public abstract class ReflectiveCommandBase extends BukkitCommand implements CommandExecutor {
+public abstract class ReflectiveCommandBase extends BukkitCommand implements CommandExecutor, TabCompleter {
     private final LinkedHashMap<String, ArrayList<SubCommand>> pathToSubCommandsMap = new LinkedHashMap<>();
     private int maxPathLength = 0;
     private final CustomClassParser classParser;
+    private final ParameterTabCompleter tabCompleter;
 
     /**
+     * Initializes the CommandBase with the default classParser and tabCompleter
+     *
      * @param commandName The name of the command
      * @param description The description of the command
      * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
+     *
+     * @throws IllegalStateException When two methods have the same annotated path and arguments
      */
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases) {
-        this(commandName, description, aliases, new CustomClassParser());
+        this(commandName, description, aliases, new CustomClassParser(), new ParameterTabCompleter());
     }
 
     /**
+     * Initializes the CommandBase with the default tabCompleter
+     *
      * @param commandName The name of the command
      * @param description The description of the command
      * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
@@ -41,9 +46,39 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @throws IllegalStateException When two methods have the same annotated path and arguments
      */
     public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases, @NotNull CustomClassParser classParser) {
+        this(commandName, description, aliases, classParser, new ParameterTabCompleter());
+    }
+
+    /**
+     * Initializes the CommandBase with the default tabCompleter
+     *
+     * @param commandName The name of the command
+     * @param description The description of the command
+     * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
+     * @param tabCompleter The tabCompleter to use (useful for tab completion of non-standard classes)
+     *
+     * @throws IllegalStateException When two methods have the same annotated path and arguments
+     */
+    public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases, @NotNull ParameterTabCompleter tabCompleter) {
+        this(commandName, description, aliases, new CustomClassParser(), tabCompleter);
+    }
+
+    /**
+     * Initializes the CommandBase with a custom classParser and tabCompleter
+     *
+     * @param commandName The name of the command
+     * @param description The description of the command
+     * @param aliases The possible aliases (doesn't matter, only the ones in plugin.yml are usable, regardless of their presence here)
+     * @param classParser The classParser to parse the arguments (needed if arguments contain non-standard classes)
+     * @param tabCompleter The tabCompleter to use (useful for tab completion of non-standard classes)
+     *
+     * @throws IllegalStateException When two methods have the same annotated path and arguments
+     */
+    public ReflectiveCommandBase(@NotNull String commandName, @NotNull String description, @NotNull List<String> aliases, @NotNull CustomClassParser classParser, @NotNull ParameterTabCompleter tabCompleter) {
         super(commandName, description,
                 "If this shows up, someone has not updated the usageMessage in ReflectiveCommandBase yet. Please notify a developer immediately!", aliases);
         this.classParser = classParser;
+        this.tabCompleter = tabCompleter;
 
         for (Method method : getClass().getDeclaredMethods()) {
             if (!method.isAnnotationPresent(ReflectCommand.class))
@@ -339,6 +374,47 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         for (ParsingLog parsingLog : subCommandParsingLog)
             stringBuilder.append("\n").append(parsingLog.subCommand().getArguments());
         return stringBuilder.toString();
+    }
+
+    /**
+     * Generates possible tab completions for the subCommands returned by mostMatchingSubCommands()
+     *
+     * @param sender Source of the command.  For players tab-completing a
+     *     command inside a command block, this will be the player, not
+     *     the command block.
+     * @param command Command which was executed
+     * @param label Alias of the command which was used
+     * @param arguments The arguments passed to the command, including final
+     *     partial argument to be completed
+     * @return The possible tab completions
+     */
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] arguments) {
+        int argLength = arguments.length-1; //arguments contains "" when nothing has been typed for an argument
+        Diagnostics diagnostics = new Diagnostics(
+                (arguments.length > 1 && arguments[argLength].equals("")) ?
+                        Arrays.copyOfRange(arguments, 0, argLength) :
+                        arguments,
+                maxPathLength);
+
+        List<String> completions = new LinkedList<>();
+        for (SubCommand subCommand : mostPathMatchingSubCommands(diagnostics.getPossiblePaths())) {
+            String[] path = subCommand.getCleanPath();
+            if (path.length > argLength) {
+                completions.add(path[argLength]);
+                continue;
+            }
+
+            int parameterLength = argLength-path.length;
+            Parameter[] parameters = subCommand.getParsingParameters();
+            if (parameters.length > parameterLength) {
+                Parameter parameter = parameters[parameterLength];
+                if (!completions.addAll(tabCompleter.enumerateOptions(parameter, arguments[argLength])))
+                    completions.add(parameter.getType().getSimpleName() + "<" + parameter.getName() + ">");
+            }
+        }
+
+        return completions;
     }
 
     @Override
