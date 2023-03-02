@@ -49,7 +49,7 @@ public class Fiery_Rage extends Spell implements Killable {
             @Override
             public void run() {
                 Location location = caster.getLocation();
-                location.setYaw(Math.round(location.getYaw())+18);
+                location.setYaw(location.getYaw()+18f);
                 caster.teleport(location);
 
                 Color color = Colors.getRandomOrange5or6();
