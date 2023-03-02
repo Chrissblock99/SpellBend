@@ -50,7 +50,6 @@ public class Fiery_Rage extends Spell implements Killable {
             public void run() {
                 Location location = caster.getLocation();
                 location.setYaw(location.getYaw()+18f);
-                caster.teleport(location);
 
                 Color color = Colors.getRandomOrange5or6();
                 Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, (float) MathUtil.random(1.3d, 2d));
@@ -69,7 +68,9 @@ public class Fiery_Rage extends Spell implements Killable {
                     windupTask.cancel();
                     launchPlayer();
                     activate();
+                    return;
                 }
+                caster.teleport(location);
                 time += 18;
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 1);
