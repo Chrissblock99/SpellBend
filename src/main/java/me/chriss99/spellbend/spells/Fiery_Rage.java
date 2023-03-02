@@ -44,14 +44,13 @@ public class Fiery_Rage extends Spell implements Killable {
         caster.setGravity(false);
 
         windupTask = new BukkitRunnable() {
-            final int startRot = Math.round(caster.getLocation().getYaw());
             int time = 0;
 
             @Override
             public void run() {
                 Location location = caster.getLocation();
-                location.setYaw(startRot + time);
-                caster.teleport(location);//TODO //BUG #7 position change while windup
+                location.setYaw(Math.round(location.getYaw())+18);
+                caster.teleport(location);
 
                 Color color = Colors.getRandomOrange5or6();
                 Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, (float) MathUtil.random(1.3d, 2d));
