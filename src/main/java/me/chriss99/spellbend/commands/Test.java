@@ -116,15 +116,15 @@ public class Test extends ReflectiveCommandBase {
     }
 
     @ReflectCommand(path = "value modifier get")
-    public void value_modifier_get(CommandSender commandSender, String modifier, Player player) {
+    public void value_modifier_get(CommandSender commandSender, Modifier modifier, Player player) {
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
         PercentageModifier percentageModifier = null;
-        switch (modifier.toUpperCase()) {
-            case "DAMAGE_TAKEN" ->
+        switch (modifier) {
+            case DAMAGE_TAKEN ->
                     percentageModifier = sessionData.getDamageTakenModifiers();
-            case "DAMAGE_DEALT" ->
+            case DAMAGE_DEALT ->
                     percentageModifier = sessionData.getDamageDealtModifiers();
-            case "WALK_SPEED" ->
+            case WALK_SPEED ->
                     percentageModifier = sessionData.getWalkSpeedModifiers();
         }
 
@@ -137,15 +137,15 @@ public class Test extends ReflectiveCommandBase {
     }
 
     @ReflectCommand(path = "value modifier")
-    public void value_modifier(CommandSender commandSender, Action action, String modifier, Player player, float number) {
+    public void value_modifier(CommandSender commandSender, Action action, Modifier modifier, Player player, float number) {
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
         PercentageModifier percentageModifier = null;
-        switch (modifier.toUpperCase()) {
-            case "DAMAGE_TAKEN" ->
+        switch (modifier) {
+            case DAMAGE_TAKEN ->
                     percentageModifier = sessionData.getDamageTakenModifiers();
-            case "DAMAGE_DEALT" ->
+            case DAMAGE_DEALT ->
                     percentageModifier = sessionData.getDamageDealtModifiers();
-            case "WALK_SPEED" ->
+            case WALK_SPEED ->
                     percentageModifier = sessionData.getWalkSpeedModifiers();
         }
 
@@ -224,5 +224,11 @@ public class Test extends ReflectiveCommandBase {
             case GET -> commandSender.sendMessage(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency());
             default -> commandSender.sendMessage("&cAction: \"" + action + "\" is not supported by this subCommand!");
         }
+    }
+
+    public enum Modifier {
+        DAMAGE_TAKEN,
+        DAMAGE_DEALT,
+        WALK_SPEED
     }
 }
