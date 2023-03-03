@@ -118,19 +118,20 @@ public class Health {
      */
     public void onPlayerDeath(@Nullable Entity killer, @Nullable ItemStack item) {
         //TODO use LuckPerms here ALSO implement cosmetics at some point
-        StringBuilder message = new StringBuilder("§8[§c☠§8] §e§l" + player.getName() + "§r§c");
+        StringBuilder messageBuilder = new StringBuilder("§8[§c☠§8] §e§l" + player.getName() + "§r§c");
         switch ((killer != null) + "-" + (item != null)) {
             case "true-true" -> //noinspection ConstantConditions
-                    message.append(" was slain by §e§l").append(killer.getName()).append("§r§c using ").append(item.getItemMeta().getLocalizedName());
+                    messageBuilder.append(" was slain by §e§l").append(killer.getName()).append("§r§c using ").append(item.getItemMeta().getLocalizedName());
             case "true-false" -> //noinspection ConstantConditions
-                    message.append(" was slain by §e§l").append(killer.getName());
+                    messageBuilder.append(" was slain by §e§l").append(killer.getName());
             case "false-true" -> //noinspection ConstantConditions
-                    message.append(" died to").append(item.getItemMeta().getLocalizedName());
-            case "false-false" -> message.append(" died");
+                    messageBuilder.append(" died to").append(item.getItemMeta().getLocalizedName());
+            case "false-false" -> messageBuilder.append(" died");
         }
 
+        String message = messageBuilder.toString();
         for (Player playerInWorld : player.getWorld().getPlayers())
-            playerInWorld.sendMessage(message.toString());
+            playerInWorld.sendMessage(message);
 
         List<DamageEntry> uniqueAttackers = new ArrayList<>();
 
