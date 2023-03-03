@@ -195,6 +195,15 @@ public class Health {
         PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
     }
 
+    /**
+     * Gets the current system time and compares it to iFrameEnd
+     *
+     * @return If an iFrame is active right now
+     */
+    public boolean activeIFrame() {
+        return new Date().getTime() < iFrameEnd.getTime();
+    }
+
     public Player getPlayer() {
         return player;
     }
