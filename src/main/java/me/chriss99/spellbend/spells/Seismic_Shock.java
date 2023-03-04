@@ -11,6 +11,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -136,21 +138,22 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
 
                     world.playSound(center, Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS, 0.25f, 1.5f);
                     world.playSound(center, Sound.BLOCK_GRASS_BREAK, 0.25f, 1.5f);
-
-                    Map<Player, Double> players = PlayerUtil.getPlayersNearLocation(center, 6);
-                    players.remove(caster);
-                    for (Map.Entry<Player, Double> entry : players.entrySet()) {
-                        Player player = entry.getKey();
-                        if (player.isOnGround()) //if this is every removed use a list of already moved players instead, like mango did it
-                            player.getVelocity().add(new Vector(0, 0.5, 0));
-                        shockPlayer(player, 1);
-                        PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-                        sessionData.getHealth().damagePlayer(caster, 2.5, item);
-                        sessionData.getSpellHandler().stunPlayer(4);
-                    }
                 }
 
-                if (time == 0) {
+                Map<Player, Double> players = PlayerUtil.getPlayersNearLocation(center, 6);
+                players.remove(caster);
+                for (Map.Entry<Player, Double> entry : players.entrySet()) {
+                    Player player = entry.getKey();
+                    PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+
+                    if (player.isOnGround()) //if isOnGround() is ever removed use a list of already moved players instead, like mango did it (or use a better function)
+                        player.setVelocity(player.getVelocity().add(new Vector(0, 0.5, 0)));
+                    shockPlayer(player, 1);
+                    sessionData.getHealth().damagePlayer(caster, 2.5, item);
+                    sessionData.getSpellHandler().stunPlayer(4);
+                }
+
+                if (time == 1) {
                     activeTask.cancel();
                     naturalSpellEnd();
                 }
@@ -194,13 +197,14 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         int finalTimeIn2ticks = timeIn2ticks*2;
 
         new BukkitRunnable(){
-            int time = 0;
+            int time = 1;
 
             @Override
             public void run() {
                 Location location = player.getLocation();
                 if (time%2 == 0) {
-                    world.spawnParticle(Particle.VILLAGER_ANGRY, location, 1, 0, 0, 0, 0);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 2, 1, false, false, false));
+                    world.spawnParticle(Particle.VILLAGER_ANGRY, location, 1, 0.2, 0.4, 0.2, 0);
                     world.playSound(location, Sound.BLOCK_NOTE_BLOCK_BIT, 3f, 1.8f);
                 }
                 else world.playSound(location, Sound.BLOCK_NOTE_BLOCK_BIT, 3f, 1.5f);
