@@ -144,11 +144,11 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                 players.remove(caster);
                 for (Map.Entry<Player, Double> entry : players.entrySet()) {
                     Player player = entry.getKey();
-                    PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
 
                     if (player.isOnGround()) //if isOnGround() is ever removed use a list of already moved players instead, like mango did it (or use a better function)
                         player.setVelocity(player.getVelocity().add(new Vector(0, 0.5, 0)));
                     shockPlayer(player, 1);
+                    PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
                     sessionData.getHealth().damagePlayer(caster, 2.5, item);
                     sessionData.getSpellHandler().stunPlayer(4);
                 }
