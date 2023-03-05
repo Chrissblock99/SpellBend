@@ -2,6 +2,8 @@ package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.util.TextUtil;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -12,7 +14,7 @@ import java.util.Map;
 
 public class ActionBarController {
     private final Player player;
-    private String displayMessage = null;
+    private Component displayMessage = null;
     private BukkitTask displayMessageRemover = null;
 
     public static void startUpdater() {
@@ -32,7 +34,7 @@ public class ActionBarController {
         this.player = player;
     }
 
-    public void displayMessage(@NotNull String message) {
+    public void displayMessage(@NotNull Component message) {
         displayMessage = message;
         updateBar();
 
@@ -55,7 +57,7 @@ public class ActionBarController {
         }
 
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-        player.sendActionBar("§c❤ §6" + TextUtil.roundToNDecimalPlaces(sessionData.getHealth().getHealth()/2, 2) + "§c/§610 §4| §b★ §6" + Math.round(sessionData.getMana().getCurrency()) + "§9/§6100");
+        player.sendActionBar(SpellBend.getMiniMessage().deserialize("<red>❤</red> <gold>" + TextUtil.roundToNDecimalPlaces(sessionData.getHealth().getHealth()/2, 2) + "</gold><red>/</red><gold>10</gold> <dark_red>|</dark_red> <aqua>★</aqua> <gold>" + Math.round(sessionData.getMana().getCurrency()) + "</gold><blue>/</blue><gold>100</gold>"));
     }
 
     public Player getPlayer() {

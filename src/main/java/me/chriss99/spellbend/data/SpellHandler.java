@@ -4,6 +4,8 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.*;
 import me.chriss99.spellbend.util.ItemData;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -210,13 +212,13 @@ public class SpellHandler {
         int manaCost = nameToManaCostMap.get(spellName);
         CurrencyTracker mana = sessionData.getMana();
         if (mana.getCurrency()<manaCost) {
-            sessionData.getActionBarController().displayMessage("&c&lNot enough mana!");
+            sessionData.getActionBarController().displayMessage(SpellBend.getMiniMessage().deserialize("<red><bold>Not enough mana!</red>"));
             return false;
         }
 
         PlayerStateValidator stateValidator = nameToPlayerStateValidatorMap.get(spellName);
         if (stateValidator != null) {
-            String errorMessage = stateValidator.validateState(player);
+            Component errorMessage = stateValidator.validateState(player);
             if (errorMessage != null) {
                 sessionData.getActionBarController().displayMessage(errorMessage);
                 return false;
