@@ -8,6 +8,8 @@ import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,6 +18,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
+import org.yaml.snakeyaml.error.YAMLException;
 
 public class Ember_Blast extends Spell { //TODO this
     private BukkitTask windupTask;
@@ -81,12 +84,27 @@ public class Ember_Blast extends Spell { //TODO this
                     time += 6;
                 }
 
-                if (time == 720) {
+                if (time >= 720) { //TODO Does this iterrate one too much ?
                     windupTask.cancel();
-                    //activate();
+                    activate();
                 }
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 1);
+    }
+
+    private void activate(){
+
+        Fireball fireball = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getX(), caster.getEyeLocation().getY()+1, caster.getEyeLocation().getZ()), Fireball.class);
+        caster.launchProjectile(fireball.getClass());
+
+        int x = (int) Math.round(caster.getEyeLocation().getDirection().getX());
+        caster.sendMessage("x: "+x);
+        int y = (int) Math.round(caster.getEyeLocation().getDirection().getY());
+        caster.sendMessage("y: "+y);
+        int z = (int) Math.round(caster.getEyeLocation().getDirection().getZ());
+        caster.sendMessage("z: "+z);
+
+        naturalSpellEnd();//wenn nach normalen verlauf zuende
     }
 
     @Override
