@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import me.chriss99.spellbend.SpellBend;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,24 +14,24 @@ import java.lang.reflect.Type;
 public class PercentageModifier {
     private static final Gson gson = SpellBend.getGson();
 
-    private final Player player;
+    private final LivingEntity livingEntity;
     private float modifier;
     private int activeModifiers;
     private int isZero;
     private final NamespacedKey key;
 
-    public PercentageModifier(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name) {
-        this.player = player;
+    public PercentageModifier(@NotNull LivingEntity livingEntity, @NotNull NamespacedKey key, @NotNull String name) {
+        this.livingEntity = livingEntity;
         this.key = key;
 
-        String gsonString = player.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        String gsonString = livingEntity.getPersistentDataContainer().get(key, PersistentDataType.STRING);
 
         if (gsonString == null) {
-            Bukkit.getLogger().warning(player.getName() + "'s " + name + " were not setup when loading, fixing now!");
+            Bukkit.getLogger().warning(livingEntity.getName() + "'s " + name + " were not setup when loading, fixing now!");
             modifier = 1;
             activeModifiers = 0;
             isZero = 0;
-            player.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(getDefaultData()));
+            livingEntity.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(getDefaultData()));
             return;
         }
 
@@ -55,7 +55,7 @@ public class PercentageModifier {
     }
 
     /**
-     * Adds the Modifier to the player
+     * Adds the Modifier to the livingEntity
      * It does this by multiplying the number with the modifier
      * therefore it can be undone by dividing it by the same modifier
      * To do that call removeModifier()
@@ -80,7 +80,7 @@ public class PercentageModifier {
     }
 
     /**
-     * Removes the modifier from the player
+     * Removes the modifier from the livingEntity
      * It does this by dividing the number with the modifier, undoing addModifier() in the process
      *
      * @throws IllegalArgumentException If the modifier is negative
@@ -105,15 +105,15 @@ public class PercentageModifier {
         this.modifier /= modifier;
     }
 
-    public Player getPlayer() {
-        return player;
+    public LivingEntity getLivingEntity() {
+        return livingEntity;
     }
 
     /**
-     * Saves the players modifiers to their PersistentDataContainer
+     * Saves the livingEntities modifiers to their PersistentDataContainer
      */
     public void saveModifiers() {
-        player.getPersistentDataContainer().set(key, PersistentDataType.STRING,
+        livingEntity.getPersistentDataContainer().set(key, PersistentDataType.STRING,
                 gson.toJson(new Data(modifier, activeModifiers, isZero)));
     }
 

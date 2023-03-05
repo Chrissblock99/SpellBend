@@ -1,20 +1,20 @@
 package me.chriss99.spellbend.data;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class DamageEntry {
-    private final Entity attacker;
+    private final LivingEntity attacker;
     private double damage;
 
-    public DamageEntry(@Nullable Entity attacker, double damage) {
+    public DamageEntry(@Nullable LivingEntity attacker, double damage) {
         this.attacker = attacker;
         this.damage = damage;
     }
 
-    public @Nullable Entity getAttacker() {
+    public @Nullable LivingEntity getAttacker() {
         return attacker;
     }
 

@@ -1,12 +1,12 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class IsInvisible extends ValueTracker {
-    public IsInvisible(@NotNull Player player) {
-        super(player, PersistentDataKeys.isInvisibleKey, "isInvisible", 0);
+    public IsInvisible(@NotNull LivingEntity livingEntity) {
+        super(livingEntity, PersistentDataKeys.isInvisibleKey, "isInvisible", 0);
         updateInvisibility();
     }
 
@@ -17,6 +17,6 @@ public class IsInvisible extends ValueTracker {
     }
 
     private void updateInvisibility() {
-        getPlayer().setInvisible(valueIsLargerZero());
+        getLivingEntity().setInvisible(valueIsLargerZero());
     }
 }

@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.util;
 
+import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -83,5 +84,17 @@ public class LivingEntityUtil {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Checks if the entity has the spellAffectAbleKey
+     *
+     * @param entity The entity to check for
+     * @return If the entity should be affected by spells
+     */
+    public static boolean entityIsSpellAffectAble(@NotNull Entity entity) {
+        if (entity instanceof Player)
+            return true;
+        return entity.getPersistentDataContainer().has(PersistentDataKeys.spellAffectAbleKey);
     }
 }

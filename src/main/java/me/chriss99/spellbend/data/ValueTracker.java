@@ -2,23 +2,23 @@ package me.chriss99.spellbend.data;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 public class ValueTracker {
-    protected final Player player;
+    protected final LivingEntity livingEntity;
     private final NamespacedKey key;
     private Integer value;
 
-    public ValueTracker(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name, int defaultValue) {
-        this.player = player;
+    public ValueTracker(@NotNull LivingEntity livingEntity, @NotNull NamespacedKey key, @NotNull String name, int defaultValue) {
+        this.livingEntity = livingEntity;
         this.key = key;
 
-        value = player.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
+        value = livingEntity.getPersistentDataContainer().get(key, PersistentDataType.INTEGER);
         if (value == null) {
-            Bukkit.getLogger().warning(player.getName() + " did not have " + name + " set up when loading, fixing now!");
-            player.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, defaultValue);
+            Bukkit.getLogger().warning(livingEntity.getName() + " did not have " + name + " set up when loading, fixing now!");
+            livingEntity.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, defaultValue);
             value = defaultValue;
         }
     }
@@ -31,8 +31,8 @@ public class ValueTracker {
         return value;
     }
 
-    public @NotNull Player getPlayer() {
-        return player;
+    public @NotNull LivingEntity getLivingEntity() {
+        return livingEntity;
     }
 
     public boolean valueIsLargerZero() {
@@ -40,6 +40,6 @@ public class ValueTracker {
     }
 
     public void saveValue() {
-        player.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, value);
+        livingEntity.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, value);
     }
 }

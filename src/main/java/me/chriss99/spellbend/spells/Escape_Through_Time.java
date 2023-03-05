@@ -6,7 +6,7 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
-import me.chriss99.spellbend.util.PlayerUtil;
+import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.sound.SoundStop;
 import org.bukkit.*;
@@ -123,12 +123,12 @@ public class Escape_Through_Time extends Spell implements Killable {
 
     private void explode() {
         World world = caster.getWorld();
-        Map<Player, Double> players = PlayerUtil.getPlayersNearLocation(armorStandOrigin, 4.5);
+        Map<Player, Double> players = LivingEntityUtil.getPlayersNearLocation(armorStandOrigin, 4.5);
         players.remove(caster);
         for (Map.Entry<Player, Double> entry : players.entrySet()) {
             Player player = entry.getKey();
             PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-            sessionData.getHealth().damagePlayer(caster, 3, item);
+            sessionData.getHealth().damageLivingEntity(caster, 3, item);
             sessionData.getSpellHandler().stunPlayer(20);
             world.spawnParticle(Particle.FLASH, player.getLocation(), 1, 0, 0, 0, 0);
             //player.moveUp(1);

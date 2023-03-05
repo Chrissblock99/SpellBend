@@ -2,7 +2,7 @@ package me.chriss99.spellbend.data;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,18 +12,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MultiValueTracker {
-    private final Player player;
+    private final LivingEntity livingEntity;
     private final NamespacedKey key;
     private final List<Integer> values;
 
-    public MultiValueTracker(@NotNull Player player, @NotNull NamespacedKey key, @NotNull String name, int[] defaultArray) {
-        this.player = player;
+        public MultiValueTracker(@NotNull LivingEntity livingEntity, @NotNull NamespacedKey key, @NotNull String name, int[] defaultArray) {
+        this.livingEntity = livingEntity;
         this.key = key;
 
-        int[] value = player.getPersistentDataContainer().get(key, PersistentDataType.INTEGER_ARRAY);
+        int[] value = livingEntity.getPersistentDataContainer().get(key, PersistentDataType.INTEGER_ARRAY);
         if (value == null) {
-            Bukkit.getLogger().warning(player.getName() + " did not have " + name + " set up when loading, fixing now!");
-            player.getPersistentDataContainer().set(key, PersistentDataType.INTEGER_ARRAY, defaultArray);
+            Bukkit.getLogger().warning(livingEntity.getName() + " did not have " + name + " set up when loading, fixing now!");
+            livingEntity.getPersistentDataContainer().set(key, PersistentDataType.INTEGER_ARRAY, defaultArray);
             value = defaultArray;
         }
 
@@ -58,8 +58,8 @@ public class MultiValueTracker {
         return new LinkedList<>(values);
     }
 
-    public @NotNull Player getPlayer() {
-        return player;
+    public @NotNull LivingEntity getLivingEntity() {
+        return livingEntity;
     }
 
     public Integer largestValue() {
@@ -70,6 +70,6 @@ public class MultiValueTracker {
     }
 
     public void saveValue() {
-        player.getPersistentDataContainer().set(key, PersistentDataType.INTEGER_ARRAY, values.stream().mapToInt(i->i).toArray());
+        livingEntity.getPersistentDataContainer().set(key, PersistentDataType.INTEGER_ARRAY, values.stream().mapToInt(i->i).toArray());
     }
 }

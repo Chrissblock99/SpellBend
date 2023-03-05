@@ -1,14 +1,14 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class JumpEffect extends MultiValueTracker {
-    public JumpEffect(@NotNull Player player) {
-        super(player, PersistentDataKeys.jumpEffect, "jumpEffect", new int[0]);
+    public JumpEffect(@NotNull LivingEntity livingEntity) {
+        super(livingEntity, PersistentDataKeys.jumpEffect, "jumpEffect", new int[0]);
         updateJumpEffect();
     }
 
@@ -25,12 +25,12 @@ public class JumpEffect extends MultiValueTracker {
     }
 
     private void updateJumpEffect() {
-        getPlayer().removePotionEffect(PotionEffectType.JUMP);
+        getLivingEntity().removePotionEffect(PotionEffectType.JUMP);
 
         Integer value = largestValue();
         if (value == null || value == 0)
             return;
 
-        getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 99999, value, false, false, false));
+        getLivingEntity().addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 99999, value, false, false, false));
     }
 }

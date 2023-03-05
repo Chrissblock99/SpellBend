@@ -5,7 +5,7 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.ParticleUtil;
-import me.chriss99.spellbend.util.PlayerUtil;
+import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.text.Component;
 
@@ -42,7 +42,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         }, new PlayerStateValidator() {
             @Override
             public Component validateState(@NotNull Player player) {
-                if (!PlayerUtil.isOnGround(player))
+                if (!LivingEntityUtil.isOnGround(player))
                     return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
                 return null;
             }
@@ -142,16 +142,16 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                     world.playSound(center, Sound.BLOCK_GRASS_BREAK, 0.25f, 1.5f);
                 }
 
-                Map<Player, Double> players = PlayerUtil.getPlayersNearLocation(center, 6);
+                Map<Player, Double> players = LivingEntityUtil.getPlayersNearLocation(center, 6);
                 players.remove(caster);
                 for (Map.Entry<Player, Double> entry : players.entrySet()) {
                     Player player = entry.getKey();
 
-                    if (PlayerUtil.isOnGround(player))
+                    if (LivingEntityUtil.isOnGround(player))
                         player.setVelocity(player.getVelocity().add(new Vector(0, 0.5, 0)));
                     shockPlayer(player, 1);
                     PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-                    sessionData.getHealth().damagePlayer(caster, 2.5, item);
+                    sessionData.getHealth().damageLivingEntity(caster, 2.5, item);
                     sessionData.getSpellHandler().stunPlayer(4);
                 }
 

@@ -1,6 +1,5 @@
 package me.chriss99.spellbend.data;
 
-import com.google.gson.Gson;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Bukkit;
@@ -15,10 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class PlayerSessionData {
-    private static final Gson gson = SpellBend.getGson();
+public class PlayerSessionData extends LivingEntitySessionData {
     private static final Map<Player, PlayerSessionData> playerSessions = new HashMap<>();
-
 
     private final Player player;
 
@@ -31,16 +28,7 @@ public class PlayerSessionData {
     private final CurrencyTracker gold;
     private final CurrencyTracker crystals;
 
-    private final MultiValueTracker jumpEffect;
-    private final ValueTracker isInvisible;
-
     private final CoolDowns coolDowns;
-    private final PercentageModifier damageDealtModifiers;
-    private final PercentageModifier damageTakenModifiers;
-    private final PercentageModifier walkSpeedModifiers;
-    private final Health health;
-
-    private final ValueTracker isMovementStunned;
 
     public static void startManaRegenerator() {
         new BukkitRunnable(){
@@ -55,7 +43,7 @@ public class PlayerSessionData {
     }
 
     /**
-     * Loads the players sessionData from his PersistentData, checking if it is already loaded or if the player isn't online
+     * Loads the players sessionData from their PersistentData, checking if it is already loaded or if the player isn't online
      *
      * @param player The player whose sessionData to load
      * @return The player's sessionData, null if offline
@@ -106,24 +94,18 @@ public class PlayerSessionData {
      * @param player The player who's PersistentData to set up
      */
     public static void setupPlayerData(@NotNull Player player) {
+        setupLivingEntityData(player);
         PersistentDataContainer data = player.getPersistentDataContainer();
 
         data.set(PersistentDataKeys.gemsKey, PersistentDataType.FLOAT, 150f);
         data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
         data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
 
-        data.set(PersistentDataKeys.jumpEffect, PersistentDataType.INTEGER_ARRAY, new int[0]);
-        data.set(PersistentDataKeys.isInvisibleKey, PersistentDataType.INTEGER, 0);
-
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
-        data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
-        data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
-        data.set(PersistentDataKeys.walkSpeedModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
-
-        data.set(PersistentDataKeys.isMovementStunnedKey, PersistentDataType.INTEGER, 0);
     }
 
     private PlayerSessionData(@NotNull Player player) {
+        super(player);
         this.player = player;
 
         spellHandler = new SpellHandler(player);
@@ -135,16 +117,7 @@ public class PlayerSessionData {
         gold = new CurrencyTracker(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
         crystals = new CurrencyTracker(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
 
-        jumpEffect = new JumpEffect(player);
-        isInvisible = new IsInvisible(player);
-
         coolDowns = new CoolDowns(player);
-        damageDealtModifiers = new PercentageModifier(player, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
-        damageTakenModifiers = new PercentageModifier(player, PersistentDataKeys.damageTakenModifiersKey, "damageTakenModifiers");
-        walkSpeedModifiers = new WalkSpeed(player);
-        health = new Health(player);
-
-        isMovementStunned = new IsMovementStunned(player, walkSpeedModifiers, jumpEffect);
     }
 
     public Player getPlayer() {
@@ -179,36 +152,8 @@ public class PlayerSessionData {
         return crystals;
     }
 
-    public MultiValueTracker getJumpEffect() {
-        return jumpEffect;
-    }
-
-    public ValueTracker getIsInvisible() {
-        return isInvisible;
-    }
-
     public CoolDowns getCoolDowns() {
         return coolDowns;
-    }
-
-    public PercentageModifier getDamageDealtModifiers() {
-        return damageDealtModifiers;
-    }
-
-    public PercentageModifier getDamageTakenModifiers() {
-        return damageTakenModifiers;
-    }
-
-    public PercentageModifier getWalkSpeedModifiers() {
-        return walkSpeedModifiers;
-    }
-
-    public Health getHealth() {
-        return health;
-    }
-
-    public ValueTracker getIsMovementStunned() {
-        return isMovementStunned;
     }
 
     public static Map<Player, PlayerSessionData> getPlayerSessions() {
@@ -218,34 +163,24 @@ public class PlayerSessionData {
     /**
      * Saves the sessionData to the players PersistentData
      */
+    @Override
     public void saveSession() {
+        super.saveSession();
         gems.saveCurrency();
         gold.saveCurrency();
         crystals.saveCurrency();
 
-        jumpEffect.saveValue();
-        isInvisible.saveValue();
-
         coolDowns.saveCoolDowns();
-        damageDealtModifiers.saveModifiers();
-        damageTakenModifiers.saveModifiers();
-        walkSpeedModifiers.saveModifiers();
-
-        isMovementStunned.saveValue();
     }
 
     /**
      * Saves the players sessionData and removes it from the sessionMap
      */
+    @Override
     public void endSession() {
         spellHandler.playerLeave();
         playerDataBoard.stopDisplayCooldown();
-        saveSession();
+        super.endSession();
         playerSessions.remove(player);
-    }
-
-    public static void endAllSessions() {
-        for (Map.Entry<Player, PlayerSessionData> playerToSessionData : playerSessions.entrySet())
-            playerToSessionData.getValue().endSession();
     }
 }

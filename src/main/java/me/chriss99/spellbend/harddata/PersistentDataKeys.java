@@ -21,4 +21,6 @@ public class PersistentDataKeys {
     public static final NamespacedKey damageDealtModifiersKey = new NamespacedKey(plugin, "dmgDealtModifiers");
     public static final NamespacedKey damageTakenModifiersKey = new NamespacedKey(plugin, "dmgTakenModifiers");
     public static final NamespacedKey walkSpeedModifiersKey = new NamespacedKey(plugin, "walkSpeedModifiers");
+
+    public static final NamespacedKey spellAffectAbleKey = new NamespacedKey(plugin, "spellAffectAble");
 }
