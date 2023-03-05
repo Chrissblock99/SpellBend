@@ -3,6 +3,9 @@ package me.chriss99.spellbend.data;
 import me.chriss99.spellbend.SpellBend;
 import org.bukkit.Bukkit;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -158,12 +161,24 @@ public class Health {
         //TODO use LuckPerms here ALSO implement cosmetics at some point
         StringBuilder messageBuilder = new StringBuilder("<dark_grey>[<red>☠<dark_grey>] <yellow><bold>" + livingEntity.getName() + "<reset><red>");
         switch ((killer != null) + "-" + (item != null)) {
-            case "true-true" -> //noinspection ConstantConditions
-                    messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName()).append("<reset><red> using ").append(SpellBend.getMiniMessage().serialize(item.getItemMeta().displayName()));
+            case "true-true" -> {//noinspection ConstantConditions
+                messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName()).append("<reset><red> using "); 
+                if(item.getItemMeta().displayName()!=null){
+                    messageBuilder.append(SpellBend.getMiniMessage().serializeOrNull(item.getItemMeta().displayName()));
+                }else{
+                    messageBuilder.append("<italic>Unknown");
+                }
+            }
             case "true-false" -> //noinspection ConstantConditions
                     messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName());
-            case "false-true" -> //noinspection ConstantConditions
-                    messageBuilder.append(" died to").append(SpellBend.getMiniMessage().serialize(item.getItemMeta().displayName()));
+            case "false-true" -> {//noinspection ConstantConditions
+                messageBuilder.append(" died to"); 
+                if(item.getItemMeta().displayName()!=null){
+                    messageBuilder.append(SpellBend.getMiniMessage().serializeOrNull(item.getItemMeta().displayName()));
+                }else{
+                    messageBuilder.append("<italic>Unknown");
+                }
+            }
             case "false-false" -> messageBuilder.append(" died");
         }
 
