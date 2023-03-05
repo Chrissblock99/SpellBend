@@ -40,7 +40,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         }, new PlayerStateValidator() {
             @Override
             public String validateState(@NotNull Player player) {
-                if (!player.isOnGround())
+                if (!PlayerUtil.isOnGround(player))
                     return "&c&lGet on the Ground!";
                 return null;
             }
@@ -145,7 +145,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                 for (Map.Entry<Player, Double> entry : players.entrySet()) {
                     Player player = entry.getKey();
 
-                    if (player.isOnGround()) //if isOnGround() is ever removed use a list of already moved players instead, like mango did it (or use a better function)
+                    if (PlayerUtil.isOnGround(player))
                         player.setVelocity(player.getVelocity().add(new Vector(0, 0.5, 0)));
                     shockPlayer(player, 1);
                     PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
