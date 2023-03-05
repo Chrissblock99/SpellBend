@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.commands;
 
+import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Action;
 import me.chriss99.spellbend.harddata.CoolDownStage;
@@ -9,6 +10,8 @@ import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
 import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -31,9 +34,9 @@ public class Test extends ReflectiveCommandBase {
     @ReflectCommand(path = "item")
     public void item(Player commandSender) {
         Inventory inv = commandSender.getInventory();
-        inv.addItem(Item.create(Material.CAMPFIRE, Component.text("§c§lFiery Rage"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"fiery_rage", "AURA"}));
-        inv.addItem(Item.create(Material.GOLDEN_HORSE_ARMOR, Component.text("§c§lEmber Blast"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"ember_blast", "BLAST"}));
-        inv.addItem(Item.create(Material.IRON_HORSE_ARMOR, Component.text("§c§lTest Spell"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"test_spell", "TEST"}));
+        inv.addItem(Item.create(Material.CAMPFIRE, Component.text().content("Fiery Rage").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"fiery_rage", "AURA"}));
+        inv.addItem(Item.create(Material.GOLDEN_HORSE_ARMOR, Component.text().content("Ember Blast").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"ember_blast", "BLAST"}));
+        inv.addItem(Item.create(Material.IRON_HORSE_ARMOR, Component.text().content("Test Spell").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"test_spell", "TEST"}));
     }
 
     @ReflectCommand(path = "update sidebar")
@@ -43,14 +46,14 @@ public class Test extends ReflectiveCommandBase {
 
     @ReflectCommand(path = "memory spell")
     public void memory_spell(CommandSender commandSender, Player player) {
-        commandSender.sendMessage("Spells:");
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Spells:"));
         Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
         if (playerSpells.size() == 0) {
-            commandSender.sendMessage("none");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
             return;
         }
         for (Spell spell : playerSpells)
-            commandSender.sendMessage(spell.getClass().getName());
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(spell.getClass().getName()));
     }
 
     @ReflectCommand(path = "memory tasks")
@@ -58,51 +61,51 @@ public class Test extends ReflectiveCommandBase {
         boolean filtering = !filter.equalsIgnoreCase("all");
         int printed = 0;
 
-        commandSender.sendMessage("Workers:");
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Workers:"));
         List<BukkitWorker> workers = Bukkit.getScheduler().getActiveWorkers();
         for (BukkitWorker worker : workers) {
             if (filtering && !worker.getOwner().getName().equals(filter))
                 continue;
-            commandSender.sendMessage((worker.getOwner().getName() + " " + worker.getTaskId() + ": " + worker));
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize((worker.getOwner().getName() + " " + worker.getTaskId() + ": " + worker)));
             printed++;
         }
         if (printed == 0)
-            commandSender.sendMessage("none");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
 
         printed = 0;
 
-        commandSender.sendMessage("Tasks:");
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Tasks:"));
         List<BukkitTask> tasks = Bukkit.getScheduler().getPendingTasks();
         for (BukkitTask task : tasks) {
             if (filtering && !task.getOwner().getName().equals(filter))
                 continue;
-            commandSender.sendMessage((task.getOwner().getName() + " " + task.getTaskId() + ": " + task));
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize((task.getOwner().getName() + " " + task.getTaskId() + ": " + task)));
             printed++;
         }
         if (printed == 0)
-            commandSender.sendMessage("none");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
     }
 
     @ReflectCommand(path = "memory sessions")
     public void memory_sessions(CommandSender commandSender) {
-        commandSender.sendMessage("Sessions:");
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Sessions:"));
         int printed = 0;
         for (Map.Entry<Player, PlayerSessionData> entry : PlayerSessionData.getPlayerSessions().entrySet()) {
-            commandSender.sendMessage(entry.getKey().getName());
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(entry.getKey().getName()));
             printed++;
         }
         if (printed == 0)
-            commandSender.sendMessage("none");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
     }
 
     @ReflectCommand(path = "value item get spellName")
     public void value_item_get_spellName(CommandSender commandSender, Player player) {
-        commandSender.sendMessage(player.getName() + "'s held item's spellName is " + ItemData.getHeldSpellName(player) + ".");
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s held item's spellName is " + ItemData.getHeldSpellName(player) + "."));
     }
 
     @ReflectCommand(path = "value item get spellType")
     public void value_item_get_spellType(CommandSender commandSender, Player player) {
-        commandSender.sendMessage(player.getName() + "'s held item's spellType is " + ItemData.getHeldSpellType(player) + ".");
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s held item's spellType is " + ItemData.getHeldSpellType(player) + "."));
     }
 
     @ReflectCommand(path = "value item set spellName")
@@ -129,11 +132,11 @@ public class Test extends ReflectiveCommandBase {
         }
 
         if (percentageModifier == null) {
-            commandSender.sendMessage(modifier + " is not a valid modifier!");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(modifier + " is not a valid modifier!"));
             return;
         }
 
-        commandSender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier()));
     }
 
     @ReflectCommand(path = "value modifier")
@@ -150,15 +153,15 @@ public class Test extends ReflectiveCommandBase {
         }
 
         if (percentageModifier == null) {
-            commandSender.sendMessage(modifier + " is not a valid modifier!");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(modifier + " is not a valid modifier!"));
             return;
         }
 
         switch (action) {
             case ADD -> percentageModifier.addModifier(number);
             case REMOVE -> percentageModifier.removeModifier(number);
-            case GET -> commandSender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
-            default -> commandSender.sendMessage("§cAction: \"" + action + "\" is not supported by this subCommand!");
+            case GET -> commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier()));
+            default -> commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>Action: \"" + action + "\" is not supported by this subCommand!"));
         }
     }
 
@@ -167,27 +170,27 @@ public class Test extends ReflectiveCommandBase {
         CoolDowns coolDowns = PlayerSessionData.getPlayerSession(player).getCoolDowns();
 
         if (spellType.equals("ALL")) {
-            commandSender.sendMessage("active CoolDowns of " + player.getName() + ":");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("active CoolDowns of " + player.getName() + ":"));
             Set<Map.Entry<String, CoolDownEntry>> entrySet = coolDowns.getCoolDowns().entrySet();
             if (entrySet.size() == 0) {
-                commandSender.sendMessage("none");
+                commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
                 return;
             }
             for (Map.Entry<String, CoolDownEntry> entry : entrySet) {
                 CoolDownEntry coolDownEntry = entry.getValue();
-                commandSender.sendMessage(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
+                commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType()));
             }
             return;
         }
 
         CoolDownEntry coolDownEntry = coolDowns.getCoolDownEntry(spellType);
         if (coolDownEntry == null) {
-            commandSender.sendMessage(spellType + " is not cooled down for " + player.getName());
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(spellType + " is not cooled down for " + player.getName()));
             return;
         }
 
-        commandSender.sendMessage("CoolDown " + spellType + " of " + player.getName() + ": "
-                + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType());
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("CoolDown " + spellType + " of " + player.getName() + ": "
+                + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType()));
     }
 
     @ReflectCommand(path = "value cooldown set")
@@ -205,7 +208,7 @@ public class Test extends ReflectiveCommandBase {
             case CRYSTALS -> currencyTracker = PlayerSessionData.getPlayerSession(player).getCrystals();
         }
 
-        commandSender.sendMessage(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency());
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency()));
     }
 
     @ReflectCommand(path = "value currency")
@@ -221,8 +224,8 @@ public class Test extends ReflectiveCommandBase {
             case ADD -> currencyTracker.addCurrency(number);
             case REMOVE -> currencyTracker.addCurrency(-number);
             case SET -> currencyTracker.setCurrency(number);
-            case GET -> commandSender.sendMessage(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency());
-            default -> commandSender.sendMessage("&cAction: \"" + action + "\" is not supported by this subCommand!");
+            case GET -> commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency()));
+            default -> commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("&cAction: \"" + action + "\" is not supported by this subCommand!"));
         }
     }
 

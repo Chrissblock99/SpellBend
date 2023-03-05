@@ -3,6 +3,8 @@ package me.chriss99.spellbend.commands;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.util.CustomClassParser;
 import me.chriss99.spellbend.util.ParameterTabCompleter;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
@@ -149,7 +151,7 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
 
         ParsedSubCommand parsedSubCommand = parsedSubCommands.get(0);
         if (Player.class.equals(parsedSubCommand.subCommand().getSenderParameterType()) && !(sender instanceof Player)) {
-            sender.sendMessage("§cOnly players can use this subCommand!");
+            sender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>Only players can use this subCommand!"));
             return true;
         }
 
@@ -164,12 +166,12 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
         try {
             parsedSubCommand.subCommand().getMethod().invoke(this, parameters);
         } catch (IllegalAccessException iae) {
-            sender.sendMessage("§cThe programmer of this subCommand used the ReflectiveCommandBase incorrectly!\n§4IllegalAccessException: §c" + iae.getMessage());
+            sender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>The programmer of this subCommand used the ReflectiveCommandBase incorrectly!\n<dark_red>IllegalAccessException: <red>" + iae.getMessage()));
             iae.printStackTrace();
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
-            sender.sendMessage("§cThe subCommand method \"" + parsedSubCommand.subCommand().getMethod().getName() + "\" threw an exception!\n§4" +
-                    cause.getClass().getSimpleName() + ": §c" + cause.getMessage());
+            sender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>The subCommand method \"" + parsedSubCommand.subCommand().getMethod().getName() + "\" threw an exception!\n<dark_red>" +
+                    cause.getClass().getSimpleName() + ": <red>" + cause.getMessage()));
             e.printStackTrace();
         }
         return true;
@@ -200,12 +202,12 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @param possiblePaths The pre-generated possible paths, from shortest to longest
      * @return The error feedback
      */
-    private @NotNull String noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
-        StringBuilder stringBuilder = new StringBuilder("§cInvalid path! Most matching subCommands:§r");
+    private @NotNull Component noPathMatchingSubCommandsMessage(final @NotNull ArrayList<String> possiblePaths) {
+        StringBuilder stringBuilder = new StringBuilder("<red>Invalid path! Most matching subCommands:</red>");
         for (SubCommand subCommand : mostPathMatchingSubCommands(possiblePaths))
             stringBuilder.append("\n").append(subCommand.getArguments());
 
-        return stringBuilder.toString();
+        return SpellBend.getMiniMessage().deserialize(stringBuilder.toString());
     }
 
     /**
@@ -261,13 +263,13 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @param possiblePaths The pre-generated possible paths, from shortest to longest
      * @return The error feedback
      */
-    private @NotNull String noSubCommandsMatchingParameterCountMessage(final @NotNull ArrayList<String> possiblePaths) {
+    private @NotNull Component noSubCommandsMatchingParameterCountMessage(final @NotNull ArrayList<String> possiblePaths) {
         //if anyone wants to use the arguments to find out which of the possible parameter lists fit the best, here is the place to start!
-        StringBuilder stringBuilder = new StringBuilder("§cWrong parameter count! Possible subCommands:§r");
+        StringBuilder stringBuilder = new StringBuilder("<red>Wrong parameter count! Possible subCommands:</red>");
         for (SubCommand subCommand : mostPathMatchingSubCommands(possiblePaths))
             stringBuilder.append("\n").append(subCommand.getArguments());
 
-        return stringBuilder.toString();
+        return SpellBend.getMiniMessage().deserialize(stringBuilder.toString());
     }
 
     /**
@@ -333,11 +335,11 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @param subCommandParsingLog The list of parsingLogs
      * @return The error feedback
      */
-    private @NotNull String noSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
-        StringBuilder stringBuilder = new StringBuilder("§cIncorrect parameters!§r");
+    private @NotNull Component noSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
+        StringBuilder stringBuilder = new StringBuilder("<red>Incorrect parameters!</red>");
         for (ParsingLog parsingLog : subCommandParsingLog)
             addParsingFailures(stringBuilder, parsingLog);
-        return stringBuilder.toString();
+        return SpellBend.getMiniMessage().deserialize(stringBuilder.toString());
     }
 
     /**
@@ -356,9 +358,9 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
                 continue;
 
             stringBuilder.append("\n  \"").append(parsingLog.parameterStrings()[i]).append("\" -> ")
-                    .append(parsingLog.subCommand().getParsingParameters()[i].getType().getSimpleName()).append("\n  §4")
-                    .append(parsingLog.parameterTypes()[i].getSimpleName()).append(": §c")
-                    .append(((Exception) parsingLog.parameters()[i]).getMessage()).append("§r");
+                    .append(parsingLog.subCommand().getParsingParameters()[i].getType().getSimpleName()).append("\n  <dark_red>")
+                    .append(parsingLog.parameterTypes()[i].getSimpleName()).append(": <red>")
+                    .append(((Exception) parsingLog.parameters()[i]).getMessage()).append("<reset>");
         }
     }
 
@@ -368,12 +370,12 @@ public abstract class ReflectiveCommandBase extends BukkitCommand implements Com
      * @param subCommandParsingLog The list of parsingLogs
      * @return The error feedback
      */
-    private @NotNull String multipleSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
-        StringBuilder stringBuilder = new StringBuilder("§cThe parameters were parsable to multiple subCommands! There is no way to fix this currently, sorry.\n" +
-                "Tip: floats can be differentiated from integers with a \".0\" at the end.§r");
+    private @NotNull Component multipleSubCommandsParsedMessage(@NotNull LinkedList<ParsingLog> subCommandParsingLog) {
+        StringBuilder stringBuilder = new StringBuilder("<red>The parameters were parsable to multiple subCommands! There is no way to fix this currently, sorry.\n" +
+                "Tip: floats can be differentiated from integers with a \".0\" at the end.</red>");
         for (ParsingLog parsingLog : subCommandParsingLog)
             stringBuilder.append("\n").append(parsingLog.subCommand().getArguments());
-        return stringBuilder.toString();
+        return SpellBend.getMiniMessage().deserialize(stringBuilder.toString());
     }
 
     /**
