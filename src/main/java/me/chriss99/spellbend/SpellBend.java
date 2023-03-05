@@ -48,6 +48,7 @@ public final class SpellBend extends JavaPlugin {
     public static void registerAllPaperEvents() {
         new PlayerInteractBlock();
         new PlayerInteractEntity();
+        new PlayerInteractAtEntity();
         new PlayerJoin();
         new PlayerQuit();
         new FoodLevelChange();
