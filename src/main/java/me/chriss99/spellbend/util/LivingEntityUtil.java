@@ -142,10 +142,12 @@ public class LivingEntityUtil {
             if (!entityIsSpellAffectAble(livingEntity)) {
                 data.set(PersistentDataKeys.spellAffectAbleKey, PersistentDataType.STRING, "");
                 LivingEntitySessionData.setupLivingEntityData(livingEntity);
+                LivingEntitySessionData.loadLivingEntitySession(livingEntity);
             }
         } else
             if (entityIsSpellAffectAble(livingEntity)) {
                 data.remove(PersistentDataKeys.spellAffectAbleKey);
+                LivingEntitySessionData.getLivingEntitySession(livingEntity).endSession();
                 LivingEntitySessionData.removeLivingEntityData(livingEntity);
             }
     }
