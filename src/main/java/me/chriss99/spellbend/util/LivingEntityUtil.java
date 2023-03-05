@@ -12,17 +12,19 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 
 public class LivingEntityUtil {
     /**
-     * Gets all adventure mode players near the location and returns them with their distance^2
+     * Gets all livingEntities near the location and returns them with their distance^2
      *
-     * @param location The location to get players near
+     * @param location The location to get livingEntities near
      * @param distance The distance
-     * @return The playerToDistanceMap
+     * @return The livingEntityToDistanceMap
      */
-    public static Map<Player, Double> getPlayersNearLocation(@NotNull Location location, double distance) {
+    public static <C extends LivingEntity> Map<C, Double> getLivingEntitiesNearLocation(@NotNull Location location, double distance,
+                                                                                        @NotNull Predicate<C> predicate, @NotNull Class<C> returnMapKeyType) {
         Chunk centerChunk = location.getChunk();
         World world = location.getWorld();
         int chunkX = centerChunk.getX();
@@ -30,33 +32,55 @@ public class LivingEntityUtil {
         int chunkDistance = (int) Math.ceil(distance/16);
         int maxX = chunkX+chunkDistance;
         int maxZ = chunkZ+chunkDistance;
-        Set<Entity> entities = new HashSet<>();
+        Set<C> entities = new HashSet<>();
 
         for (int x = chunkX-chunkDistance;x<maxX;x++)
             for (int z = chunkZ-chunkDistance;z<maxZ;z++)
-                entities.addAll(List.of(world.getChunkAt(x, z).getEntities()));
 
-        Set<Player> players = new HashSet<>();
-        for (Entity entity : entities)
-            if (entity instanceof Player player)
-                players.add(player);
+                for (Entity entity : world.getChunkAt(x, z).getEntities())
+                    if (returnMapKeyType.isInstance(entity)) {
+                        //noinspection unchecked
+                        C livingEntity = (C) entity;
+                        if (predicate.test(livingEntity))
+                            entities.add(livingEntity);
+                    }
 
-        Map<Player, Double> playerToDistanceSquaredMap = new HashMap<>();
+        Map<C, Double> livingEntityToDistanceSquaredMap = new HashMap<>();
         double distanceSquared = distance * distance;
 
-        for (Player player : players) {
-            if (!GameMode.ADVENTURE.equals(player.getGameMode()))
-                continue;
-
-            Location playerLocation = player.getLocation();
-            double deltaX = playerLocation.getX()-location.getX();
-            double deltaY = playerLocation.getY()-location.getY();
-            double deltaZ = playerLocation.getZ()-location.getZ();
-            double playerDistanceSquared = deltaX*deltaX + deltaY*deltaY + deltaZ*deltaZ;
-            if (playerDistanceSquared<=distanceSquared)
-                playerToDistanceSquaredMap.put(player, playerDistanceSquared);
+        for (C livingEntity : entities) {
+            Location entityLocation = livingEntity.getLocation();
+            double deltaX = entityLocation.getX()-location.getX();
+            double deltaY = entityLocation.getY()-location.getY();
+            double deltaZ = entityLocation.getZ()-location.getZ();
+            double livingEntityDistanceSquared = deltaX*deltaX + deltaY*deltaY + deltaZ*deltaZ;
+            if (livingEntityDistanceSquared<=distanceSquared)
+                livingEntityToDistanceSquaredMap.put(livingEntity, livingEntityDistanceSquared);
         }
-        return playerToDistanceSquaredMap;
+        return livingEntityToDistanceSquaredMap;
+    }
+
+    /**
+     * Gets all players in adventure mode near the location and returns them with their distance^2
+     *
+     * @param location The location to get players near
+     * @param distance The distance
+     * @return The playerToDistanceMap
+     */
+    public static Map<Player, Double> getPlayersNearLocation(@NotNull Location location, double distance) {
+        return getLivingEntitiesNearLocation(location, distance,
+                (player) -> GameMode.ADVENTURE.equals(player.getGameMode()), Player.class);
+    }
+
+    /**
+     * Gets all players in adventure mode near the location and returns them with their distance^2
+     *
+     * @param location The location to get players near
+     * @param distance The distance
+     * @return The playerToDistanceMap
+     */
+    public static Map<LivingEntity, Double> getLivingEntitiesNearLocation(@NotNull Location location, double distance) {
+        return getLivingEntitiesNearLocation(location, distance, (a) -> true, LivingEntity.class);
     }
 
     private static final Vector[] offset = new Vector[]{
