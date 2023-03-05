@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.util;
 
+import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -137,8 +138,15 @@ public class LivingEntityUtil {
 
     public static void setLivingEntitySpellAffectAble(@NotNull LivingEntity livingEntity, boolean affectAble) {
         PersistentDataContainer data = livingEntity.getPersistentDataContainer();
-        if (affectAble)
-            data.set(PersistentDataKeys.spellAffectAbleKey, PersistentDataType.STRING, "");
-        else data.remove(PersistentDataKeys.spellAffectAbleKey);
+        if (affectAble) {
+            if (!entityIsSpellAffectAble(livingEntity)) {
+                data.set(PersistentDataKeys.spellAffectAbleKey, PersistentDataType.STRING, "");
+                LivingEntitySessionData.setupLivingEntityData(livingEntity);
+            }
+        } else
+            if (entityIsSpellAffectAble(livingEntity)) {
+                data.remove(PersistentDataKeys.spellAffectAbleKey);
+                LivingEntitySessionData.removeLivingEntityData(livingEntity);
+            }
     }
 }
