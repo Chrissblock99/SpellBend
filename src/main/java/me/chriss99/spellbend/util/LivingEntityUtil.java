@@ -146,9 +146,9 @@ public class LivingEntityUtil {
             }
         } else
             if (entityIsSpellAffectAble(livingEntity)) {
-                data.remove(PersistentDataKeys.spellAffectAbleKey);
                 LivingEntitySessionData.getLivingEntitySession(livingEntity).endSession();
                 LivingEntitySessionData.removeLivingEntityData(livingEntity);
+                data.remove(PersistentDataKeys.spellAffectAbleKey);
             }
     }
 }
