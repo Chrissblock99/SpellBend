@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,8 +10,8 @@ public class IsMovementStunned extends ValueTracker {
     private final MultiValueTracker jumpEffect;
     private boolean subsAreIncreased = false;
 
-    public IsMovementStunned(@NotNull Player player, @NotNull PercentageModifier walkSpeedModifiers, @NotNull MultiValueTracker jumpEffect) {
-        super(player, PersistentDataKeys.isMovementStunnedKey, "isMovementStunned", 0);
+    public IsMovementStunned(@NotNull LivingEntity livingEntity, @NotNull PercentageModifier walkSpeedModifiers, @NotNull MultiValueTracker jumpEffect) {
+        super(livingEntity, PersistentDataKeys.isMovementStunnedKey, "isMovementStunned", 0);
         this.walkSpeedModifiers = walkSpeedModifiers;
         this.jumpEffect = jumpEffect;
         updateStun();
@@ -26,12 +27,14 @@ public class IsMovementStunned extends ValueTracker {
         if (valueIsLargerZero() && !subsAreIncreased) {
             walkSpeedModifiers.addModifier(0);
             jumpEffect.addValue(128);
-            player.setFoodLevel(6);
+            if (livingEntity instanceof Player player)
+                player.setFoodLevel(6);
             subsAreIncreased = true;
         } else if (subsAreIncreased) {
             walkSpeedModifiers.removeModifier(0);
             jumpEffect.removeValue(128);
-            player.setFoodLevel(20);
+            if (livingEntity instanceof Player player)
+                player.setFoodLevel(20);
             subsAreIncreased = false;
         }
     }

@@ -1,16 +1,18 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
+import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.ParticleUtil;
-import me.chriss99.spellbend.util.PlayerUtil;
+import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -42,7 +44,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         }, new PlayerStateValidator() {
             @Override
             public Component validateState(@NotNull Player player) {
-                if (!PlayerUtil.isOnGround(player))
+                if (!LivingEntityUtil.isOnGround(player))
                     return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
                 return null;
             }
@@ -142,17 +144,18 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                     world.playSound(center, Sound.BLOCK_GRASS_BREAK, 0.25f, 1.5f);
                 }
 
-                Map<Player, Double> players = PlayerUtil.getPlayersNearLocation(center, 6);
+                Map<LivingEntity, Double> players = LivingEntityUtil.getSpellAffectAbleEntitiesNearLocation(center, 6);
                 players.remove(caster);
-                for (Map.Entry<Player, Double> entry : players.entrySet()) {
-                    Player player = entry.getKey();
+                for (Map.Entry<LivingEntity, Double> entry : players.entrySet()) {
+                    LivingEntity livingEntity = entry.getKey();
 
-                    if (PlayerUtil.isOnGround(player))
-                        player.setVelocity(player.getVelocity().add(new Vector(0, 0.5, 0)));
-                    shockPlayer(player, 1);
-                    PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-                    sessionData.getHealth().damagePlayer(caster, 2.5, item);
-                    sessionData.getSpellHandler().stunPlayer(4);
+                    if (LivingEntityUtil.isOnGround(livingEntity))
+                        livingEntity.setVelocity(livingEntity.getVelocity().add(new Vector(0, 0.5, 0)));
+                    shockLivingEntity(livingEntity, 1);
+
+                    LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 2.5, item);
+                    if (livingEntity instanceof Player player)
+                        PlayerSessionData.getPlayerSession(player).getSpellHandler().stunPlayer(4);
                 }
 
                 if (time == 1) {
@@ -194,8 +197,8 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         cancelSpell();
     }
 
-    public static void shockPlayer(@NotNull Player player, int timeIn2ticks) {
-        World world = player.getWorld();
+    public static void shockLivingEntity(@NotNull LivingEntity livingEntity, int timeIn2ticks) {
+        World world = livingEntity.getWorld();
         int finalTimeIn2ticks = timeIn2ticks*2;
 
         new BukkitRunnable(){
@@ -203,9 +206,9 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
 
             @Override
             public void run() {
-                Location location = player.getLocation();
+                Location location = livingEntity.getLocation();
                 if (time%2 == 0) {
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 2, 1, false, false, false));
+                    livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 2, 1, false, false, false));
                     world.spawnParticle(Particle.VILLAGER_ANGRY, location, 1, 0.2, 0.4, 0.2, 0);
                     world.playSound(location, Sound.BLOCK_NOTE_BLOCK_BIT, 3f, 1.8f);
                 }

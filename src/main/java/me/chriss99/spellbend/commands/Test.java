@@ -9,6 +9,7 @@ import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
 import me.chriss99.spellbend.util.ItemData;
+import me.chriss99.spellbend.util.LivingEntityUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -16,6 +17,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
@@ -227,6 +230,28 @@ public class Test extends ReflectiveCommandBase {
             case GET -> commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s " + currency + " count is: " + currencyTracker.getCurrency()));
             default -> commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("&cAction: \"" + action + "\" is not supported by this subCommand!"));
         }
+    }
+
+    @ReflectCommand(path = "value entity set isSpellAffectAble")
+    public void value_entity_set_isSpellAffectAble(Player commandSender, boolean affectAble) {
+        Entity targetEntity = commandSender.getTargetEntity(2);
+        if (!(targetEntity instanceof LivingEntity livingEntity)) {
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>Targeted entity is not a livingEntity!"));
+            return;
+        }
+
+        LivingEntityUtil.setLivingEntitySpellAffectAble(livingEntity, affectAble);
+    }
+
+    @ReflectCommand(path = "value entity get isSpellAffectAble")
+    public void value_entity_get_isSpellAffectAble(Player commandSender) {
+        Entity targetEntity = commandSender.getTargetEntity(2);
+        if (!(targetEntity instanceof LivingEntity livingEntity)) {
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>Targeted entity is not a livingEntity!"));
+            return;
+        }
+
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(String.valueOf(LivingEntityUtil.entityIsSpellAffectAble(livingEntity))));
     }
 
     public enum Modifier {

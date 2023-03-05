@@ -1,10 +1,13 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.SpellBend;
+import org.bukkit.Bukkit;
 import net.kyori.adventure.text.Component;
-
 import org.bukkit.GameMode;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,26 +17,38 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 public class Health {
     private final static SpellBend plugin = SpellBend.getInstance();
     public final static long iFrameTimeInMS = 500;
-    private final Player player;
+
+    private final LivingEntity livingEntity;
+    private final double maxHealth;
     private final List<DamageEntry> damageEntries = new ArrayList<>();
     private Date iFrameEnd = new Date();
     private double iFrameDamage = 0;
 
-    public Health(@NotNull Player player) {
-        this.player = player;
+    public Health(@NotNull LivingEntity livingEntity) {
+        this.livingEntity = livingEntity;
+
+        AttributeInstance attributeInstance = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if (attributeInstance != null) {
+            maxHealth = attributeInstance.getDefaultValue(); //TODO //HACK this does not account for the max health to change LOL!
+            return;
+        }
+
+        Bukkit.getLogger().log(Level.WARNING, "The livingEntity \"" + livingEntity + "\" did not have a GENERIC_MAX_HEALTH attribute! Setting to 20!");
+        maxHealth = 20;
     }
 
     /**
-     * Calculates the health of the player from its DamageEntries
+     * Calculates the livingEntity of the player from its DamageEntries
      *
-     * @return The health of the player
+     * @return The health of the livingEntity
      */
     public double getHealth() {
-        double health = 20d;
+        double health = maxHealth;
         for (DamageEntry entry : damageEntries)
             health -= entry.getDamage();
         return health;
@@ -42,12 +57,12 @@ public class Health {
     /**
      * @throws IllegalArgumentException If the damage value is negative
      *
-     * @param attacker The attacking entity (null if undefined)
+     * @param attacker The attacking livingEntity (null if undefined)
      * @param rawDamage The damage dealt not modified by dmgMods
      * @param item The item used to damage (null if undefined)
      * @return The damage dealt after modification by dmgMods and iFrameDamage while being limited to health left
      */
-    public double damagePlayer(@Nullable Entity attacker, double rawDamage, @Nullable ItemStack item) {
+    public double damageLivingEntity(@Nullable LivingEntity attacker, double rawDamage, @Nullable ItemStack item) {
         if (rawDamage < 0)
             throw new IllegalArgumentException("Damage cannot be negative!");
 
@@ -56,7 +71,7 @@ public class Health {
 
         double damage = rawDamage;
         damage *= (attacker instanceof Player attackerPlayer) ? PlayerSessionData.getPlayerSession(attackerPlayer).getDamageDealtModifiers().getModifier() : 1;
-        damage *= PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers().getModifier();
+        damage *= PlayerSessionData.getLivingEntitySession(livingEntity).getDamageTakenModifiers().getModifier();
 
         if (activeIFrame) {
             damage -= iFrameDamage;
@@ -77,36 +92,40 @@ public class Health {
             return healthBefore; //the health before dmg is equal to health needed to kill
         }
 
-        player.setHealth(health);
-        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
+        livingEntity.setHealth(health);
+        if (livingEntity instanceof Player player)
+            PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
         return damage;
     }
 
     /**
-     * Takes in a value and passes it to healPlayer() or damagePlayer() respectively <br>
-     * <b>as this cannot be traced back to a dmg cause, it is discouraged to use this</b>
+     * Passes the damage to healLivingEntity() or damageLivingEntity() respectively
      *
-     * @param health the health to displace by
+     * @param health The health to displace by
+     * @param attacker The displacing livingEntity
+     * @param item The item used to displace
      */
-    public void displaceHealth(double health) {
+    public void displaceHealth(double health, @Nullable LivingEntity attacker, @Nullable ItemStack item) {
         if (health == 0)
             return;
         if (health < 0)
-            damagePlayer(null, health*(-1), null);
-        else healPlayer(health);
+            damageLivingEntity(attacker, health*(-1), item);
+        else healLivingEntity(health);
     }
 
     /**
-     * Heals the player up to its health limit
+     * Heals the livingEntity up to its health limit
      *
-     * @throws IllegalArgumentException If the healing amount is negative or zero
+     * @throws IllegalArgumentException If the healing amount is negative
      *
      * @param heal The amount of health to heal
      * @return The player's health after healing
      */
-    public double healPlayer(double heal) {
-        if (heal <= 0)
+    public double healLivingEntity(double heal) {
+        if (heal < 0)
             throw new IllegalArgumentException("Healing amount cannot be negative or zero!");
+        if (heal == 0)
+            return getHealth();
 
         int lastIndex;
         while (true) {
@@ -124,7 +143,8 @@ public class Health {
             heal *= -1;
         }
 
-        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
+        if (livingEntity instanceof Player player)
+            PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
         return getHealth();
     }
 
@@ -136,7 +156,7 @@ public class Health {
      */
     public void onPlayerDeath(@Nullable Entity killer, @Nullable ItemStack item) {
         //TODO use LuckPerms here ALSO implement cosmetics at some point
-        StringBuilder messageBuilder = new StringBuilder("<dark_grey>[<red>☠<dark_grey>] <yellow><bold>" + player.getName() + "<reset><red>");
+        StringBuilder messageBuilder = new StringBuilder("<dark_grey>[<red>☠<dark_grey>] <yellow><bold>" + livingEntity.getName() + "<reset><red>");
         switch ((killer != null) + "-" + (item != null)) {
             case "true-true" -> //noinspection ConstantConditions
                     messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName()).append("<reset><red> using ").append(item.getItemMeta().getLocalizedName());
@@ -148,7 +168,7 @@ public class Health {
         }
 
         Component message = SpellBend.getMiniMessage().deserialize(messageBuilder.toString());
-        for (Player playerInWorld : player.getWorld().getPlayers())
+        for (Player playerInWorld : livingEntity.getWorld().getPlayers())
             playerInWorld.sendMessage(message);
 
         List<DamageEntry> uniqueAttackers = new ArrayList<>();
@@ -168,34 +188,43 @@ public class Health {
         }
 
         for (DamageEntry entry : uniqueAttackers) {
-            if (entry.getAttacker() instanceof Player uniqueAttacker) {
-                double percentage = entry.getDamage() / 20d;
+            LivingEntity attacker = entry.getAttacker();
+            if (attacker == null)
+                continue;
+
+            double percentage = entry.getDamage() / maxHealth;
+            float health = (float) (5 * percentage);
+
+            if (attacker instanceof Player uniqueAttacker) {
                 float gold = (float) (10 * percentage);
                 float gems = (float) (3 * percentage);
-                float health = (float) (5 * percentage);
 
                 uniqueAttacker.sendMessage(SpellBend.getMiniMessage().deserialize("<yellow>" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! <gold>+" + gold + " Gold <dark_grey>| <aqua>+" + gems + " Gems <dark_grey>| <red>+" + health + " Health"));
                 PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(uniqueAttacker);
                 sessionData.getGold().addCurrency(gold);
                 sessionData.getGems().addCurrency(gems);
-                sessionData.getHealth().healPlayer(health);
             }
+
+            LivingEntitySessionData.getLivingEntitySession(attacker).getHealth().healLivingEntity(health);
         }
 
-        player.setGameMode(GameMode.SPECTATOR);
-        if (killer != null)
-            player.setSpectatorTarget(killer);
         damageEntries.clear(); //practically setting health back to max
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                //TODO tp victim to spawn here
-                player.setGameMode(GameMode.ADVENTURE);
-            }
-        }.runTaskLater(plugin, 100);
+        if (livingEntity instanceof Player player) {
+            player.setGameMode(GameMode.SPECTATOR);
+            if (killer != null)
+                player.setSpectatorTarget(killer);
 
-        PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    //TODO tp victim to spawn here
+                    player.setGameMode(GameMode.ADVENTURE);
+                }
+            }.runTaskLater(plugin, 100);
+
+            PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
+        }
     }
 
     /**
@@ -207,7 +236,7 @@ public class Health {
         return new Date().getTime() < iFrameEnd.getTime();
     }
 
-    public Player getPlayer() {
-        return player;
+    public LivingEntity getLivingEntity() {
+        return livingEntity;
     }
 }
