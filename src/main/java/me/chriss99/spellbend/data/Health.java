@@ -159,11 +159,11 @@ public class Health {
         StringBuilder messageBuilder = new StringBuilder("<dark_grey>[<red>☠<dark_grey>] <yellow><bold>" + livingEntity.getName() + "<reset><red>");
         switch ((killer != null) + "-" + (item != null)) {
             case "true-true" -> //noinspection ConstantConditions
-                    messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName()).append("<reset><red> using ").append(item.getItemMeta().getLocalizedName());
+                    messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName()).append("<reset><red> using ").append(SpellBend.getMiniMessage().serialize(item.getItemMeta().displayName()));
             case "true-false" -> //noinspection ConstantConditions
                     messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName());
             case "false-true" -> //noinspection ConstantConditions
-                    messageBuilder.append(" died to").append(item.getItemMeta().getLocalizedName());
+                    messageBuilder.append(" died to").append(SpellBend.getMiniMessage().serialize(item.getItemMeta().displayName()));
             case "false-false" -> messageBuilder.append(" died");
         }
 
