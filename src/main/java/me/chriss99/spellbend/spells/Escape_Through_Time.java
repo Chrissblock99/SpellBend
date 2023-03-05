@@ -2,6 +2,7 @@ package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
+import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
@@ -12,6 +13,7 @@ import net.kyori.adventure.sound.SoundStop;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -123,14 +125,16 @@ public class Escape_Through_Time extends Spell implements Killable {
 
     private void explode() {
         World world = caster.getWorld();
-        Map<Player, Double> players = LivingEntityUtil.getPlayersNearLocation(armorStandOrigin, 4.5);
+        Map<LivingEntity, Double> players = LivingEntityUtil.getSpellAffectAbleEntitiesNearLocation(armorStandOrigin, 4.5);
         players.remove(caster);
-        for (Map.Entry<Player, Double> entry : players.entrySet()) {
-            Player player = entry.getKey();
-            PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-            sessionData.getHealth().damageLivingEntity(caster, 3, item);
-            sessionData.getSpellHandler().stunPlayer(20);
-            world.spawnParticle(Particle.FLASH, player.getLocation(), 1, 0, 0, 0, 0);
+        for (Map.Entry<LivingEntity, Double> entry : players.entrySet()) {
+            LivingEntity livingEntity = entry.getKey();
+
+            LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 3, item);
+            if (livingEntity instanceof Player player)
+                PlayerSessionData.getPlayerSession(player).getSpellHandler().stunPlayer(20);
+
+            world.spawnParticle(Particle.FLASH, livingEntity.getLocation(), 1, 0, 0, 0, 0);
             //player.moveUp(1);
             //player.moveAway(1);
         }
