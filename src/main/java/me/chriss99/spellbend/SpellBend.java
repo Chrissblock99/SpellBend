@@ -12,6 +12,8 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.events.paper.*;
 //import me.chriss99.spellbend.events.protocollib.*;
 import me.chriss99.spellbend.spells.*;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +23,7 @@ public final class SpellBend extends JavaPlugin {
     private static SpellBend instance;
     private static ProtocolManager protocolManager;
     private static final Gson gson = new Gson();
+    private static final MiniMessage miniMsg = MiniMessage.miniMessage();
 
     @Override
     public void onEnable() {
@@ -93,5 +96,9 @@ public final class SpellBend extends JavaPlugin {
 
     public static Gson getGson() {
         return gson;
+    }
+
+    public static MiniMessage getMiniMessage(){
+        return miniMsg;
     }
 }

@@ -3,7 +3,6 @@ package me.chriss99.spellbend.data;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.util.TextUtil;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -57,9 +56,8 @@ public class ActionBarController {
             return;
         }
 
-        MiniMessage miniMsg = MiniMessage.miniMessage();
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-        player.sendActionBar(miniMsg.deserialize("<red>❤</red> <gold>" + TextUtil.roundToNDecimalPlaces(sessionData.getHealth().getHealth()/2, 2) + "</gold><red>/</red><gold>10</gold> <dark_red>|</dark_red> <aqua>★</aqua> <gold>" + Math.round(sessionData.getMana().getCurrency()) + "</gold><blue>/</blue><gold>100</gold>"));
+        player.sendActionBar(SpellBend.getMiniMessage().deserialize("<red>❤</red> <gold>" + TextUtil.roundToNDecimalPlaces(sessionData.getHealth().getHealth()/2, 2) + "</gold><red>/</red><gold>10</gold> <dark_red>|</dark_red> <aqua>★</aqua> <gold>" + Math.round(sessionData.getMana().getCurrency()) + "</gold><blue>/</blue><gold>100</gold>"));
     }
 
     public Player getPlayer() {
