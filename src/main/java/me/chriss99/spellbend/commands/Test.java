@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.commands;
 
+import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Action;
 import me.chriss99.spellbend.harddata.CoolDownStage;
@@ -9,6 +10,9 @@ import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
 import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -31,9 +35,10 @@ public class Test extends ReflectiveCommandBase {
     @ReflectCommand(path = "item")
     public void item(Player commandSender) {
         Inventory inv = commandSender.getInventory();
-        inv.addItem(Item.create(Material.CAMPFIRE, Component.text("§c§lFiery Rage"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"fiery_rage", "AURA"}));
-        inv.addItem(Item.create(Material.GOLDEN_HORSE_ARMOR, Component.text("§c§lEmber Blast"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"ember_blast", "BLAST"}));
-        inv.addItem(Item.create(Material.IRON_HORSE_ARMOR, Component.text("§c§lTest Spell"), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"test_spell", "TEST"}));
+        MiniMessage miniMsg = MiniMessage.miniMessage();
+        inv.addItem(Item.create(Material.CAMPFIRE, Component.text().content("Fiery Rage").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"fiery_rage", "AURA"}));
+        inv.addItem(Item.create(Material.GOLDEN_HORSE_ARMOR, Component.text().content("Ember Blast").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"ember_blast", "BLAST"}));
+        inv.addItem(Item.create(Material.IRON_HORSE_ARMOR, Component.text().content("Test Spell").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"test_spell", "TEST"}));
     }
 
     @ReflectCommand(path = "update sidebar")
@@ -158,7 +163,7 @@ public class Test extends ReflectiveCommandBase {
             case ADD -> percentageModifier.addModifier(number);
             case REMOVE -> percentageModifier.removeModifier(number);
             case GET -> commandSender.sendMessage(modifier + " of " + player.getName() + " is " + percentageModifier.getModifier());
-            default -> commandSender.sendMessage("§cAction: \"" + action + "\" is not supported by this subCommand!");
+            default -> commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>Action: \"" + action + "\" is not supported by this subCommand!"));
         }
     }
 
