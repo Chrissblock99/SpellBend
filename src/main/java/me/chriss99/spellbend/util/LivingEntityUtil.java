@@ -73,14 +73,25 @@ public class LivingEntityUtil {
     }
 
     /**
-     * Gets all players in adventure mode near the location and returns them with their distance^2
+     * Gets all livingEntities near the location and returns them with their distance^2
      *
-     * @param location The location to get players near
+     * @param location The location to get livingEntities near
      * @param distance The distance
-     * @return The playerToDistanceMap
+     * @return The livingEntityToDistanceMap
      */
     public static Map<LivingEntity, Double> getLivingEntitiesNearLocation(@NotNull Location location, double distance) {
         return getLivingEntitiesNearLocation(location, distance, (a) -> true, LivingEntity.class);
+    }
+
+    /**
+     * Gets all spell affect-able livingEntities near the location and returns them with their distance^2
+     *
+     * @param location The location to get spellAffectAbleEntities near
+     * @param distance The distance
+     * @return The livingEntityToDistanceMap
+     */
+    public static Map<LivingEntity, Double> getSpellAffectAbleEntitiesNearLocation(@NotNull Location location, double distance) {
+        return getLivingEntitiesNearLocation(location, distance, LivingEntityUtil::entityIsSpellAffectAble, LivingEntity.class);
     }
 
     private static final Vector[] offset = new Vector[]{
