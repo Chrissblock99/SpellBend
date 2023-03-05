@@ -99,6 +99,24 @@ public class LivingEntitySessionData {
         data.set(PersistentDataKeys.isMovementStunnedKey, PersistentDataType.INTEGER, 0);
     }
 
+    /**
+     * Removes all the PersistentData of the livingEntity
+     *
+     * @param livingEntity The livingEntity whose PersistentData to remove
+     */
+    public static void removeLivingEntityData(@NotNull LivingEntity livingEntity) {
+        PersistentDataContainer data = livingEntity.getPersistentDataContainer();
+
+        data.remove(PersistentDataKeys.jumpEffect);
+        data.remove(PersistentDataKeys.isInvisibleKey);
+
+        data.remove(PersistentDataKeys.damageDealtModifiersKey);
+        data.remove(PersistentDataKeys.damageTakenModifiersKey);
+        data.remove(PersistentDataKeys.walkSpeedModifiersKey);
+
+        data.remove(PersistentDataKeys.isMovementStunnedKey);
+    }
+
     protected LivingEntitySessionData(@NotNull LivingEntity livingEntity) {
         this.livingEntity = livingEntity;
 
