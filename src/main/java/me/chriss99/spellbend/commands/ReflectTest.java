@@ -1,5 +1,6 @@
 package me.chriss99.spellbend.commands;
 
+import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.spells.Spell;
 import org.bukkit.Bukkit;
@@ -19,7 +20,7 @@ public class ReflectTest extends ReflectiveCommandBase {
     public void noParams() {
         for (World world : Bukkit.getWorlds())
             for (Player player : world.getPlayers())
-                player.sendMessage("\"/reflectTest noParams\" executed!");
+                player.sendMessage(SpellBend.getMiniMessage().deserialize("\"/reflectTest noParams\" executed!"));
     }
 
     @ReflectCommand(path = "value")
@@ -36,69 +37,69 @@ public class ReflectTest extends ReflectiveCommandBase {
     public void noPath() {
         for (World world : Bukkit.getWorlds())
             for (Player player : world.getPlayers())
-                player.sendMessage("\"/reflectTest\" executed!");
+                player.sendMessage(SpellBend.getMiniMessage().deserialize("\"/reflectTest\" executed!"));
     }
 
     @ReflectCommand(path = "senderOnly")
     public void senderOnly(CommandSender commandSender) {
         for (World world : Bukkit.getWorlds())
             for (Player player : world.getPlayers())
-                player.sendMessage("\"/reflectTest senderOnly\" executed by " + commandSender.getName() + "!");
+                player.sendMessage(SpellBend.getMiniMessage().deserialize("\"/reflectTest senderOnly\" executed by " + commandSender.getName() + "!"));
     }
 
     @ReflectCommand(path = "playerOnly")
     public void playerOnly(Player commandSender) {
         for (World world : Bukkit.getWorlds())
             for (Player player : world.getPlayers())
-                player.sendMessage("\"/reflectTest playerOnly\" executed by " + commandSender.getName() + "!");
+                player.sendMessage(SpellBend.getMiniMessage().deserialize("\"/reflectTest playerOnly\" executed by " + commandSender.getName() + "!"));
     }
 
     @ReflectCommand(path = "playerOnly")
     public void playerOnly(Player commandSender, int value) {
         for (World world : Bukkit.getWorlds())
             for (Player player : world.getPlayers())
-                player.sendMessage("\"/reflectTest playerOnly\" executed by " + commandSender.getName() + " with value " + value + "!");
+                player.sendMessage(SpellBend.getMiniMessage().deserialize("\"/reflectTest playerOnly\" executed by " + commandSender.getName() + " with value " + value + "!"));
     }
 
     @ReflectCommand(path = "memory")
     public void memory(CommandSender commandSender, Player player) {
-        commandSender.sendMessage("Spells:");
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Spells:"));
         Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
         if (playerSpells.size() == 0) {
-            commandSender.sendMessage("none");
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
             return;
         }
 
         for (Spell spell : playerSpells) {
-            commandSender.sendMessage(spell.getClass().getName());
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(spell.getClass().getName()));
         }
     }
 
     @ReflectCommand(path = "memory")
     public void memory(Player sendTo, Player player) {
-        sendTo.sendMessage("Spells:");
+        sendTo.sendMessage(SpellBend.getMiniMessage().deserialize("Spells:"));
         Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
         if (playerSpells.size() == 0) {
-            sendTo.sendMessage("none");
+            sendTo.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
             return;
         }
 
         for (Spell spell : playerSpells) {
-            sendTo.sendMessage(spell.getClass().getName());
+            sendTo.sendMessage(SpellBend.getMiniMessage().deserialize(spell.getClass().getName()));
         }
     }
 
     @ReflectCommand(path = "memory spell")
     public void memory_spell(Player player) {
-        player.sendMessage("Spells:");
+        player.sendMessage(SpellBend.getMiniMessage().deserialize("Spells:"));
         Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
         if (playerSpells.size() == 0) {
-            player.sendMessage("none");
+            player.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
             return;
         }
 
         for (Spell spell : playerSpells) {
-            player.sendMessage(spell.getClass().getName());
+            player.sendMessage(SpellBend.getMiniMessage().deserialize(spell.getClass().getName()));
         }
     }
 }

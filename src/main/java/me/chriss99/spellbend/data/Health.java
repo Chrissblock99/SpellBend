@@ -2,6 +2,7 @@ package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.SpellBend;
 import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -155,18 +156,18 @@ public class Health {
      */
     public void onPlayerDeath(@Nullable Entity killer, @Nullable ItemStack item) {
         //TODO use LuckPerms here ALSO implement cosmetics at some point
-        StringBuilder messageBuilder = new StringBuilder("§8[§c☠§8] §e§l" + livingEntity.getName() + "§r§c");
+        StringBuilder messageBuilder = new StringBuilder("<dark_grey>[<red>☠<dark_grey>] <yellow><bold>" + livingEntity.getName() + "<reset><red>");
         switch ((killer != null) + "-" + (item != null)) {
             case "true-true" -> //noinspection ConstantConditions
-                    messageBuilder.append(" was slain by §e§l").append(killer.getName()).append("§r§c using ").append(item.getItemMeta().getLocalizedName());
+                    messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName()).append("<reset><red> using ").append(item.getItemMeta().getLocalizedName());
             case "true-false" -> //noinspection ConstantConditions
-                    messageBuilder.append(" was slain by §e§l").append(killer.getName());
+                    messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName());
             case "false-true" -> //noinspection ConstantConditions
                     messageBuilder.append(" died to").append(item.getItemMeta().getLocalizedName());
             case "false-false" -> messageBuilder.append(" died");
         }
 
-        String message = messageBuilder.toString();
+        Component message = SpellBend.getMiniMessage().deserialize(messageBuilder.toString());
         for (Player playerInWorld : livingEntity.getWorld().getPlayers())
             playerInWorld.sendMessage(message);
 
@@ -198,7 +199,7 @@ public class Health {
                 float gold = (float) (10 * percentage);
                 float gems = (float) (3 * percentage);
 
-                uniqueAttacker.sendMessage("§e" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! §6+" + gold + " Gold §8| §b+" + gems + " Gems §8| §c+" + health + " Health");
+                uniqueAttacker.sendMessage(SpellBend.getMiniMessage().deserialize("<yellow>" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! <gold>+" + gold + " Gold <dark_grey>| <aqua>+" + gems + " Gems <dark_grey>| <red>+" + health + " Health"));
                 PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(uniqueAttacker);
                 sessionData.getGold().addCurrency(gold);
                 sessionData.getGems().addCurrency(gems);
