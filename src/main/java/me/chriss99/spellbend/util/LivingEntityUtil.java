@@ -5,6 +5,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -96,5 +98,12 @@ public class LivingEntityUtil {
         if (entity instanceof Player)
             return true;
         return entity.getPersistentDataContainer().has(PersistentDataKeys.spellAffectAbleKey);
+    }
+
+    public static void setLivingEntitySpellAffectAble(@NotNull LivingEntity livingEntity, boolean affectAble) {
+        PersistentDataContainer data = livingEntity.getPersistentDataContainer();
+        if (affectAble)
+            data.set(PersistentDataKeys.spellAffectAbleKey, PersistentDataType.STRING, "");
+        else data.remove(PersistentDataKeys.spellAffectAbleKey);
     }
 }
