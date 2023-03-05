@@ -2,6 +2,7 @@ package me.chriss99.spellbend.util;
 
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 
-public class PlayerUtil {
+public class LivingEntityUtil {
     /**
      * Gets all adventure mode players near the location and returns them with their distance^2
      *
@@ -61,23 +62,23 @@ public class PlayerUtil {
             new Vector(-1, 0, -1), new Vector(1, 0, -1), new Vector(-1, 0, 1), new Vector(1, 0, 1)};
 
     /**
-     * Gets the voxelShapes of the 9 blocks below the player and compares them to the player's boundingBox <br>
-     * Returns false if the player is inside a vehicle
+     * Gets the voxelShapes of the 9 blocks below the livingEntity and compares them to its boundingBox <br>
+     * Returns false if the livingEntity is inside a vehicle
      *
-     * @param player The player to check for
-     * @return If the player is on ground
+     * @param livingEntity The livingEntity to check for
+     * @return If the livingEntity is on ground
      */
-    public static boolean isOnGround(@NotNull Player player) {
-        if (player.isInsideVehicle())
+    public static boolean isOnGround(@NotNull LivingEntity livingEntity) {
+        if (livingEntity.isInsideVehicle())
             return false;
 
-        BoundingBox playerBound = player.getBoundingBox().shift(0, -0.03, 0);
-        World world = player.getWorld();
-        Location belowPlayer = player.getLocation().add(0, -0.03, 0).toBlockLocation();
+        BoundingBox livingEntityBound = livingEntity.getBoundingBox().shift(0, -0.03, 0);
+        World world = livingEntity.getWorld();
+        Location belowLivingEntity = livingEntity.getLocation().add(0, -0.03, 0).toBlockLocation();
 
         for (Vector offset : offset) {
-            Location relativeLoc = belowPlayer.clone().add(offset);
-            BoundingBox relativeBound = playerBound.clone().shift(relativeLoc.clone().multiply(-1));
+            Location relativeLoc = belowLivingEntity.clone().add(offset);
+            BoundingBox relativeBound = livingEntityBound.clone().shift(relativeLoc.clone().multiply(-1));
             if (world.getBlockAt(relativeLoc).getCollisionShape().overlaps(relativeBound))
                 return true;
         }
