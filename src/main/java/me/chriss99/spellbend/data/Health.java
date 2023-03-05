@@ -10,12 +10,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Health {
     private final static SpellBend plugin = SpellBend.getInstance();
+    public final static long iFrameTimeInMS = 500;
     private final Player player;
     private final List<DamageEntry> damageEntries = new ArrayList<>();
+    private Date iFrameEnd = new Date();
+    private double iFrameDamage = 0;
 
     public Health(@NotNull Player player) {
         this.player = player;
@@ -39,15 +43,27 @@ public class Health {
      * @param attacker The attacking entity (null if undefined)
      * @param rawDamage The damage dealt not modified by dmgMods
      * @param item The item used to damage (null if undefined)
-     * @return The damage dealt after modification by dmgMods (and limited to health left)
+     * @return The damage dealt after modification by dmgMods and iFrameDamage while being limited to health left
      */
     public double damagePlayer(@Nullable Entity attacker, double rawDamage, @Nullable ItemStack item) {
         if (rawDamage < 0)
             throw new IllegalArgumentException("Damage cannot be negative!");
 
+        Date currentTime = new Date();
+        boolean activeIFrame = currentTime.getTime() < iFrameEnd.getTime();
+
         double damage = rawDamage;
         damage *= (attacker instanceof Player attackerPlayer) ? PlayerSessionData.getPlayerSession(attackerPlayer).getDamageDealtModifiers().getModifier() : 1;
         damage *= PlayerSessionData.getPlayerSession(player).getDamageTakenModifiers().getModifier();
+
+        if (activeIFrame) {
+            damage -= iFrameDamage;
+            if (damage <= 0)
+                return 0;
+        } else {
+            iFrameEnd = new Date(currentTime.getTime() + iFrameTimeInMS);
+            iFrameDamage = damage;
+        }
 
         double healthBefore = getHealth();
         damageEntries.add(0, new DamageEntry(attacker,
@@ -178,6 +194,15 @@ public class Health {
         }.runTaskLater(plugin, 100);
 
         PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
+    }
+
+    /**
+     * Gets the current system time and compares it to iFrameEnd
+     *
+     * @return If an iFrame is active right now
+     */
+    public boolean activeIFrame() {
+        return new Date().getTime() < iFrameEnd.getTime();
     }
 
     public Player getPlayer() {
