@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -91,15 +92,7 @@ public class Ember_Blast extends Spell { //TODO this
     }
 
     private void activate() {
-        Fireball fireball = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getX(), caster.getEyeLocation().getY()+1, caster.getEyeLocation().getZ()), Fireball.class);
-        caster.launchProjectile(fireball.getClass());
-
-        int x = (int) Math.round(caster.getEyeLocation().getDirection().getX());
-        caster.sendMessage("x: "+x);
-        int y = (int) Math.round(caster.getEyeLocation().getDirection().getY());
-        caster.sendMessage("y: "+y);
-        int z = (int) Math.round(caster.getEyeLocation().getDirection().getZ());
-        caster.sendMessage("z: "+z);
+        Fireball ballProj = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getDirection()), Fireball.class, (fireball) -> fireball.setVelocity(caster.getEyeLocation().getDirection()),CreatureSpawnEvent.SpawnReason.CUSTOM);
 
         naturalSpellEnd(); //when the spell ends by its normal way
     }
