@@ -8,7 +8,6 @@ import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +17,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
-import org.yaml.snakeyaml.error.YAMLException;
 
 public class Ember_Blast extends Spell { //TODO this
     private BukkitTask windupTask;
@@ -84,7 +82,7 @@ public class Ember_Blast extends Spell { //TODO this
                     time += 6;
                 }
 
-                if (time >= 720) { //TODO Does this iterrate one too much ?
+                if (time >= 720) { //TODO Does this iterate one too much ?
                     windupTask.cancel();
                     activate();
                 }
@@ -104,7 +102,7 @@ public class Ember_Blast extends Spell { //TODO this
         int z = (int) Math.round(caster.getEyeLocation().getDirection().getZ());
         caster.sendMessage("z: "+z);
 
-        naturalSpellEnd();//wenn nach normalen verlauf zuende
+        naturalSpellEnd(); //when the spell ends by its normal way
     }
 
     @Override
