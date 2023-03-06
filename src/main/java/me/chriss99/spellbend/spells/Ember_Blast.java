@@ -47,10 +47,10 @@ public class Ember_Blast extends Spell { //TODO this
             @Override
             public void run() {
                 for (int i = 0;i<3;i++) {
-                    /*double radiants = time * MathUtil.DEGTORAD;
+                    /*double radians = time * MathUtil.DEGTORAD;
                     Location location = caster.getEyeLocation();
                     Location location1 = location.clone();
-                    Vector vector = new Vector(Math.cos(radiants) * 1.25, Math.sin(radiants) * 1.25, 1);
+                    Vector vector = new Vector(Math.cos(radians) * 1.25, Math.sin(radians) * 1.25, 1);
                     vector.rotateAroundY(location.getYaw()*MathUtil.DEGTORAD*(-1));
 
                     Vector sideVec = new Vector(1, 0, 0).rotateAroundY(location.getYaw()*MathUtil.DEGTORAD*(-1));
@@ -67,10 +67,10 @@ public class Ember_Blast extends Spell { //TODO this
                     caster.getWorld().spawnParticle(Particle.FLAME, location, 1, 0.02, 0.02, 0.02, 0);*/
 
 
-                    double radiants = time * MathUtil.DEGTORAD;
+                    double radians = time * MathUtil.DEGTORAD;
                     Location location = caster.getEyeLocation();
                     Bukkit.getLogger().info(location.toString());
-                    Quaterniond quaternion = new Quaterniond(Math.cos(radiants) * 1.25, Math.sin(radiants) * 1.25, 1, 0);
+                    Quaterniond quaternion = new Quaterniond(Math.cos(radians) * 1.25, Math.sin(radians) * 1.25, 0, 0);
                     Bukkit.getLogger().info(quaternion.toString());
                     quaternion.mul(new Quaterniond().rotationY(location.getYaw()*MathUtil.DEGTORAD)).mul(new Quaterniond().rotationX(location.getPitch()*MathUtil.DEGTORAD));
                     Bukkit.getLogger().info(quaternion.toString());
@@ -90,8 +90,7 @@ public class Ember_Blast extends Spell { //TODO this
         }.runTaskTimer(SpellBend.getInstance(), 0, 1);
     }
 
-    private void activate(){
-
+    private void activate() {
         Fireball fireball = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getX(), caster.getEyeLocation().getY()+1, caster.getEyeLocation().getZ()), Fireball.class);
         caster.launchProjectile(fireball.getClass());
 
