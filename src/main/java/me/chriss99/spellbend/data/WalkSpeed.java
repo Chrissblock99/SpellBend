@@ -50,6 +50,12 @@ public class WalkSpeed extends PercentageModifier {
             return;
         }
 
+        if (getModifier() == 0) {
+            livingEntity.setAI(false);
+            return;
+        }
+
+        livingEntity.setAI(true);
         livingEntity.removePotionEffect(PotionEffectType.SPEED);
         livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, Math.round(getModifier()), //TODO //HACK find out how to balance this properly
                 false, false, false));
