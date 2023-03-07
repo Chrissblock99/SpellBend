@@ -25,16 +25,20 @@ public class IsMovementStunned extends ValueTracker {
 
     private void updateStun() {
         if (valueIsLargerZero() && !subsAreIncreased) {
-            walkSpeedModifiers.addModifier(0);
-            jumpEffect.addValue(128);
-            if (livingEntity instanceof Player player)
+            if (livingEntity instanceof Player player) {
+                jumpEffect.addValue(128);
                 player.setFoodLevel(6);
+            }
+            walkSpeedModifiers.addModifier(0);
+
             subsAreIncreased = true;
         } else if (subsAreIncreased) {
-            walkSpeedModifiers.removeModifier(0);
-            jumpEffect.removeValue(128);
-            if (livingEntity instanceof Player player)
+            if (livingEntity instanceof Player player) {
+                jumpEffect.removeValue(128);
                 player.setFoodLevel(20);
+            }
+            walkSpeedModifiers.removeModifier(0);
+
             subsAreIncreased = false;
         }
     }
