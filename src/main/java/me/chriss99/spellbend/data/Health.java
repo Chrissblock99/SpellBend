@@ -164,7 +164,7 @@ public class Health {
                     messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName()).append("<reset><red> using ").append(
                             (item.hasItemMeta() && item.getItemMeta().displayName() != null) ?
                                     messageBuilder.append(SpellBend.getMiniMessage().serializeOrNull(item.getItemMeta().displayName())) :
-                                    messageBuilder.append("<italic>Unknown"));
+                                    messageBuilder.append("<italic>").append(item.getType()));
             case "true-false" ->
                 //noinspection DataFlowIssue
                     messageBuilder.append(" was slain by <yellow><bold>").append(killer.getName());
@@ -173,7 +173,7 @@ public class Health {
                     messageBuilder.append(" died to ").append(
                             (item.hasItemMeta() && item.getItemMeta().displayName() != null) ?
                                     messageBuilder.append(SpellBend.getMiniMessage().serializeOrNull(item.getItemMeta().displayName())) :
-                                    messageBuilder.append("<italic>Unknown"));
+                                    messageBuilder.append("<italic>").append(item.getType()));
             case "false-false" -> messageBuilder.append(" died");
         }
 
