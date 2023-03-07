@@ -2,15 +2,20 @@ package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDowns;
+import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
+import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -23,6 +28,7 @@ public class Ember_Blast extends Spell { //TODO this
     private BukkitTask windupTask;
     private final Spell instance;
     private final CoolDowns coolDowns;
+    private Fireball fireball;
 
     public static void register() {
         SpellHandler.registerSpell("ember_blast", 35, new SpellSubClassBuilder() {
@@ -92,9 +98,21 @@ public class Ember_Blast extends Spell { //TODO this
     }
 
     private void activate() {
-        Fireball ballProj = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getDirection()), Fireball.class, (fireball) -> fireball.setVelocity(caster.getEyeLocation().getDirection()),CreatureSpawnEvent.SpawnReason.CUSTOM);
+        fireball = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getDirection()), Fireball.class, (projectile) -> projectile.setVelocity(caster.getEyeLocation().getDirection()),CreatureSpawnEvent.SpawnReason.CUSTOM);
+        SpellHandler.addProjectileConsumer(fireball, this::fireBallHit);
 
-        naturalSpellEnd(); //when the spell ends by its normal way
+        naturalSpellEnd(); //TODO execute this when the fireball existence time limit has run out (which we define for the sake of cooldowns)
+    }
+
+    private void fireBallHit(@NotNull ProjectileHitEvent event) {
+        Entity hitEntity = event.getHitEntity();
+        if (hitEntity instanceof LivingEntity livingEntity && LivingEntityUtil.entityIsSpellAffectAble(livingEntity))
+            LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 2.5, item);
+
+        fireball.getLocation(); //visuals on this location (an immediately exploding firework is used)
+
+        SpellHandler.removeProjectileConsumer(fireball);
+        naturalSpellEnd();
     }
 
     @Override
