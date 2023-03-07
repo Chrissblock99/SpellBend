@@ -2,6 +2,7 @@ package me.chriss99.spellbend.util;
 
 import me.chriss99.spellbend.SpellBend;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -230,59 +231,63 @@ public class Item {
 
 
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName)
-    {return create(material, miniMessage.deserialize(miniMessageName), 0);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull NamespacedKey key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull NamespacedKey[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull Map<NamespacedKey, String> persistentData)
-    {return create(material, miniMessage.deserialize(miniMessageName), 0, persistentData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, persistentData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull String key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull String[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull NamespacedKey key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull NamespacedKey[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull Map<NamespacedKey, String> persistentData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, persistentData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, persistentData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData)
-    {return create(material, miniMessage.deserialize(miniMessageName), CustomModelData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull String key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull String[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull NamespacedKey key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull NamespacedKey[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull Map<NamespacedKey, String> persistentData)
-    {return create(material, miniMessage.deserialize(miniMessageName), CustomModelData, persistentData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, persistentData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull String key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull String[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull NamespacedKey key, @NotNull String customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull NamespacedKey[] key, @NotNull String[] customData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull Map<NamespacedKey, String> persistentData)
-    {return create(material, miniMessage.deserialize(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, persistentData);}
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, persistentData);}
 
     public static @NotNull ItemStack edit(@NotNull ItemStack item, @NotNull String[] miniMessageLore)
     {return edit(item, miniMessageStringArrayToComponentArray(miniMessageLore));}
 
 
+    private static @NotNull Component miniMessageStringToComponent(@NotNull String miniMessageString) {
+        return Component.text().decoration(TextDecoration.ITALIC, false).append(miniMessage.deserialize(miniMessageString)).build();
+    }
+
     private static @NotNull Component[] miniMessageStringArrayToComponentArray(@NotNull String[] miniMessageStringArray) {
-        return Arrays.stream(miniMessageStringArray).map(miniMessage::deserialize).toList().toArray(new Component[0]);
+        return Arrays.stream(miniMessageStringArray).map(Item::miniMessageStringToComponent).toList().toArray(new Component[0]);
     }
 }
