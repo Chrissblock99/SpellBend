@@ -54,15 +54,15 @@ public enum SpellEnum {
     CHRONOPUNCH(Material.GOLDEN_AXE, "Chronopunch", "yellow", "CONTACT", 800),
     TEMPORAL_ILLUSION(Material.TOTEM_OF_UNDYING, "Temporal Illusion", "yellow", "AURA", 1000),
     CATAPULT(Material.ANVIL, "Catapult", "gray", "BLAST", 0),
-    ALLOYED_BARRIER(Material.SPRUCE_DOOR, "Alloyed Barrier", "gray", "SHIELD", 800),
-    METARANG(Material.IRON_TRAPDOOR, "Metarang", "gray", "MULTI_PROJECTILE", 1200),
-    RAZOR_SPIN(Material.IRON_SWORD, "Razor Spin", "gray", "TRANSPORT", 1600),
-    ANCIENT_TEMPER(Material.IRON_CHESTPLATE, "Ancient Temper", "gray", "AURA", 2000),
+    ALLOYED_BARRIER(Material.SPRUCE_DOOR, "Alloyed Barrier", "gray", "SHIELD", 600),
+    METARANG(Material.IRON_TRAPDOOR, "Metarang", "gray", "MULTI_PROJECTILE", 900),
+    RAZOR_SPIN(Material.IRON_SWORD, "Razor Spin", "gray", "TRANSPORT", 1200),
+    ANCIENT_TEMPER(Material.IRON_CHESTPLATE, "Ancient Temper", "gray", "AURA", 1500),
     FIERY_MISSILE(Material.TNT, "Fiery Missile", "orange", "BLAST", 0),
-    LANDMINES(Material.ACACIA_PRESSURE_PLATE, "Landmines", "orange", "MULTI_PROJECTILE", 800),
-    BLAST_OFF(Material.PISTON, "Blast off", "orange", "AREA_OF_EFFECT", 1200),
-    FLYING_BLITZ(Material.TNT_MINECART, "Flying Blitz", "orange", "TRANSPORT", 1600),
-    BOMB_HEAD(Material.GOLDEN_PICKAXE, "Bomb head", "orange", "CONTACT", 2000);
+    LANDMINES(Material.ACACIA_PRESSURE_PLATE, "Landmines", "orange", "MULTI_PROJECTILE", 600),
+    BLAST_OFF(Material.PISTON, "Blast off", "orange", "AREA_OF_EFFECT", 900),
+    FLYING_BLITZ(Material.TNT_MINECART, "Flying Blitz", "orange", "TRANSPORT", 1200),
+    BOMB_HEAD(Material.GOLDEN_PICKAXE, "Bomb head", "orange", "CONTACT", 1500);
     
     private final ItemStack displayItem;
     private final ItemStack useItem;

@@ -17,8 +17,8 @@ public enum ElementEnum {
     AETHER(new ItemStack(Material.CONDUIT), new SpellEnum[]{SpellEnum.METEOR_BELT, SpellEnum.BLACK_HOLE, SpellEnum.STELLAR_SLAM, SpellEnum.AETHERS_WRATH, SpellEnum.COSMIC_SMASH}, 650),
     SOUL(new ItemStack(Material.SKELETON_SKULL), new SpellEnum[]{SpellEnum.SCATTER_BONES, SpellEnum.SOUL_DRAIN, SpellEnum.SEEKING_SKULL, SpellEnum.GASHING_FOSSILS, SpellEnum.PHANTOMS_CURSE}, 650),
     TIME(new ItemStack(Material.CLOCK), new SpellEnum[]{SpellEnum.DARTS_OF_TIME, SpellEnum.ESCAPE_THROUGH_TIME, SpellEnum.DEATHLY_HOUR, SpellEnum.CHRONOPUNCH, SpellEnum.TEMPORAL_ILLUSION}, 650),
-    METAL(new ItemStack(Material.IRON_INGOT), new SpellEnum[]{SpellEnum.CATAPULT, SpellEnum.ALLOYED_BARRIER, SpellEnum.METARANG, SpellEnum.RAZOR_SPIN, SpellEnum.ANCIENT_TEMPER}, 1000),
-    EXPLOSION(new ItemStack(Material.TNT), new SpellEnum[]{SpellEnum.FIERY_MISSILE, SpellEnum.LANDMINES, SpellEnum.BLAST_OFF, SpellEnum.FLYING_BLITZ, SpellEnum.BOMB_HEAD}, 1000);
+    METAL(new ItemStack(Material.IRON_INGOT), new SpellEnum[]{SpellEnum.CATAPULT, SpellEnum.ALLOYED_BARRIER, SpellEnum.METARANG, SpellEnum.RAZOR_SPIN, SpellEnum.ANCIENT_TEMPER}, 900),
+    EXPLOSION(new ItemStack(Material.TNT), new SpellEnum[]{SpellEnum.FIERY_MISSILE, SpellEnum.LANDMINES, SpellEnum.BLAST_OFF, SpellEnum.FLYING_BLITZ, SpellEnum.BOMB_HEAD}, 900);
 
     private final ItemStack displayItem;
     private final List<SpellEnum> spells;
