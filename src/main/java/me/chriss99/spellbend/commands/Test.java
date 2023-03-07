@@ -5,20 +5,14 @@ import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Action;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.harddata.Currency;
-import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.Spell;
-import me.chriss99.spellbend.util.ItemBuilder;
 import me.chriss99.spellbend.util.ItemData;
 import me.chriss99.spellbend.util.LivingEntityUtil;
-import me.chriss99.spellbend.util.PersistentData;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
 
@@ -30,29 +24,6 @@ import java.util.Map;
 public class Test extends ReflectiveCommandBase {
     public Test() {
         super("test", "test command for testing test stuff", new ArrayList<>());
-    }
-
-    @ReflectCommand(path = "item")
-    public void item(Player commandSender) {
-        Inventory inv = commandSender.getInventory();
-        inv.addItem(new ItemBuilder(Material.CAMPFIRE)
-                        .setMiniMessageDisplayName("<red><bold>Fiery Rage")
-                        .setCustomModelData(1)
-                        .addPersistentData(new PersistentData<>(PersistentDataKeys.spellNameKey,  PersistentDataType.STRING,"fiery_rage"),
-                                new PersistentData<>(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, "AURA"))
-                        .build(),
-                new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
-                        .setMiniMessageDisplayName("<red><bold>Ember Blast")
-                        .setCustomModelData(1)
-                        .addPersistentData(new PersistentData<>(PersistentDataKeys.spellNameKey,  PersistentDataType.STRING,"ember_blast"),
-                                new PersistentData<>(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, "BLAST"))
-                        .build(),
-                new ItemBuilder(Material.IRON_HORSE_ARMOR)
-                        .setMiniMessageDisplayName("<red><bold>Test Spell")
-                        .setCustomModelData(1)
-                        .addPersistentData(new PersistentData<>(PersistentDataKeys.spellNameKey,  PersistentDataType.STRING,"test_spell"),
-                                new PersistentData<>(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, "TEST"))
-                        .build());
     }
 
     @ReflectCommand(path = "update sidebar")
