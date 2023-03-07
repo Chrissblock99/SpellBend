@@ -11,6 +11,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -23,6 +25,7 @@ import java.util.function.Function;
 
 public class SpellHandler {
     private static final Map<FallingBlock, Consumer<EntityChangeBlockEvent>> fallingBlockHitGroundEventListeners = new HashMap<>();
+    private static final Map<Projectile, Consumer<ProjectileHitEvent>> projectileHitEventConsumers = new HashMap<>();
 
     private final Player player;
     private final Set<Spell> activeSpells = new HashSet<>();
@@ -50,6 +53,38 @@ public class SpellHandler {
 
         fallingBlockHitGroundEventListeners.remove(fallingBlock);
         listener.accept(event);
+    }
+
+    /**
+     * Adds a projectileHitEventConsumer to the projectileHitEventConsumers map
+     *
+     * @param projectile The projectile to trigger for
+     * @param consumer The consumer to run
+     */
+    public static void addProjectileConsumer(@NotNull Projectile projectile, @NotNull Consumer<ProjectileHitEvent> consumer) {
+        projectileHitEventConsumers.put(projectile, consumer);
+    }
+
+    /**
+     * Removes a projectileHitEventConsumer from the projectileHitEventConsumers map
+     *
+     * @param projectile The projectile to not trigger for anymore
+     */
+    public static void removeProjectileConsumer(@NotNull Projectile projectile) {
+        projectileHitEventConsumers.remove(projectile);
+    }
+
+    /**
+     * Runs the projectileHitEventConsumer of the given projectile if present
+     *
+     * @param projectileHitEvent The projectile to trigger for
+     */
+    public static void projectileHit(@NotNull ProjectileHitEvent projectileHitEvent) {
+        Consumer<ProjectileHitEvent> projectileConsumer = projectileHitEventConsumers.get(projectileHitEvent.getEntity());
+        if (projectileConsumer == null)
+            return;
+
+        projectileConsumer.accept(projectileHitEvent);
     }
 
 
