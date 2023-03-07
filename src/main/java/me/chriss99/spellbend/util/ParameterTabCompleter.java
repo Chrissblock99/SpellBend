@@ -96,6 +96,8 @@ public class ParameterTabCompleter {
                 return List.of();
             }
         });
+        enumerators.put(new CommandParameter(Boolean.class, null), (type, input) -> List.of("true", "false"));
+        enumerators.put(new CommandParameter(boolean.class, null), (type, input) -> List.of("true", "false"));
 
         return enumerators;
     }
