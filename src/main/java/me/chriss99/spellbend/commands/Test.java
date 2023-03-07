@@ -10,9 +10,6 @@ import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.Item;
 import me.chriss99.spellbend.util.ItemData;
 import me.chriss99.spellbend.util.LivingEntityUtil;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -37,9 +34,19 @@ public class Test extends ReflectiveCommandBase {
     @ReflectCommand(path = "item")
     public void item(Player commandSender) {
         Inventory inv = commandSender.getInventory();
-        inv.addItem(Item.create(Material.CAMPFIRE, Component.text().content("Fiery Rage").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"fiery_rage", "AURA"}));
-        inv.addItem(Item.create(Material.GOLDEN_HORSE_ARMOR, Component.text().content("Ember Blast").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"ember_blast", "BLAST"}));
-        inv.addItem(Item.create(Material.IRON_HORSE_ARMOR, Component.text().content("Test Spell").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.ITALIC,false).build(), 1, new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey}, new String[]{"test_spell", "TEST"}));
+        inv.addItem(
+                Item.create(Material.CAMPFIRE, "<red><bold>Fiery Rage", 1,
+                        new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey},
+                        new String[]{"fiery_rage", "AURA"}),
+
+                Item.create(Material.GOLDEN_HORSE_ARMOR, "<red><bold>Ember Blast", 1,
+                        new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey},
+                        new String[]{"ember_blast", "BLAST"}),
+
+                Item.create(Material.IRON_HORSE_ARMOR, "<gray><bold>Test Spell", 1,
+                        new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey},
+                        new String[]{"test_spell", "TEST"})
+        );
     }
 
     @ReflectCommand(path = "update sidebar")
