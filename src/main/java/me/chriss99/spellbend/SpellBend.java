@@ -48,7 +48,7 @@ public final class SpellBend extends JavaPlugin {
         Bukkit.getLogger().info("SpellBend disabled!");
     }
 
-    public static void registerAllPaperEvents() {
+    private static void registerAllPaperEvents() {
         new PlayerInteractBlock();
         new PlayerInteractEntity();
         new PlayerInteractAtEntity();
@@ -59,12 +59,12 @@ public final class SpellBend extends JavaPlugin {
         new InventoryClick();
     }
 
-    public static void registerAllPacketListeners() {
+    private static void registerAllPacketListeners() {
         //new PlayClientPosition();
         //new PlayClientPositionLook();
     }
 
-    public static void registerAllSpells() {
+    private static void registerAllSpells() {
         Test_Spell.register();
 
         Fiery_Rage.register();
@@ -73,7 +73,7 @@ public final class SpellBend extends JavaPlugin {
         Seismic_Shock.register();
     }
 
-    public static void registerAllCommands() {
+    private static void registerAllCommands() {
         new Test();
         new ReflectTest();
     }
