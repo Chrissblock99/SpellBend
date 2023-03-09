@@ -1,4 +1,4 @@
-package me.chriss99.spellbend.GUI;
+package me.chriss99.spellbend.gui;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
