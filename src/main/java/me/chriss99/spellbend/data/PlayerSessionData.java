@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.SpellBend;
+import me.chriss99.spellbend.harddata.ElementEnum;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +29,8 @@ public class PlayerSessionData extends LivingEntitySessionData {
     private final CurrencyTracker gems;
     private final CurrencyTracker gold;
     private final CurrencyTracker crystals;
+
+    private final ElementsOwned elementsOwned;
 
     private final CoolDowns coolDowns;
 
@@ -101,6 +105,8 @@ public class PlayerSessionData extends LivingEntitySessionData {
         data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
         data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
 
+        data.set(PersistentDataKeys.elementsOwnedKey, PersistentDataType.STRING, gson.toJson(new EnumMap<>(ElementEnum.class)));
+
         data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
     }
 
@@ -116,6 +122,8 @@ public class PlayerSessionData extends LivingEntitySessionData {
         gems = new CurrencyTracker(player, PersistentDataKeys.gemsKey, "Gems", 150, true, false);
         gold = new CurrencyTracker(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
         crystals = new CurrencyTracker(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
+
+        elementsOwned = new ElementsOwned(player);
 
         coolDowns = new CoolDowns(player);
     }
@@ -152,6 +160,10 @@ public class PlayerSessionData extends LivingEntitySessionData {
         return crystals;
     }
 
+    public ElementsOwned getElementsOwned() {
+        return elementsOwned;
+    }
+
     public CoolDowns getCoolDowns() {
         return coolDowns;
     }
@@ -169,6 +181,8 @@ public class PlayerSessionData extends LivingEntitySessionData {
         gems.saveCurrency();
         gold.saveCurrency();
         crystals.saveCurrency();
+
+        elementsOwned.saveElementsOwned();
 
         coolDowns.saveCoolDowns();
     }
