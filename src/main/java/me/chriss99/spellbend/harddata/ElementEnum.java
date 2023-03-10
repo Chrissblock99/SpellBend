@@ -24,17 +24,8 @@ public enum ElementEnum {
     private final List<SpellEnum> spells;
     private final int price;
 
-
-    public boolean playerOwns(@NotNull PlayerSessionData sessionData) {
-        return true;//TODO sessionData.getSpellsOwned(this) > 0;
-    }
-
     public boolean playerCanBuy(@NotNull PlayerSessionData sessionData) {
         return sessionData.getGems().getCurrency() >= price;
-    }
-
-    public boolean playerOwnsSpell(@NotNull PlayerSessionData sessionData, int nth) {
-        return true;//TODO sessionData.getSpellsOwned(this) >= nth+1;
     }
 
     public ItemStack getDisplayItem(int index) {
