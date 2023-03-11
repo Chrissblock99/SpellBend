@@ -3,20 +3,30 @@ package me.chriss99.spellbend.gui;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-public final class EventProcessor {
-    private final Function<InventoryEvent, ArrayList<Object>> eventAdapter;
-    private final HashMap<ArrayList<Object>, Consumer<InventoryEvent>> comparableEventToConsumerMap;
+public abstract class GUIEventProcessor<T> {
+    /**
+     * A list of all Functions that convert an InventoryEvent to a comparable ArrayList of Objects <br>
+     * These return null if the InventoryEvent is not applicable or similar
+     */
+    private static final LinkedList<GUIEventProcessor<?>> eventProcessors = new LinkedList<>();
 
-    public EventProcessor(@NotNull Function<InventoryEvent, ArrayList<Object>> eventAdapter,
-                          @NotNull HashMap<ArrayList<Object>, Consumer<InventoryEvent>> comparableEventToConsumerMap) {
-        this.eventAdapter = eventAdapter;
-        this.comparableEventToConsumerMap = comparableEventToConsumerMap;
+    private final HashMap<T, Consumer<InventoryEvent>> comparableEventToConsumerMap;
+
+    public GUIEventProcessor() {
+    }
+
+    public static void onInventoryEvent(@NotNull InventoryEvent event) {
+        for (GUIEventProcessor<?> eventProcessor : eventProcessors)
+            eventProcessor.process(event);
     }
 
     public void process(@NotNull InventoryEvent event) {
@@ -25,11 +35,13 @@ public final class EventProcessor {
             eventConsumer.accept(event);
     }
 
+    public abstract T convertInventoryEvent(@NotNull InventoryEvent event);
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (EventProcessor) obj;
+        var that = (GUIEventProcessor<?>) obj;
         return Objects.equals(this.eventAdapter, that.eventAdapter) &&
                 Objects.equals(this.comparableEventToConsumerMap, that.comparableEventToConsumerMap);
     }
@@ -44,5 +56,11 @@ public final class EventProcessor {
         return "EventMappingConsumer[" +
                 "eventAdapter=" + eventAdapter + ", " +
                 "comparableEventToConsumerMap=" + comparableEventToConsumerMap + ']';
+    }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface ReflectCommand {
+        T type;
     }
 }
