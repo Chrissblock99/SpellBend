@@ -1,7 +1,8 @@
-package me.chriss99.spellbend.gui;
+package me.chriss99.spellbend.gui.shop;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.gui.GUIUtil;
 import me.chriss99.spellbend.harddata.ElementEnum;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.harddata.SpellEnum;
