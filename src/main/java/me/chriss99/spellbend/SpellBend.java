@@ -11,7 +11,7 @@ import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.events.paper.*;
 //import me.chriss99.spellbend.events.protocollib.*;
-import me.chriss99.spellbend.gui.shop.ShopGUI;
+import me.chriss99.spellbend.gui.ShopGUI;
 import me.chriss99.spellbend.spells.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
