@@ -11,6 +11,7 @@ import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.events.paper.*;
 //import me.chriss99.spellbend.events.protocollib.*;
+import me.chriss99.spellbend.gui.shop.ShopGUI;
 import me.chriss99.spellbend.spells.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
@@ -34,6 +35,7 @@ public final class SpellBend extends JavaPlugin {
         registerAllPacketListeners();
         registerAllSpells();
         registerAllCommands();
+        registerAllGUIs();
         PlayerDataBoard.startUpdater();
         ActionBarController.startUpdater();
         PlayerSessionData.startManaRegenerator();
@@ -57,6 +59,7 @@ public final class SpellBend extends JavaPlugin {
         new FoodLevelChange();
         new PlayerSwitchHeldItem();
         new InventoryClick();
+        new InventoryEventListener();
     }
 
     private static void registerAllPacketListeners() {
@@ -76,6 +79,10 @@ public final class SpellBend extends JavaPlugin {
     private static void registerAllCommands() {
         new Test();
         new ReflectTest();
+    }
+
+    private static void registerAllGUIs() {
+        new ShopGUI();
     }
 
     public static void registerPaperEvent(@NotNull Listener listener) {
