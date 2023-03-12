@@ -39,6 +39,25 @@ public class ElementsOwned {
         elementsOwned = gson.fromJson(gsonString, type);
     }
 
+    public void setElementOwned(@NotNull ElementEnum elementEnum) {
+        elementsOwned.put(elementEnum, EnumSet.of(elementEnum.getSpell(0)));
+    }
+
+    public void setElementOwned(@NotNull ElementEnum elementEnum, @NotNull EnumSet<SpellEnum> ownedSpells) {
+        elementsOwned.put(elementEnum, ownedSpells);
+    }
+
+    public void addSpellOwnedInElement(@NotNull ElementEnum elementEnum, @NotNull SpellEnum spellEnum) {
+        EnumSet<SpellEnum> ownedSpells = elementsOwned.get(elementEnum);
+        if (ownedSpells == null) {
+            Bukkit.getLogger().warning(spellEnum + " was supposed to be added as owned by " + player.getName() + " in " + elementEnum + " which they do not own!");
+            player.sendMessage(SpellBend.getMiniMessage().deserialize("<red>You have to own " + elementEnum + " before you can buy this spell!"));
+            return;
+        }
+
+        ownedSpells.add(spellEnum);
+    }
+
     public boolean playerOwnsElement(@NotNull ElementEnum elementEnum) {
         return elementsOwned.containsKey(elementEnum);
     }
