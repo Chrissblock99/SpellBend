@@ -1,9 +1,11 @@
 package me.chriss99.spellbend.harddata;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -37,6 +39,15 @@ public enum ElementEnum {
     }
 
     public SpellEnum getSpell(int index) {
+        return spells.get(index);
+    }
+
+    public @Nullable SpellEnum getSpellBefore(@NotNull SpellEnum spellEnum) {
+        int index = spells.indexOf(spellEnum)-1;
+        if (index == -2) {
+            Bukkit.getLogger().warning("The spell before " + spellEnum + " in " + this + " was queried which is not contained in the element!");
+            return null;
+        }
         return spells.get(index);
     }
 

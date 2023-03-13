@@ -92,12 +92,12 @@ public class ElementsOwned {
     }
 
     public boolean playerOwnsPreviousSpellInElement(@NotNull ElementEnum elementEnum, @NotNull SpellEnum spellEnum) {
-        int index = elementEnum.getSpells().indexOf(spellEnum)-1;
-        if (index == -2) {
-            Bukkit.getLogger().warning("It was queried if " + player.getName() + " owns " + spellEnum + " in " + elementEnum + " which is not contained in that element!");
+        SpellEnum spellEnumBefore = elementEnum.getSpellBefore(spellEnum);
+        if (spellEnumBefore == null) {
+            Bukkit.getLogger().warning("By " + player.getName());
             return false;
         }
-        return playerOwnsSpellInElement(elementEnum, elementEnum.getSpell(index));
+        return playerOwnsSpellInElement(elementEnum, spellEnumBefore);
     }
 
     public Player getPlayer() {
