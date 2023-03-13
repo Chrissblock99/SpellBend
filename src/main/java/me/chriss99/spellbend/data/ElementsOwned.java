@@ -12,9 +12,9 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ElementsOwned {
@@ -35,8 +35,10 @@ public class ElementsOwned {
             return;
         }
 
-        Type type = new TypeToken<EnumMap<ElementEnum, ArrayList<SpellEnum>>>(){}.getType();
-        elementsOwned = gson.fromJson(gsonString, type);
+        Type type = new TypeToken<EnumMap<ElementEnum, EnumSet<SpellEnum>>>(){}.getType();
+        LinkedHashMap<ElementEnum, EnumSet<SpellEnum>> elementsOwned = gson.fromJson(gsonString, type);
+        this.elementsOwned = new EnumMap<>(ElementEnum.class);
+        this.elementsOwned.putAll(elementsOwned);
     }
 
     public void setElementOwned(@NotNull ElementEnum elementEnum) {
