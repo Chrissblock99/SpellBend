@@ -9,3 +9,4 @@ depend:
 commands:
   test:
   reflectTest:
+  shop:

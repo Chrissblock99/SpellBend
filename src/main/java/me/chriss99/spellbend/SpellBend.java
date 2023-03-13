@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.google.gson.Gson;
 import me.chriss99.spellbend.commands.ReflectTest;
+import me.chriss99.spellbend.commands.Shop;
 import me.chriss99.spellbend.commands.Test;
 import me.chriss99.spellbend.data.ActionBarController;
 import me.chriss99.spellbend.data.PlayerDataBoard;
@@ -76,6 +77,7 @@ public final class SpellBend extends JavaPlugin {
     private static void registerAllCommands() {
         new Test();
         new ReflectTest();
+        new Shop();
     }
 
     public static void registerPaperEvent(@NotNull Listener listener) {
