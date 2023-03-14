@@ -63,12 +63,23 @@ public class ElementGui extends GuiInventory {
             return;
         }
 
+        if (!sessionData.getElementsOwned().playerOwnsPreviousSpellInElement(elementEnum, spellEnum)) {
+            String spellToLearnBefore = null;
+
+            SpellEnum spellEnumBefore = elementEnum.getSpellBefore(spellEnum);
+            if (spellEnumBefore != null)
+                spellToLearnBefore = miniMessage.serializeOrNull(spellEnumBefore.getDisplayItem().getItemMeta().displayName());
+            player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <dark_gray>»<red> You must learn " + spellToLearnBefore + "<reset><red> first!"));
+            return;
+        }
+
         if (spellEnum.playerCanBuy(sessionData)) {
             buySpell(player, sessionData, elementEnum, spellEnum);
             return;
         }
 
-        player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <dark_gray>»<red> Not enough Gold! Need <gold>" + (long) (spellEnum.getPrice() - sessionData.getGold().getCurrency()) + "<red> more!"));
+        player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <dark_gray>»<red> Not enough Gold! Need <gold>" +
+                (long) (spellEnum.getPrice() - sessionData.getGold().getCurrency()) + "<red> more!"));
     }
 
     private static void buySpell(@NotNull Player player, @NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum, @NotNull SpellEnum spellEnum) {
