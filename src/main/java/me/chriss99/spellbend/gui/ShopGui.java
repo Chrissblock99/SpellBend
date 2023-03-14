@@ -4,6 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CurrencyTracker;
 import me.chriss99.spellbend.data.ElementsOwned;
 import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.guiframework.GuiButton;
 import me.chriss99.spellbend.guiframework.GuiInventory;
 import me.chriss99.spellbend.guiframework.GuiItem;
@@ -50,13 +51,37 @@ public class ShopGui extends GuiInventory {
         player.openInventory(inventory);
     }
 
+    @Override
+    public void clickInInventory(@NotNull InventoryClickEvent event) {
+        shopClick(event);
+    }
+
+    @Override
+    public void clickInOtherInventory(@NotNull InventoryClickEvent event) {
+        nonShopClick(event);
+    }
+
+    public static void shopClick(@NotNull InventoryClickEvent event) {
+        event.setCancelled(true);
+        if (SpellHandler.itemIsSpell(event.getCursor()))
+            event.setCursor(null);
+    }
+
+    public static void nonShopClick(@NotNull InventoryClickEvent event) {
+        if (event.getClick().isShiftClick()) {
+            event.setCancelled(true);
+            if (SpellHandler.itemIsSpell(event.getCurrentItem()))
+                event.setCurrentItem(null);
+        }
+    }
+
     private static void elementClickEvent(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, @NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum) {
         ClickType clickType = clickEvent.getClick();
         if (clickType.equals(ClickType.RIGHT) || clickType.equals(ClickType.LEFT)) {
             elementClick(player, sessionData, elementEnum);
             return;
         }
-        if (clickType.equals(ClickType.SHIFT_RIGHT) || clickType.equals(ClickType.SHIFT_LEFT))
+        if (clickType.isShiftClick())
             elementShiftClick(player, sessionData, elementEnum);
     }
 
