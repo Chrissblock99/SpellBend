@@ -40,7 +40,9 @@ public abstract class GuiInventory {
         guiButton.click(clickEvent);
     }
 
-    public void clickInInventory(@NotNull InventoryClickEvent clickEvent) {}
+    public void clickInInventory(@NotNull InventoryClickEvent clickEvent) {
+        clickEvent.setCancelled(true);
+    }
 
     public void clickInOtherInventory(@NotNull InventoryClickEvent clickEvent) {}
 
