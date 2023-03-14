@@ -19,6 +19,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class ShopGui extends GuiInventory {
@@ -121,7 +122,8 @@ public class ShopGui extends GuiInventory {
         for (SpellEnum spellEnum : elementEnum.getSpells()) {
             if (!elementsOwned.playerOwnsSpellInElement(elementEnum, spellEnum))
                 break;
-            if (InventoryUtil.spellsInsideInventory(player.getInventory()) < 5)
+            Inventory playerInventory = player.getInventory();
+            if (InventoryUtil.spellsInsideInventory(playerInventory) < 5 && !InventoryUtil.inventoryContainsSpellName(playerInventory, spellEnum.toString()))
                 player.getInventory().addItem(spellEnum.getUseItem());
         }
     }
