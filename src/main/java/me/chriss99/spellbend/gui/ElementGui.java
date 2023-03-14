@@ -16,6 +16,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,16 @@ public class ElementGui extends GuiInventory {
         }
 
         player.openInventory(inventory);
+    }
+
+    @Override
+    public void clickInInventory(@NotNull InventoryClickEvent event) {
+        ShopGui.shopClick(event);
+    }
+
+    @Override
+    public void clickInOtherInventory(@NotNull InventoryClickEvent event) {
+        ShopGui.nonShopClick(event);
     }
 
     private static void spellClickEvent(@NotNull Player player, @NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum, @NotNull SpellEnum spellEnum) {
