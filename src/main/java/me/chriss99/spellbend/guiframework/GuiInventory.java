@@ -28,6 +28,7 @@ public abstract class GuiInventory {
     }
 
     public void click(@NotNull InventoryClickEvent clickEvent) {
+        clickInInventory(clickEvent);
         GuiItem guiItem = guiItems.get(clickEvent.getCurrentItem());
         if (guiItem == null)
             return;
@@ -38,6 +39,10 @@ public abstract class GuiInventory {
 
         guiButton.click(clickEvent);
     }
+
+    public void clickInInventory(@NotNull InventoryClickEvent clickEvent) {}
+
+    public void clickInOtherInventory(@NotNull InventoryClickEvent clickEvent) {}
 
     public void registerItem(@NotNull GuiItem guiItem, @NotNull List<Integer> slots) {
         guiItems.put(guiItem.item, guiItem);
