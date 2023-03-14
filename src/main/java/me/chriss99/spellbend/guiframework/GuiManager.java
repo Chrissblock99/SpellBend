@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.guiframework;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,12 @@ public class GuiManager {
         }
 
         guiInventory.click(clickEvent);
+    }
+    
+    public static void dragEvent(@NotNull InventoryDragEvent dragEvent) {
+        InventoryView inventoryView = dragEvent.getView();
+        if (guiInventories.containsKey(inventoryView.getTopInventory()) || guiInventories.containsKey(inventoryView.getBottomInventory()))
+            dragEvent.setCancelled(true);
     }
 
     private static void nonGuiClicked(@NotNull InventoryClickEvent clickEvent) {

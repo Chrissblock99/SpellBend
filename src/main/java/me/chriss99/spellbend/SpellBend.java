@@ -58,6 +58,7 @@ public final class SpellBend extends JavaPlugin {
         new FoodLevelChange();
         new PlayerSwitchHeldItem();
         new InventoryClick();
+        new InventoryDrag();
     }
 
     private static void registerAllPacketListeners() {
