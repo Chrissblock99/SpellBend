@@ -27,7 +27,7 @@ public abstract class GuiInventory {
         this(miniMessage.deserialize(miniMessageTitle), rows);
     }
 
-    public void click(@NotNull InventoryClickEvent clickEvent) {
+    public void clickEvent(@NotNull InventoryClickEvent clickEvent) {
         clickInInventory(clickEvent);
         GuiItem guiItem = guiItems.get(clickEvent.getCurrentItem());
         if (guiItem == null)

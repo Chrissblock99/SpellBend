@@ -15,14 +15,14 @@ public class GuiManager {
         guiInventories.put(guiInventory.inventory, guiInventory);
     }
 
-    public static void click(@NotNull InventoryClickEvent clickEvent) {
+    public static void clickEvent(@NotNull InventoryClickEvent clickEvent) {
         GuiInventory guiInventory = guiInventories.get(clickEvent.getClickedInventory());
         if (guiInventory == null) {
             nonGuiClicked(clickEvent);
             return;
         }
 
-        guiInventory.click(clickEvent);
+        guiInventory.clickEvent(clickEvent);
     }
     
     public static void dragEvent(@NotNull InventoryDragEvent dragEvent) {
