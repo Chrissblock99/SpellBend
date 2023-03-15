@@ -29,7 +29,7 @@ public enum ElementEnum {
             new SpellEnum[]{SpellEnum.SCATTER_BONES, SpellEnum.SOUL_DRAIN, SpellEnum.SEEKING_SKULL, SpellEnum.GASHING_FOSSILS, SpellEnum.PHANTOMS_CURSE}, 650),
     TIME(Item.create(Material.CLOCK, "<yellow><bold>Time"),
             new SpellEnum[]{SpellEnum.DARTS_OF_TIME, SpellEnum.ESCAPE_THROUGH_TIME, SpellEnum.DEATHLY_HOUR, SpellEnum.CHRONOPUNCH, SpellEnum.TEMPORAL_ILLUSION}, 650),
-    METAL(Item.create(Material.IRON_INGOT, "<dark_gray><bold>Metal"),
+    METAL(Item.create(Material.IRON_INGOT, "<#808080><bold>Metal"),
             new SpellEnum[]{SpellEnum.CATAPULT, SpellEnum.ALLOYED_BARRIER, SpellEnum.METARANG, SpellEnum.RAZOR_SPIN, SpellEnum.ANCIENT_TEMPER}, 900),
     EXPLOSION(Item.create(Material.TNT, "<gold><bold>Explosion"),
             new SpellEnum[]{SpellEnum.FIERY_MISSILE, SpellEnum.LANDMINES, SpellEnum.BLAST_OFF, SpellEnum.FLYING_BLITZ, SpellEnum.BOMB_HEAD}, 900);

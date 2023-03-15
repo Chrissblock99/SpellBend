@@ -20,7 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.*;
 
 public class ElementGui extends GuiInventory {
     private static final SpellBend plugin = SpellBend.getInstance();
@@ -50,7 +50,11 @@ public class ElementGui extends GuiInventory {
 
         for (int i = 0;i<length;i++) {
             SpellEnum spellEnum = elementEnum.getSpell(i);
-            new GuiButton(Item.edit(spellEnum.getDisplayItem(), createSpellOwningLore(sessionData, elementEnum, spellEnum)))
+            //noinspection DataFlowIssue
+            LinkedList<String> lore = new LinkedList<>(spellEnum.getDisplayItem().lore() == null ? new LinkedList<>() : spellEnum.getDisplayItem().lore().stream().map(miniMessage::serialize).toList());
+            lore.addAll(List.of(createSpellOwningLore(sessionData, elementEnum, spellEnum)));
+
+            new GuiButton(Item.edit(spellEnum.getDisplayItem(), lore.toArray(new String[0])))
                     .onClick(clickEvent -> spellClickEvent(player, sessionData, elementEnum, spellEnum))
                     .registerIn(this, positions[i]);
         }
