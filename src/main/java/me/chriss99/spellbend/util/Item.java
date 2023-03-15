@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -57,6 +58,8 @@ public class Item {
     {return create(material, name, lore, CustomModelData, Arrays.stream(key).map(string -> new NamespacedKey(plugin, string)).toList().toArray(new NamespacedKey[0]), customData);}
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull NamespacedKey key, @NotNull String customData)
     {return create(material, name, lore, CustomModelData, new NamespacedKey[]{key}, new String[]{customData});}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, name, lore, CustomModelData, new ItemFlag[0], key, customData);}
 
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName)
     {return create(material, miniMessageStringToComponent(miniMessageName), 0);}
@@ -99,7 +102,87 @@ public class Item {
     public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull NamespacedKey[] key, @NotNull String[] customData)
     {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, key, customData);}
 
-    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull NamespacedKey[] key, @NotNull String[] customData) {
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull ItemFlag[] itemFlags)
+    {return create(material, name, 0, itemFlags);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull ItemFlag[] itemFlags, @NotNull Component[] lore)
+    {return create(material, name, lore, 0, itemFlags);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, name, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, name, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, name, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, name, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, name, lore, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, name, lore, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, name, lore, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, name, lore, 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, int CustomModelData, @NotNull ItemFlag[] itemFlags)
+    {return Item.create(material, name, new Component[0], CustomModelData, itemFlags);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull ItemFlag[] itemFlags)
+    {return create(material, name, lore, CustomModelData, itemFlags, new NamespacedKey[0], new String[0]);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, name, CustomModelData, itemFlags, new String[]{key}, new String[]{customData});}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, name, new Component[0], CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, name, CustomModelData, itemFlags, new NamespacedKey[]{key}, new String[]{customData});}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, name, new Component[0], CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, name, lore, CustomModelData, itemFlags, new String[]{key}, new String[]{customData});}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, name, lore, CustomModelData, itemFlags, Arrays.stream(key).map(string -> new NamespacedKey(plugin, string)).toList().toArray(new NamespacedKey[0]), customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, name, lore, CustomModelData, itemFlags, new NamespacedKey[]{key}, new String[]{customData});}
+
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull ItemFlag[] itemFlags)
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, itemFlags);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull ItemFlag[] itemFlags)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, itemFlags);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), 0, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull ItemFlag[] itemFlags)
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, itemFlags);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull ItemFlag[] itemFlags)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, itemFlags);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull String[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey key, @NotNull String customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, itemFlags, key, customData);}
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull String miniMessageName, @NotNull String[] miniMessageLore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData)
+    {return create(material, miniMessageStringToComponent(miniMessageName), miniMessageStringArrayToComponentArray(miniMessageLore), CustomModelData, itemFlags, key, customData);}
+
+    public static @NotNull ItemStack create(@NotNull Material material, @NotNull Component name, @NotNull Component[] lore, int CustomModelData, @NotNull ItemFlag[] itemFlags, @NotNull NamespacedKey[] key, @NotNull String[] customData) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer data = meta.getPersistentDataContainer();
@@ -107,6 +190,7 @@ public class Item {
         meta.displayName(name);
         meta.lore(Arrays.asList(lore));
         meta.setCustomModelData(CustomModelData);
+        meta.addItemFlags(itemFlags);
 
         for (int i = 0;i<key.length;i++)
             data.set(key[i], PersistentDataType.STRING, customData[i]);
