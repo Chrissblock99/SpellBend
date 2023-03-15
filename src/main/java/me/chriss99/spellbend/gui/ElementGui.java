@@ -15,18 +15,21 @@ import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class ElementGui extends GuiInventory {
+    private static final SpellBend plugin = SpellBend.getInstance();
     private static final MiniMessage miniMessage = SpellBend.getMiniMessage();
 
-    public ElementGui(@NotNull Player player, @NotNull ElementEnum elementEnum) {
+    private ElementGui(@NotNull Player player, @NotNull ElementEnum elementEnum) {
         super(Objects.requireNonNullElse(elementEnum.getDisplayItem().getItemMeta().displayName(), Component.text("NULL PLS HELP")), 5);
         GuiUtil.outLineGui(this, Item.create(Material.BLUE_STAINED_GLASS_PANE, Component.text(""), 501), 5);
 
@@ -80,7 +83,8 @@ public class ElementGui extends GuiInventory {
             SpellEnum spellEnumBefore = elementEnum.getSpellBefore(spellEnum);
             if (spellEnumBefore != null)
                 spellToLearnBefore = miniMessage.serializeOrNull(spellEnumBefore.getDisplayItem().getItemMeta().displayName());
-            player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <dark_gray>»<red> You must learn " + spellToLearnBefore + "<reset><red> first!"));
+            player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <reset><dark_gray>»<red> You must learn " + spellToLearnBefore + "<reset><red> first!"));
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10f, 0.8f);
             return;
         }
 
@@ -89,8 +93,9 @@ public class ElementGui extends GuiInventory {
             return;
         }
 
-        player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <dark_gray>»<red> Not enough Gold! Need <gold>" +
+        player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <reset><dark_gray>»<red> Not enough Gold! Need <gold>" +
                 (long) (spellEnum.getPrice() - sessionData.getGold().getCurrency()) + "<red> more!"));
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10f, 0.8f);
     }
 
     private static void buySpell(@NotNull Player player, @NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum, @NotNull SpellEnum spellEnum) {
@@ -100,8 +105,10 @@ public class ElementGui extends GuiInventory {
         if (InventoryUtil.spellsInsideInventory(player.getInventory()) < 5 && !InventoryUtil.inventoryContainsSpellName(player.getInventory(), spellEnum.toString()))
             player.getInventory().addItem(spellEnum.getUseItem());
 
-        player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <dark_gray>»<yellow> Learnt " +
-                SpellBend.getMiniMessage().serializeOrNull(spellEnum.getDisplayItem().getItemMeta().displayName()) + " <gold>for <yellow>" + spellEnum.getPrice() + " Gold!"));
+        player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <reset><dark_gray>»<yellow> Learnt " +
+                SpellBend.getMiniMessage().serializeOrNull(spellEnum.getDisplayItem().getItemMeta().displayName()) + " <reset><gold>for <yellow>" + spellEnum.getPrice() + " Gold!"));
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.5f);
+        player.playSound(player.getLocation(), Sound.ITEM_TOTEM_USE, 0.5f, 2f);
 
         new ElementGui(player, elementEnum);
     }
@@ -109,21 +116,25 @@ public class ElementGui extends GuiInventory {
     private static void giveSpell(@NotNull Player player, @NotNull SpellEnum spellEnum) {
         ItemStack item = spellEnum.getUseItem();
         if (InventoryUtil.inventoryContainsSpellName(player.getInventory(), ItemData.getPersistentDataValue(item, PersistentDataKeys.spellNameKey, PersistentDataType.STRING))) {
-            player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <dark_gray>»<red> You already have this spell equipped!"));
+            player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <reset><dark_gray>»<red> You already have this spell equipped!"));
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10f, 0.8f);
             return;
         }
 
         if (InventoryUtil.spellsInsideInventory(player.getInventory()) >= 5) {
-            player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <dark_gray>»<red> Unequip a spell first! <dark_gray>(<gray>Drag into Shop<dark_gray>)"));
+            player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <reset><dark_gray>»<red> Unequip a spell first! <dark_gray>(<gray>Drag into Shop<dark_gray>)"));
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10f, 0.8f);
             return;
         }
 
         player.getInventory().addItem(item);
+        player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <reset><dark_gray>» <yellow>Equipped " + miniMessage.serializeOrNull(item.getItemMeta().displayName()) + "<reset><yellow>!"));
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.5f);
     }
 
     private static @NotNull String[] createSpellOwningLore(@NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum, @NotNull SpellEnum spellEnum) {
         if (sessionData.getElementsOwned().playerOwnsSpellInElement(elementEnum, spellEnum))
-            return new String[]{"<dark_gray>----------------", "<yellow><bold>CLICK TO EQUIP"};
+            return new String[]{"<dark_gray>----------------", "<green><bold>CLICK TO EQUIP"};
 
         if (sessionData.getElementsOwned().playerOwnsPreviousSpellInElement(elementEnum, spellEnum))
             return new String[]{"<dark_gray>----------------", "<yellow>$ <red>" + spellEnum.getPrice() + " <gold>Gold"};
@@ -135,5 +146,22 @@ public class ElementGui extends GuiInventory {
             spellToLearnBefore = miniMessage.serializeOrNull(spellEnumBefore.getDisplayItem().getItemMeta().displayName());
 
         return new String[]{"<dark_gray>----------------", "<red>You must learn " + spellToLearnBefore + "<red> first!"};
+    }
+
+    public static void open(@NotNull Player player, @NotNull ElementEnum elementEnum, boolean bought) {
+        new ElementGui(player, elementEnum);
+
+        if (!bought) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.2f);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.5f);
+                }
+            }.runTaskLater(plugin, 4);
+            return;
+        }
+
+        //TODO MUSIC
     }
 }
