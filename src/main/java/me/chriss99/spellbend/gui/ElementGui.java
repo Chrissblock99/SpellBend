@@ -8,10 +8,7 @@ import me.chriss99.spellbend.guiframework.GuiItem;
 import me.chriss99.spellbend.harddata.ElementEnum;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.harddata.SpellEnum;
-import me.chriss99.spellbend.util.GuiUtil;
-import me.chriss99.spellbend.util.InventoryUtil;
-import me.chriss99.spellbend.util.Item;
-import me.chriss99.spellbend.util.ItemData;
+import me.chriss99.spellbend.util.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -162,6 +159,83 @@ public class ElementGui extends GuiInventory {
             return;
         }
 
-        //TODO MUSIC
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 0.707107f);
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 0.707107f);
+        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.2f, 1.414214f);
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 0.707107f);
+        new BukkitTimer(
+                new BukkitTimer.TimedAction(2, () -> { //1
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 0.529732f);
+
+
+
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //2
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 0.840896f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 0.793701f);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 0.793701f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //3
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 0.943874f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 0.840896f);
+
+
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //4
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.059463f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 0.943874f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.2f, 1.414214f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 0.840896f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //5
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 0.943874f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.059463f);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 0.943874f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //6
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.059463f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.259921f);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 1.059463f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //7
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.259921f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.414214f);
+
+
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //8
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.414214f);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.2f, 1.414214f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 1.259921f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //9
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.259921f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.059463f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.2f, 1.259921f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 1.059463f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //10
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.059463f);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.2f, 1.059463f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 1.122462f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //11
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.259921f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.414214f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.2f, 1.259921f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 1.259921f);
+                }),
+                new BukkitTimer.TimedAction(2, () -> { //12
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO, 10f, 1.414214f);
+
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 0.2f, 1.414214f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO, 5f, 1.414214f);
+                })
+        );
     }
 }
