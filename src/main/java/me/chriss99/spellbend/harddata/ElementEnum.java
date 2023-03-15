@@ -23,7 +23,7 @@ public enum ElementEnum {
             new SpellEnum[]{SpellEnum.LIGHTNING_BOLT, SpellEnum.FLASH, SpellEnum.SEISMIC_SHOCK, SpellEnum.LIGHTNING_CHAIN, SpellEnum.GALVANISE}, 300),
     ICE(Item.create(Material.PACKED_ICE, "<white><bold>Ice"),
             new SpellEnum[]{SpellEnum.TWISTED_FLURRY, SpellEnum.FROSTBITE, SpellEnum.WINTERS_HEAVE, SpellEnum.AVALANCHE, SpellEnum.GLACIAL_ARMAMENT}, 300),
-    AETHER(Item.create(Material.CONDUIT, "<gray><bold>Aether"),
+    AETHER(Item.create(Material.NETHER_STAR, "<gray><bold>Aether"),
             new SpellEnum[]{SpellEnum.METEOR_BELT, SpellEnum.BLACK_HOLE, SpellEnum.STELLAR_SLAM, SpellEnum.AETHERS_WRATH, SpellEnum.COSMIC_SMASH}, 650),
     SOUL(Item.create(Material.SKELETON_SKULL, "<dark_purple><bold>Soul"),
             new SpellEnum[]{SpellEnum.SCATTER_BONES, SpellEnum.SOUL_DRAIN, SpellEnum.SEEKING_SKULL, SpellEnum.GASHING_FOSSILS, SpellEnum.PHANTOMS_CURSE}, 650),
