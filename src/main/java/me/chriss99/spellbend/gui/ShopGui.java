@@ -196,9 +196,9 @@ public class ShopGui extends GuiInventory {
 
     private static @NotNull String[] createElementOwningLore(@NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum) {
         if (sessionData.getElementsOwned().playerOwnsElement(elementEnum))
-            return new String[]{"<dark_gray>----------------", "<green><bold>SHIFT CLICK TO EQUIP"};
+            return new String[]{"<green><bold>SHIFT CLICK TO EQUIP"};
 
-        return new String[]{"<dark_gray>----------------", "<green>$ <aqua>" + elementEnum.getPrice() + " <dark_aqua>Gems",
+        return new String[]{"<green>$ <aqua>" + elementEnum.getPrice() + " <dark_aqua>Gems",
                 (elementEnum.playerCanBuy(sessionData)) ? "<gold>You can<yellow> buy<gold> this!" : "<red>You can't<yellow> buy<red> this yet!"};
 
     }
