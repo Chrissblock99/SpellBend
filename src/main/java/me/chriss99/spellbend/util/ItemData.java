@@ -130,7 +130,7 @@ public class ItemData {
      * @param key The key to use
      * @param persistentDataType The type to get
      * @return The stored value
-     * @param <T> the primary object type that is stored in the given tag (no clue what this means i copied it from the PersistentDataType doc)
+     * @param <T> the primary object type that is stored in the given tag (no clue what this means I copied it from the PersistentDataType doc)
      * @param <Z> The type of the value
      */
     public static <T, Z> @Nullable Z getPersistentDataValue(@Nullable ItemStack item, @NotNull NamespacedKey key, @NotNull PersistentDataType<T, Z> persistentDataType) {
