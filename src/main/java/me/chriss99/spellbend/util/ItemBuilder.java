@@ -94,13 +94,15 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLore(@NotNull List<Component> lore) {
-        if (meta.hasLore()) {
-            List<Component> currentLore = meta.lore();
-            //noinspection DataFlowIssue
-            currentLore.addAll(lore);
-            meta.lore(currentLore);
-        } else
+        if (!meta.hasLore()) {
             meta.lore(lore);
+            return this;
+        }
+
+        List<Component> currentLore = meta.lore();
+        //noinspection DataFlowIssue
+        currentLore.addAll(lore);
+        meta.lore(currentLore);
         return this;
     }
 
