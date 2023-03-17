@@ -138,6 +138,11 @@ public class ItemBuilder {
         return meta.isUnbreakable();
     }
 
+    public ItemBuilder hideAllFlags() {
+        meta.addItemFlags(ItemFlag.values());
+        return this;
+    }
+
     public ItemBuilder setItemFlags(@NotNull ItemFlag... itemFlags) {
         meta.removeItemFlags(ItemFlag.values());
         meta.addItemFlags(itemFlags);
