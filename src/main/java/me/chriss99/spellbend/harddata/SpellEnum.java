@@ -3,8 +3,10 @@ package me.chriss99.spellbend.harddata;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.util.ItemBuilder;
 import me.chriss99.spellbend.util.PersistentData;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,6 +107,12 @@ public enum SpellEnum {
             "<gold>through a <yellow>lightspeed blast<gold>,",
             "<gold>dealing <yellow>medium damage<gold>."),
     FLASH(Material.TIPPED_ARROW, "Flash", "aqua", "TRANSPORT", 200,
+            (item) -> {
+                    PotionMeta meta = (PotionMeta) item.getItemMeta();
+                    meta.setColor(Color.fromRGB(126, 178, 202));
+                    item.setItemMeta(meta);
+                    return item;
+                    },
             "<gold>User <yellow>warps a short",
             "<yellow>distance <gold>to evade or",
             "<gold>approach their target."),
