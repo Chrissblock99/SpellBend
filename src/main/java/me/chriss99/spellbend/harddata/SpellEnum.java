@@ -1,11 +1,11 @@
 package me.chriss99.spellbend.harddata;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.util.Item;
+import me.chriss99.spellbend.util.ItemBuilder;
+import me.chriss99.spellbend.util.PersistentData;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -273,15 +273,24 @@ public enum SpellEnum {
 
     SpellEnum(@NotNull Material material, @NotNull String name, @NotNull String color, @NotNull String spellType, int price, @NotNull String... miniMessageExplanation) {
         String miniMessageName = "<" + color + "><bold>" + name;
-        LinkedList<String> miniMessageLoreList = new LinkedList<>(List.of("<dark_gray>----------------"));
-        miniMessageLoreList.addAll(List.of(miniMessageExplanation));
-        String[] miniMessageLore = miniMessageLoreList.toArray(new String[0]);
-        ItemFlag[] itemFlags = new ItemFlag[]{ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS};
+        LinkedList<String> miniMessageLore = new LinkedList<>(List.of("<dark_gray>----------------"));
+        miniMessageLore.addAll(List.of(miniMessageExplanation));
 
-        displayItem = Item.create(material, miniMessageName, miniMessageLore, 1, itemFlags);
-        useItem = Item.create(material, miniMessageName, miniMessageLore, 1, itemFlags,
-                new NamespacedKey[]{PersistentDataKeys.spellNameKey, PersistentDataKeys.spellTypeKey},
-                new String[]{name(), spellType});
+        displayItem = new ItemBuilder(material)
+                .setMiniMessageDisplayName(miniMessageName)
+                .setMiniMessageLore(miniMessageLore)
+                .setCustomModelData(1)
+                .hideAllFlags()
+                .build();
+        useItem = new ItemBuilder(material)
+                .setMiniMessageDisplayName(miniMessageName)
+                .setMiniMessageLore(miniMessageLore)
+                .setCustomModelData(1)
+                .hideAllFlags()
+                .addPersistentData(
+                        new PersistentData<>(PersistentDataKeys.spellNameKey, PersistentDataType.STRING, name()),
+                        new PersistentData<>(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, spellType))
+                .build();
         this.price = price;
     }
 

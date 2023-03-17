@@ -28,19 +28,28 @@ public class ElementGui extends GuiInventory {
 
     private ElementGui(@NotNull Player player, @NotNull ElementEnum elementEnum) {
         super(Objects.requireNonNullElse(elementEnum.getDisplayItem().getItemMeta().displayName(), Component.text("NULL PLS HELP")), 5);
-        GuiUtil.outLineGui(this, Item.create(Material.BLUE_STAINED_GLASS_PANE, Component.text(""), 501), 5);
+        GuiUtil.outLineGui(this, new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE)
+                .setDisplayName(Component.text(""))
+                .setCustomModelData(501)
+                .build(), 5);
 
-        new GuiItem(Item.create(Material.OAK_SIGN, "<bold>Click on a move", new String[]{
-                "<white>to purchase it!",
-                "<dark_gray>---------------",
-                "<gray>Click on<white><bold> glowing moves",
-                "<gray>to equip them!",
-                "",
-                "<white><bold>Drag <gray>or<white><bold> shift click <gray>moves",
-                "<gray>into the shop to unequip them!"
-        }, 501))
+        new GuiItem(new ItemBuilder(Material.OAK_SIGN)
+                        .setMiniMessageDisplayName("<bold>Click on a move")
+                        .setMiniMessageLore(
+                                "<white>to purchase it!",
+                                "<dark_gray>---------------",
+                                "<gray>Click on<white><bold> glowing moves",
+                                "<gray>to equip them!",
+                                "",
+                                "<white><bold>Drag <gray>or<white><bold> shift click <gray>moves",
+                                "<gray>into the shop to unequip them!")
+                        .setCustomModelData(501)
+                        .build())
                 .registerIn(this, 4);
-        new GuiButton(Item.create(Material.ARROW, "<gray><bold>Back", 301))
+        new GuiButton(new ItemBuilder(Material.ARROW)
+                        .setMiniMessageDisplayName("<gray><bold>Back")
+                        .setCustomModelData(301)
+                        .build())
                 .onClick(clickEvent -> new ShopGui(player))
                 .registerIn(this, 18);
 
@@ -50,11 +59,9 @@ public class ElementGui extends GuiInventory {
 
         for (int i = 0;i<length;i++) {
             SpellEnum spellEnum = elementEnum.getSpell(i);
-            //noinspection DataFlowIssue
-            LinkedList<String> lore = new LinkedList<>(spellEnum.getDisplayItem().lore() == null ? new LinkedList<>() : spellEnum.getDisplayItem().lore().stream().map(miniMessage::serialize).toList());
-            lore.addAll(List.of(createSpellOwningLore(sessionData, elementEnum, spellEnum)));
-
-            new GuiButton(Item.edit(spellEnum.getDisplayItem(), lore.toArray(new String[0])))
+            new GuiButton(new ItemBuilder(spellEnum.getDisplayItem())
+                            .addMiniMessageLore(createSpellOwningLore(sessionData, elementEnum, spellEnum))
+                            .build())
                     .onClick(clickEvent -> spellClickEvent(player, sessionData, elementEnum, spellEnum))
                     .registerIn(this, positions[i]);
         }

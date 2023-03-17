@@ -12,7 +12,7 @@ import me.chriss99.spellbend.harddata.ElementEnum;
 import me.chriss99.spellbend.harddata.SpellEnum;
 import me.chriss99.spellbend.util.GuiUtil;
 import me.chriss99.spellbend.util.InventoryUtil;
-import me.chriss99.spellbend.util.Item;
+import me.chriss99.spellbend.util.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -32,23 +32,34 @@ public class ShopGui extends GuiInventory {
 
     public ShopGui(@NotNull Player player) {
         super("<blue><bold>SHOP", 5);
-        GuiUtil.outLineGui(this, Item.create(Material.BLUE_STAINED_GLASS_PANE, Component.text(""), 501), 5);
+        GuiUtil.outLineGui(this, new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE)
+                .setDisplayName(Component.text(""))
+                .setCustomModelData(501)
+                .build(), 5);
 
-        new GuiItem(Item.create(Material.OAK_SIGN, "<bold>Click on an Element", new String[]{
-                "<white>to purchase it!",
-                "<dark_gray>---------------",
-                "<white><bold>Drag <gray>or<white><bold> shift click <gray>moves",
-                "<gray>into the shop to unequip them!"
-        }, 501))
+        new GuiItem(new ItemBuilder(Material.OAK_SIGN)
+                        .setMiniMessageDisplayName("<bold>Click on an Element")
+                        .setMiniMessageLore(
+                            "<white>to purchase it!",
+                            "<dark_gray>---------------",
+                            "<white><bold>Drag <gray>or<white><bold> shift click <gray>moves",
+                            "<gray>into the shop to unequip them!")
+                        .setCustomModelData(501)
+                        .build())
                 .registerIn(this, 4);
-        new GuiButton(Item.create(Material.CHEST, "<blue><bold>COSMETICS", 301))
+        new GuiButton(new ItemBuilder(Material.CHEST)
+                        .setMiniMessageDisplayName("<blue><bold>COSMETICS")
+                        .setCustomModelData(301)
+                        .build())
                 .onClick(clickEvent -> player.sendMessage("You've been trolled!"))
                 .registerIn(this, 40);
 
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
         for (int i = 0; i < elementEnums.length; i++) {
             ElementEnum elementEnum = elementEnums[i];
-            new GuiButton(Item.edit(elementEnum.getDisplayItem(), createElementOwningLore(sessionData, elementEnum)))
+            new GuiButton(new ItemBuilder(elementEnum.getDisplayItem())
+                            .addMiniMessageLore(createElementOwningLore(sessionData, elementEnum))
+                            .build())
                     .onClick(clickEvent -> elementClickEvent(clickEvent, player, sessionData, elementEnum))
                     .registerIn(this, GuiUtil.convertNumToOutlinedGUISlot(i));
         }
