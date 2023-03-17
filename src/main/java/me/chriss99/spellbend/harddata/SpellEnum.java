@@ -275,6 +275,7 @@ public enum SpellEnum {
         String miniMessageName = "<" + color + "><bold>" + name;
         LinkedList<String> miniMessageLore = new LinkedList<>(List.of("<dark_gray>----------------"));
         miniMessageLore.addAll(List.of(miniMessageExplanation));
+        miniMessageLore.add("<dark_gray>----------------");
 
         displayItem = new ItemBuilder(material)
                 .setMiniMessageDisplayName(miniMessageName)

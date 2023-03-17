@@ -146,10 +146,10 @@ public class ElementGui extends GuiInventory {
 
     private static @NotNull String[] createSpellOwningLore(@NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum, @NotNull SpellEnum spellEnum) {
         if (sessionData.getElementsOwned().playerOwnsSpellInElement(elementEnum, spellEnum))
-            return new String[]{"<dark_gray>----------------", "<green><bold>CLICK TO EQUIP"};
+            return new String[]{"<green><bold>CLICK TO EQUIP"};
 
         if (sessionData.getElementsOwned().playerOwnsPreviousSpellInElement(elementEnum, spellEnum))
-            return new String[]{"<dark_gray>----------------", "<green>$ <yellow>" + spellEnum.getPrice() + " <gold>Gold"};
+            return new String[]{"<green>$ <yellow>" + spellEnum.getPrice() + " <gold>Gold"};
 
         String spellToLearnBefore = null;
 
@@ -157,7 +157,7 @@ public class ElementGui extends GuiInventory {
         if (spellEnumBefore != null)
             spellToLearnBefore = miniMessage.serializeOrNull(spellEnumBefore.getDisplayItem().getItemMeta().displayName());
 
-        return new String[]{"<dark_gray>----------------", "<red>You must learn " + spellToLearnBefore + "<reset><red> first!"};
+        return new String[]{"<red>You must learn " + spellToLearnBefore + "<reset><red> first!"};
     }
 
     public static void open(@NotNull Player player, @NotNull ElementEnum elementEnum, boolean bought) {
