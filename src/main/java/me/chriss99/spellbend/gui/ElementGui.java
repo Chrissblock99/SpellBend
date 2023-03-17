@@ -13,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -59,9 +60,12 @@ public class ElementGui extends GuiInventory {
 
         for (int i = 0;i<length;i++) {
             SpellEnum spellEnum = elementEnum.getSpell(i);
-            new GuiButton(new ItemBuilder(spellEnum.getDisplayItem())
-                            .addMiniMessageLore(createSpellOwningLore(sessionData, elementEnum, spellEnum))
-                            .build())
+            ItemBuilder itemBuilder = new ItemBuilder(spellEnum.getDisplayItem())
+                    .addMiniMessageLore(createSpellOwningLore(sessionData, elementEnum, spellEnum));
+            if (sessionData.getElementsOwned().playerOwnsSpellInElement(elementEnum, spellEnum))
+                itemBuilder.addEnchantment(Enchantment.MENDING, 0);
+
+            new GuiButton(itemBuilder.build())
                     .onClick(clickEvent -> spellClickEvent(player, sessionData, elementEnum, spellEnum))
                     .registerIn(this, positions[i]);
         }

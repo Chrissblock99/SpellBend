@@ -17,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -57,9 +58,12 @@ public class ShopGui extends GuiInventory {
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
         for (int i = 0; i < elementEnums.length; i++) {
             ElementEnum elementEnum = elementEnums[i];
-            new GuiButton(new ItemBuilder(elementEnum.getDisplayItem())
-                            .addMiniMessageLore(createElementOwningLore(sessionData, elementEnum))
-                            .build())
+            ItemBuilder itemBuilder = new ItemBuilder(elementEnum.getDisplayItem())
+                    .addMiniMessageLore(createElementOwningLore(sessionData, elementEnum));
+            if (sessionData.getElementsOwned().playerOwnsElement(elementEnum))
+                itemBuilder.addEnchantment(Enchantment.MENDING, 0);
+
+            new GuiButton(itemBuilder.build())
                     .onClick(clickEvent -> elementClickEvent(clickEvent, player, sessionData, elementEnum))
                     .registerIn(this, GuiUtil.convertNumToOutlinedGUISlot(i));
         }
