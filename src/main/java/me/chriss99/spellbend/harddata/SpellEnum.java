@@ -7,9 +7,11 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 public enum SpellEnum {
     MAGMA_BURST(Material.GOLDEN_HOE, "Magma Burst", "red", "MULTI_PROJECTILE", 0,
@@ -272,22 +274,28 @@ public enum SpellEnum {
 
 
     SpellEnum(@NotNull Material material, @NotNull String name, @NotNull String color, @NotNull String spellType, int price, @NotNull String... miniMessageExplanation) {
+        this(material, name, color, spellType, price, null, miniMessageExplanation);
+    }
+
+    SpellEnum(@NotNull Material material, @NotNull String name, @NotNull String color, @NotNull String spellType, int price,
+              @Nullable Function<ItemStack, ItemStack> itemModifier, @NotNull String... miniMessageExplanation) {
+
         String miniMessageName = "<" + color + "><bold>" + name;
         LinkedList<String> miniMessageLore = new LinkedList<>(List.of("<dark_gray>----------------"));
         miniMessageLore.addAll(List.of(miniMessageExplanation));
         miniMessageLore.add("<dark_gray>----------------");
 
-        displayItem = new ItemBuilder(material)
+        ItemStack item = new ItemBuilder(material)
                 .setMiniMessageDisplayName(miniMessageName)
                 .setMiniMessageLore(miniMessageLore)
                 .setCustomModelData(1)
                 .hideAllFlags()
                 .build();
-        useItem = new ItemBuilder(material)
-                .setMiniMessageDisplayName(miniMessageName)
-                .setMiniMessageLore(miniMessageLore)
-                .setCustomModelData(1)
-                .hideAllFlags()
+        if (itemModifier != null)
+            item = itemModifier.apply(item);
+
+        displayItem = item;
+        useItem = new ItemBuilder(displayItem.clone())
                 .addPersistentData(
                         new PersistentData<>(PersistentDataKeys.spellNameKey, PersistentDataType.STRING, name()),
                         new PersistentData<>(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, spellType))
