@@ -159,13 +159,39 @@ public class ShopGui extends GuiInventory {
     }
 
     public static void addAllElementSpells(@NotNull Player player, @NotNull ElementsOwned elementsOwned, @NotNull ElementEnum elementEnum) {
-        for (SpellEnum spellEnum : elementEnum.getSpells()) {
-            if (!elementsOwned.playerOwnsSpellInElement(elementEnum, spellEnum))
-                break;
-            Inventory playerInventory = player.getInventory();
-            if (InventoryUtil.spellsInsideInventory(playerInventory) < 5 && !InventoryUtil.inventoryContainsSpellName(playerInventory, spellEnum.toString()))
-                player.getInventory().addItem(spellEnum.getUseItem());
+        Inventory playerInventory = player.getInventory();
+        if (InventoryUtil.spellsInsideInventory(playerInventory) >= 5) {
+            player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <reset><dark_gray>»<red> Unequip a spell " +
+                    "first! <dark_gray>(<gray>Drag into Shop<dark_gray>)"));
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10f, 0.8f);
+            return;
         }
+
+        boolean spellAdded = false;
+
+        for (SpellEnum spellEnum : elementEnum.getSpells()) {
+            if (!elementsOwned.playerOwnsSpellInElement(elementEnum, spellEnum)) {
+                player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <reset><dark_gray>»<red> You do not own " +
+                        miniMessage.serializeOrNull(spellEnum.getDisplayItem().getItemMeta().displayName()) + "<reset><yellow>!"));
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10f, 0.8f);
+                spellAdded = false;
+                break;
+            }
+
+            if (InventoryUtil.inventoryContainsSpellName(playerInventory, spellEnum.toString()))
+                continue;
+            if (InventoryUtil.spellsInsideInventory(playerInventory) >= 5)
+                break;
+
+            ItemStack item = spellEnum.getUseItem();
+            player.getInventory().addItem(item);
+            player.sendMessage(miniMessage.deserialize("<blue><bold>SHOP <reset><dark_gray>» <yellow>Equipped " +
+                    miniMessage.serializeOrNull(item.getItemMeta().displayName()) + "<reset><yellow>!"));
+            spellAdded = true;
+        }
+
+        if (spellAdded)
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 10f, 1.5f);
     }
 
     private static @NotNull String[] createElementOwningLore(@NotNull PlayerSessionData sessionData, @NotNull ElementEnum elementEnum) {
