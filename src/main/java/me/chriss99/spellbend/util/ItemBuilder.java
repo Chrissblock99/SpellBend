@@ -94,10 +94,12 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLore(@NotNull List<Component> lore) {
-        if (meta.hasLore())
+        if (meta.hasLore()) {
+            List<Component> currentLore = meta.lore();
             //noinspection DataFlowIssue
-            meta.lore().addAll(lore);
-        else
+            currentLore.addAll(lore);
+            meta.lore(currentLore);
+        } else
             meta.lore(lore);
         return this;
     }
@@ -108,11 +110,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addMiniMessageLore(@NotNull List<String> miniMessageLore) {
-        if (meta.hasLore())
-            //noinspection DataFlowIssue
-            meta.lore().addAll(miniMessageStringListToComponentList(miniMessageLore));
-        else
-            meta.lore(miniMessageStringListToComponentList(miniMessageLore));
+        addLore(miniMessageStringListToComponentList(miniMessageLore));
         return this;
     }
 
