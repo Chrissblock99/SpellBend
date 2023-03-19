@@ -135,7 +135,7 @@ public class SpellHandler {
             return;
         }
 
-        letPlayerCastSpell(spellName, spellType, spellItem, false);
+        letPlayerCastSpell(spellName, spellType, spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
     }
 
     /**
@@ -146,7 +146,7 @@ public class SpellHandler {
      */
     @SuppressWarnings("UnusedReturnValue")
     public boolean letPlayerCastSpell(@NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(spellItem, false);
+        return letPlayerCastSpell(spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
     }
 
     /**
@@ -157,7 +157,7 @@ public class SpellHandler {
      * @return If the spell was cast or not
      */
     public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(spellName, spellItem, false);
+        return letPlayerCastSpell(spellName, spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
     }
 
     /**
@@ -169,24 +169,24 @@ public class SpellHandler {
      * @return If the spell was cast or not
      */
     public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(spellName, spellType, spellItem, false);
+        return letPlayerCastSpell(spellName, spellType, spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
     }
 
     /**
      * Creates a spell of item's named type and adds it to the players activeSpellSet.
      *
      * @param spellItem The item used (HAS to be a spell)
-     * @param force To force the spell even if coolDowned
+     * @param ignoreConditionFlags The Conditions which should not be considered for casting the spell
      * @return If the spell was cast or not
      */
-    public boolean letPlayerCastSpell(@NotNull ItemStack spellItem, boolean force) {
+    public boolean letPlayerCastSpell(@NotNull ItemStack spellItem, EnumSet<IgnoreConditionFlag> ignoreConditionFlags) {
         if (!itemIsRegisteredSpell(spellItem)) {
             Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
             return false;
         }
 
         //noinspection ConstantConditions because it can only get here if it is a spell, therefore the name is present and not null
-        return letPlayerCastSpell(ItemData.getSpellName(spellItem), spellItem, force);
+        return letPlayerCastSpell(ItemData.getSpellName(spellItem), spellItem, ignoreConditionFlags);
     }
 
     /**
@@ -194,16 +194,16 @@ public class SpellHandler {
      *
      * @param spellName The name of the spell
      * @param spellItem The item used (HAS to be a spell)
-     * @param force To force the spell even if coolDowned
+     * @param ignoreConditionFlags The Conditions which should not be considered for casting the spell
      * @return If the spell was cast or not
      */
-    public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem, boolean force) {
+    public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem, EnumSet<IgnoreConditionFlag> ignoreConditionFlags) {
         if (!itemIsRegisteredSpell(spellItem)) {
             Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
             return false;
         }
 
-        return letPlayerCastSpell(spellName, ItemData.getSpellType(spellItem), spellItem, force);
+        return letPlayerCastSpell(spellName, ItemData.getSpellType(spellItem), spellItem, ignoreConditionFlags);
     }
 
     /**
@@ -212,24 +212,27 @@ public class SpellHandler {
      * @param spellName The name of the spell
      * @param spellType The spellType it should be used under (can be null, spell will overwrite with its own)
      * @param spellItem The item used (DOESN'T HAVE to be a spell)
-     * @param force To force the spell even if coolDowned
+     * @param ignoreConditionFlags The Conditions which should not be considered for casting the spell
      * @return If the spell was cast or not
      */
-    public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, boolean force) {
-        if (!force && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
+    public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, EnumSet<IgnoreConditionFlag> ignoreConditionFlags) {
+        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
             return false;
+        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.STUN) && isStunned())
+            return false;
+
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
         spellName = spellName.toUpperCase();
 
         int manaCost = nameToManaCostMap.get(spellName);
         CurrencyTracker mana = sessionData.getMana();
-        if (mana.getCurrency()<manaCost) {
+        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.MANA) && mana.getCurrency() < manaCost) {
             sessionData.getActionBarController().displayMessage(SpellBend.getMiniMessage().deserialize("<red><bold>Not enough mana!</red>"));
             return false;
         }
 
         PlayerStateValidator stateValidator = nameToPlayerStateValidatorMap.get(spellName);
-        if (stateValidator != null) {
+        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.PLAYER_STATE) && stateValidator != null) {
             Component errorMessage = stateValidator.validateState(player);
             if (errorMessage != null) {
                 sessionData.getActionBarController().displayMessage(errorMessage);
@@ -340,5 +343,12 @@ public class SpellHandler {
 
         //noinspection ConstantConditions
         return itemIsSpell(item) && spellBuilderIsRegistered(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING));
+    }
+
+    public enum IgnoreConditionFlag {
+        COOLDOWN,
+        STUN,
+        MANA,
+        PLAYER_STATE
     }
 }
