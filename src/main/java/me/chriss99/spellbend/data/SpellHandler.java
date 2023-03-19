@@ -4,6 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.*;
 import me.chriss99.spellbend.util.ItemData;
+import me.chriss99.spellbend.util.TriFunction;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
@@ -21,7 +22,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class SpellHandler {
-    private static final Map<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
+    private static final Map<String, TriFunction<@NotNull Player, @Nullable String, @NotNull ItemStack, @NotNull Spell>> nameToSpellBuilderMap = new HashMap<>();
     private static final Map<String, Function<@NotNull Player, @Nullable Component>> nameToPlayerStateValidatorMap = new HashMap<>();
     private static final Map<String, Integer> nameToManaCostMap = new HashMap<>();
 
@@ -40,17 +41,17 @@ public class SpellHandler {
      * @throws IllegalArgumentException If the name is already contained in the map
      *
      * @param name The name of the Spell to add
-     * @param builder The SpellSubClassBuilder object which will return a spell
+     * @param spellBuilder The function to build this spell
      * @param manaCost The manaCost of the spell
      */
-    public static void registerSpell(@NotNull String name, int manaCost, @NotNull SpellSubClassBuilder builder) {
+    public static void registerSpell(@NotNull String name, int manaCost, @NotNull TriFunction<@NotNull Player, @Nullable String, @NotNull ItemStack, @NotNull Spell> spellBuilder) {
         if (nameToSpellBuilderMap.containsKey(name))
             throw new IllegalArgumentException("Spell name is already contained in the builderMap!");
         if (nameToManaCostMap.containsKey(name))
             throw new IllegalArgumentException("Spell name is already contained in the manaCostMap!");
 
         name = name.toUpperCase();
-        nameToSpellBuilderMap.put(name, builder);
+        nameToSpellBuilderMap.put(name, spellBuilder);
         nameToManaCostMap.put(name, manaCost);
     }
 
@@ -58,11 +59,13 @@ public class SpellHandler {
      * @throws IllegalArgumentException If the name is already contained in the map
      *
      * @param name The name of the Spell to add
-     * @param builder The SpellSubClassBuilder object which will return a spell
+     * @param spellBuilder The function to build this spell
      * @param manaCost The manaCost of the spell
      * @param playerStateValidator The playerStateValidator
      */
-    public static void registerSpell(@NotNull String name, int manaCost, @NotNull SpellSubClassBuilder builder,  @NotNull Function<@NotNull Player, @Nullable Component> playerStateValidator) {
+    public static void registerSpell(@NotNull String name, int manaCost, @NotNull TriFunction<@NotNull Player, @Nullable String, @NotNull ItemStack, @NotNull Spell> spellBuilder,
+                                     @NotNull Function<@NotNull Player, @Nullable Component> playerStateValidator) {
+
         if (nameToSpellBuilderMap.containsKey(name))
             throw new IllegalArgumentException("Spell name is already contained in the builderMap!");
         if (nameToManaCostMap.containsKey(name))
@@ -71,7 +74,7 @@ public class SpellHandler {
             throw new IllegalArgumentException("Spell name is already contained in the stateValidatorMap!");
 
         name = name.toUpperCase();
-        nameToSpellBuilderMap.put(name, builder);
+        nameToSpellBuilderMap.put(name, spellBuilder);
         nameToManaCostMap.put(name, manaCost);
         nameToPlayerStateValidatorMap.put(name, playerStateValidator);
     }
@@ -242,7 +245,7 @@ public class SpellHandler {
         }
 
         mana.addCurrency(-manaCost);
-        Spell spell = nameToSpellBuilderMap.get(spellName).createSpell(player, spellType, spellItem);
+        Spell spell = nameToSpellBuilderMap.get(spellName).apply(player, spellType, spellItem);
         activeSpells.add(spell);
         return true;
     }
@@ -308,10 +311,6 @@ public class SpellHandler {
 
     public static boolean spellBuilderIsRegistered(@NotNull String name) {
         return nameToSpellBuilderMap.containsKey(name.toUpperCase());
-    }
-
-    public static boolean spellBuilderIsRegistered(@NotNull SpellSubClassBuilder builder) {
-        return nameToSpellBuilderMap.containsValue(builder);
     }
 
     /**

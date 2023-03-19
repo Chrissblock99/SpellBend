@@ -35,15 +35,11 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     private BukkitTask activeTask;
 
     public static void register() {
-        SpellHandler.registerSpell("seismic_shock", 35, new SpellSubClassBuilder() {
-            @Override
-            public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-                return new Seismic_Shock(caster, spellType, item);
-            }
-        }, (player) -> {
-                if (LivingEntityUtil.isOnGround(player))
-                    return null;
-                return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
+        SpellHandler.registerSpell("seismic_shock", 35, Seismic_Shock::new,
+                (player) -> {
+                    if (LivingEntityUtil.isOnGround(player))
+                        return null;
+                    return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
             });
     }
 
