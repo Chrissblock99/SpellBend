@@ -161,6 +161,18 @@ public class SpellHandler {
     }
 
     /**
+     * Creates a spell of named type and adds it to the players activeSpellSet.
+     *
+     * @param spellName The name of the spell
+     * @param spellType The spellType (can be null)
+     * @param spellItem The item used (DOESN'T HAVE to be a spell)
+     * @return If the spell was cast or not
+     */
+    public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem) {
+        return letPlayerCastSpell(spellName, spellType, spellItem, false);
+    }
+
+    /**
      * Creates a spell of item's named type and adds it to the players activeSpellSet.
      *
      * @param spellItem The item used (HAS to be a spell)
