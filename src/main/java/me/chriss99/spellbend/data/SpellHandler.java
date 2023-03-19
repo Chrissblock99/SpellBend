@@ -18,10 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class SpellHandler {
     private static final Map<String, SpellSubClassBuilder> nameToSpellBuilderMap = new HashMap<>();
-    private static final Map<String, PlayerStateValidator> nameToPlayerStateValidatorMap = new HashMap<>();
+    private static final Map<String, Function<@NotNull Player, @Nullable Component>> nameToPlayerStateValidatorMap = new HashMap<>();
     private static final Map<String, Integer> nameToManaCostMap = new HashMap<>();
 
     private static final SpellBend plugin = SpellBend.getInstance();
@@ -59,9 +60,9 @@ public class SpellHandler {
      * @param name The name of the Spell to add
      * @param builder The SpellSubClassBuilder object which will return a spell
      * @param manaCost The manaCost of the spell
-     * @param stateValidator The playerStateValidator
+     * @param playerStateValidator The playerStateValidator
      */
-    public static void registerSpell(@NotNull String name, int manaCost, @NotNull SpellSubClassBuilder builder,  @NotNull PlayerStateValidator stateValidator) {
+    public static void registerSpell(@NotNull String name, int manaCost, @NotNull SpellSubClassBuilder builder,  @NotNull Function<@NotNull Player, @Nullable Component> playerStateValidator) {
         if (nameToSpellBuilderMap.containsKey(name))
             throw new IllegalArgumentException("Spell name is already contained in the builderMap!");
         if (nameToManaCostMap.containsKey(name))
@@ -72,7 +73,7 @@ public class SpellHandler {
         name = name.toUpperCase();
         nameToSpellBuilderMap.put(name, builder);
         nameToManaCostMap.put(name, manaCost);
-        nameToPlayerStateValidatorMap.put(name, stateValidator);
+        nameToPlayerStateValidatorMap.put(name, playerStateValidator);
     }
 
     /**
@@ -231,9 +232,9 @@ public class SpellHandler {
             return false;
         }
 
-        PlayerStateValidator stateValidator = nameToPlayerStateValidatorMap.get(spellName);
-        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.PLAYER_STATE) && stateValidator != null) {
-            Component errorMessage = stateValidator.validateState(player);
+        Function<@NotNull Player, @Nullable Component> playerStateValidator = nameToPlayerStateValidatorMap.get(spellName);
+        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.PLAYER_STATE) && playerStateValidator != null) {
+            Component errorMessage = playerStateValidator.apply(player);
             if (errorMessage != null) {
                 sessionData.getActionBarController().displayMessage(errorMessage);
                 return false;
