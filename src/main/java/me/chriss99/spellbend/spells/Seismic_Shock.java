@@ -8,7 +8,6 @@ import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
-import net.kyori.adventure.text.Component;
 
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -41,14 +40,11 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
             public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
                 return new Seismic_Shock(caster, spellType, item);
             }
-        }, new PlayerStateValidator() {
-            @Override
-            public Component validateState(@NotNull Player player) {
-                if (!LivingEntityUtil.isOnGround(player))
-                    return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
-                return null;
-            }
-        });
+        }, (player) -> {
+                if (LivingEntityUtil.isOnGround(player))
+                    return null;
+                return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
+            });
     }
 
     public Seismic_Shock(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
