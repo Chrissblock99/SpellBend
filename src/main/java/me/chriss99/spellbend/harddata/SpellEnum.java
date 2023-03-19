@@ -1,18 +1,25 @@
 package me.chriss99.spellbend.harddata;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.util.ItemBuilder;
 import me.chriss99.spellbend.util.PersistentData;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 public enum SpellEnum {
@@ -182,7 +189,24 @@ public enum SpellEnum {
             "<gold>User <yellow>bites <gold>their victim,",
             "<gold>dealing <yellow>medium damage <gold>and",
             "<yellow>leeching health <gold>from lost blood."),
-    SEEKING_SKULL(Material.PLAYER_HEAD, "Seeking Skull", "dark_purple", "BLAST", 600, //TODO player head needs texture
+    SEEKING_SKULL(Material.PLAYER_HEAD, "Seeking Skull", "dark_purple", "BLAST", 600,
+            (item) -> {
+                SkullMeta meta = (SkullMeta) item.getItemMeta();
+                PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
+                PlayerTextures textures = profile.getTextures();
+
+                try {
+                    textures.setSkin(new URL("http://textures.minecraft.net/texture/71dd7ee7dc7fbcb5c1aee7a257917f034eeba1e093727d712dab0fc35fb0e38"));
+                } catch (MalformedURLException e) {
+                    Bukkit.getLogger().info("Seeking skull texture could not be generated!");
+                    e.printStackTrace();
+                }
+
+                profile.setTextures(textures);
+                meta.setPlayerProfile(profile);
+                item.setItemMeta(meta);
+                return item;
+                },
             "<gold>User casts a <yellow>homing",
             "<yellow>skull <gold>that follows the",
             "<yellow>player's direction<gold>,",
