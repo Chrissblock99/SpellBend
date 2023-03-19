@@ -25,12 +25,7 @@ public class Fiery_Rage extends Spell implements Killable {
     private final PlayerSessionData sessionData;
 
     public static void register() {
-        SpellHandler.registerSpell("fiery_rage", 40, new SpellSubClassBuilder() {
-            @Override
-            public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-                return new Fiery_Rage(caster, spellType, item);
-            }
-        });
+        SpellHandler.registerSpell("fiery_rage", 40, Fiery_Rage::new);
     }
 
     public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
