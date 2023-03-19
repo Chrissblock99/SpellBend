@@ -297,6 +297,11 @@ public class SpellHandler {
         activeSpells.clear();
     }
 
+    public boolean isStunned() {
+        return stunReverseTask != null;
+    }
+
+
     public static boolean spellBuilderIsRegistered(@NotNull String name) {
         return nameToSpellBuilderMap.containsKey(name.toUpperCase());
     }
