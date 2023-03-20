@@ -2,6 +2,7 @@ package me.chriss99.spellbend.util;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -121,5 +122,28 @@ public class ItemData {
         meta.getPersistentDataContainer().set(PersistentDataKeys.spellNameKey, PersistentDataType.STRING, spellName);
         item.setItemMeta(meta);
         return item;
+    }
+
+    /**
+     *
+     * @param item The item to get the PersistentData of
+     * @param key The key to use
+     * @param persistentDataType The type to get
+     * @return The stored value
+     * @param <T> the primary object type that is stored in the given tag (no clue what this means I copied it from the PersistentDataType doc)
+     * @param <Z> The type of the value
+     */
+    public static <T, Z> @Nullable Z getPersistentDataValue(@Nullable ItemStack item, @NotNull NamespacedKey key, @NotNull PersistentDataType<T, Z> persistentDataType) {
+        if (item == null)
+            return null;
+        if (!item.hasItemMeta())
+            return null;
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta == null)
+            return null;
+        if (!meta.getPersistentDataContainer().has(key, persistentDataType))
+            return null;
+        return meta.getPersistentDataContainer().get(key, persistentDataType);
     }
 }

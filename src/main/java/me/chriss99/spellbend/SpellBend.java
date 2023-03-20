@@ -5,6 +5,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.google.gson.Gson;
 import me.chriss99.spellbend.commands.ReflectTest;
+import me.chriss99.spellbend.commands.Shop;
 import me.chriss99.spellbend.commands.Test;
 import me.chriss99.spellbend.data.ActionBarController;
 import me.chriss99.spellbend.data.PlayerDataBoard;
@@ -48,7 +49,7 @@ public final class SpellBend extends JavaPlugin {
         Bukkit.getLogger().info("SpellBend disabled!");
     }
 
-    public static void registerAllPaperEvents() {
+    private static void registerAllPaperEvents() {
         new PlayerInteractBlock();
         new PlayerInteractEntity();
         new PlayerInteractAtEntity();
@@ -57,14 +58,15 @@ public final class SpellBend extends JavaPlugin {
         new FoodLevelChange();
         new PlayerSwitchHeldItem();
         new InventoryClick();
+        new InventoryDrag();
     }
 
-    public static void registerAllPacketListeners() {
+    private static void registerAllPacketListeners() {
         //new PlayClientPosition();
         //new PlayClientPositionLook();
     }
 
-    public static void registerAllSpells() {
+    private static void registerAllSpells() {
         Test_Spell.register();
 
         Fiery_Rage.register();
@@ -73,9 +75,10 @@ public final class SpellBend extends JavaPlugin {
         Seismic_Shock.register();
     }
 
-    public static void registerAllCommands() {
+    private static void registerAllCommands() {
         new Test();
         new ReflectTest();
+        new Shop();
     }
 
     public static void registerPaperEvent(@NotNull Listener listener) {

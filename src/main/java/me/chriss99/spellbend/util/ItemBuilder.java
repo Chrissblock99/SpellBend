@@ -94,11 +94,15 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addLore(@NotNull List<Component> lore) {
-        if (meta.hasLore())
-            //noinspection DataFlowIssue
-            meta.lore().addAll(lore);
-        else
+        if (!meta.hasLore()) {
             meta.lore(lore);
+            return this;
+        }
+
+        List<Component> currentLore = meta.lore();
+        //noinspection DataFlowIssue
+        currentLore.addAll(lore);
+        meta.lore(currentLore);
         return this;
     }
 
@@ -108,11 +112,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addMiniMessageLore(@NotNull List<String> miniMessageLore) {
-        if (meta.hasLore())
-            //noinspection DataFlowIssue
-            meta.lore().addAll(miniMessageStringListToComponentList(miniMessageLore));
-        else
-            meta.lore(miniMessageStringListToComponentList(miniMessageLore));
+        addLore(miniMessageStringListToComponentList(miniMessageLore));
         return this;
     }
 
@@ -136,6 +136,11 @@ public class ItemBuilder {
 
     public boolean isUnbreakable() {
         return meta.isUnbreakable();
+    }
+
+    public ItemBuilder hideAllFlags() {
+        meta.addItemFlags(ItemFlag.values());
+        return this;
     }
 
     public ItemBuilder setItemFlags(@NotNull ItemFlag... itemFlags) {
