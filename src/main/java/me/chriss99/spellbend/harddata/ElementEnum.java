@@ -17,7 +17,7 @@ public enum ElementEnum {
     EMBER(Material.FIRE_CHARGE, "red", 150,
             new SpellEnum[]{SpellEnum.MAGMA_BURST, SpellEnum.EMBER_BLAST, SpellEnum.SCORCHING_COLUMN, SpellEnum.BLAZING_SPIN, SpellEnum.FIERY_RAGE}),
     WATER(Material.WATER_BUCKET, "blue", 150,
-            new SpellEnum[]{SpellEnum.HYDRO_BLAST, SpellEnum.WATER_SPRAY, SpellEnum.WATER_TORRENT, SpellEnum.RISING_TIDE, SpellEnum.SEA_SHIELD}),
+            new SpellEnum[]{SpellEnum.HYDRO_BLAST, SpellEnum.WATER_SPRAY, SpellEnum.WATER_TORRENT, SpellEnum.SEA_SHIELD, SpellEnum.RISING_TIDE}),
     NATURE(Material.OAK_SAPLING, "green", 150,
             new SpellEnum[]{SpellEnum.VERDANT_SPORES, SpellEnum.POISON_DARTS, SpellEnum.AUTUMN_WINDS, SpellEnum.VINE_GRAB, SpellEnum.NATURES_AEGIS}),
     EARTH(Material.COARSE_DIRT, "dark_green", 300,
