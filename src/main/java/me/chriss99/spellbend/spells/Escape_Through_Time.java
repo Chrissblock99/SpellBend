@@ -34,12 +34,7 @@ public class Escape_Through_Time extends Spell implements Killable {
     private final SpellHandler spellHandler;
 
     public static void register() {
-        SpellHandler.registerSpell("escape_through_time", 25, new SpellSubClassBuilder() {
-            @Override
-            public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-                return new Escape_Through_Time(caster, spellType, item);
-            }
-        });
+        SpellHandler.registerSpell("escape_through_time", 25, Escape_Through_Time::new);
     }
 
     public Escape_Through_Time(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
