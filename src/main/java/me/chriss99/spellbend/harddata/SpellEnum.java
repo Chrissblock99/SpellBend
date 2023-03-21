@@ -1,11 +1,9 @@
 package me.chriss99.spellbend.harddata;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.spells.*;
 import me.chriss99.spellbend.util.ItemBuilder;
-import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.PersistentData;
 import me.chriss99.spellbend.util.TriFunction;
 import net.kyori.adventure.text.Component;
@@ -131,11 +129,7 @@ public enum SpellEnum {
             "<yellow>distance <gold>to evade or",
             "<gold>approach their target."),
     SEISMIC_SHOCK(Material.DIAMOND_SHOVEL, "Seismic Shock", "aqua", "AREA_OF_EFFECT", 300, 35, Seismic_Shock::new,
-            (player) -> {
-                if (LivingEntityUtil.isOnGround(player))
-                    return null;
-                return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
-            }, null,
+            Seismic_Shock::validatePlayerState, null,
             "<gold>User emits <yellow>shockwaves <gold>that",
             "<gold>inflict <yellow>medium damage <gold>and",
             "<yellow>stun <gold>nearby foes."),

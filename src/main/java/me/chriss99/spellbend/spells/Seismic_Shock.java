@@ -8,6 +8,7 @@ import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -32,6 +33,12 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     private final BukkitTask stunUndoTask;
     private BukkitTask windupTask;
     private BukkitTask activeTask;
+
+    public static @Nullable Component validatePlayerState(@NotNull Player player) {
+        if (LivingEntityUtil.isOnGround(player))
+            return null;
+        return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
+    }
 
     public Seismic_Shock(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
         super(caster, spellType, item);
