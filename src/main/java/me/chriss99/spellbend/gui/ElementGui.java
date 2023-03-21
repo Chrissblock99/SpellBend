@@ -127,7 +127,7 @@ public class ElementGui extends GuiInventory {
 
     private static void giveSpell(@NotNull Player player, @NotNull SpellEnum spellEnum) {
         ItemStack item = spellEnum.getUseItem();
-        if (InventoryUtil.inventoryContainsSpellName(player.getInventory(), ItemData.getPersistentDataValue(item, PersistentDataKeys.spellNameKey, PersistentDataType.STRING))) {
+        if (InventoryUtil.inventoryContainsSpellName(player.getInventory(), ItemData.getPersistentDataValue(item, PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING))) {
             player.sendMessage(SpellBend.getMiniMessage().deserialize("<blue><bold>SHOP <reset><dark_gray>»<red> You already have this spell equipped!"));
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10f, 0.8f);
             return;

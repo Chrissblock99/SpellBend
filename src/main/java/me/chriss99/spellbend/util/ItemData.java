@@ -47,10 +47,10 @@ public class ItemData {
             return null;
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-        if (!data.has(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING))
+        if (!data.has(PersistentDataKeys.SPELL_TYPE_KEY, PersistentDataType.STRING))
             return null;
 
-        String spellType = data.get(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING);
+        String spellType = data.get(PersistentDataKeys.SPELL_TYPE_KEY, PersistentDataType.STRING);
         if (spellType != null)
             spellType = spellType.toUpperCase();
 
@@ -69,7 +69,7 @@ public class ItemData {
             item.setItemMeta(new ItemStack(Material.STONE).getItemMeta());
 
         ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, spellType);
+        meta.getPersistentDataContainer().set(PersistentDataKeys.SPELL_TYPE_KEY, PersistentDataType.STRING, spellType);
         item.setItemMeta(meta);
         return item;
     }
@@ -98,10 +98,10 @@ public class ItemData {
             return null;
 
         PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-        if (!data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING))
+        if (!data.has(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING))
             return null;
 
-        String spellName = data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING);
+        String spellName = data.get(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING);
         if (spellName != null)
             spellName = spellName.toUpperCase();
 
@@ -120,7 +120,7 @@ public class ItemData {
             item.setItemMeta(new ItemStack(Material.STONE).getItemMeta());
 
         ItemMeta meta = item.getItemMeta();
-        meta.getPersistentDataContainer().set(PersistentDataKeys.spellNameKey, PersistentDataType.STRING, spellName);
+        meta.getPersistentDataContainer().set(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING, spellName);
         item.setItemMeta(meta);
         return item;
     }
@@ -176,8 +176,8 @@ public class ItemData {
 
         if (item.hasItemMeta()) {
             PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-            if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING))
-                return data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING) != null;
+            if (data.has(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING))
+                return data.get(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING) != null;
         }
         return false;
     }
@@ -193,7 +193,7 @@ public class ItemData {
             return false;
 
         //noinspection ConstantConditions
-        return itemIsSpell(item) && SpellEnum.spellExists(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING));
+        return itemIsSpell(item) && SpellEnum.spellExists(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING));
     }
 
     /**
@@ -208,6 +208,6 @@ public class ItemData {
 
         //noinspection ConstantConditions
         return itemIsRegisteredSpell(item) &&
-                SpellEnum.spellEnumOf(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING)).getSpellBuilder() != null;
+                SpellEnum.spellEnumOf(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING)).getSpellBuilder() != null;
     }
 }

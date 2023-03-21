@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class WalkSpeed extends PercentageModifier {
     public WalkSpeed(@NotNull LivingEntity livingEntity) {
-        super(livingEntity, PersistentDataKeys.walkSpeedModifiersKey, "walkSpeedModifiers");
+        super(livingEntity, PersistentDataKeys.WALK_SPEED_MODIFIERS_KEY, "walkSpeedModifiers");
     }
 
     /**

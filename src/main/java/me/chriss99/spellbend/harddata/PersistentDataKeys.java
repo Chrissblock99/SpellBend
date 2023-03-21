@@ -4,27 +4,27 @@ import me.chriss99.spellbend.SpellBend;
 import org.bukkit.NamespacedKey;
 
 public class PersistentDataKeys {
-    private static final SpellBend plugin = SpellBend.getInstance();
+    private static final SpellBend PLUGIN = SpellBend.getInstance();
 
-    public static final NamespacedKey spellNameKey = new NamespacedKey(plugin, "spellName");
-    public static final NamespacedKey spellTypeKey = new NamespacedKey(plugin, "spellType");
-    public static final NamespacedKey manaCostKey = new NamespacedKey(plugin, "manaCost");
+    public static final NamespacedKey SPELL_NAME_KEY = new NamespacedKey(PLUGIN, "spellName");
+    public static final NamespacedKey SPELL_TYPE_KEY = new NamespacedKey(PLUGIN, "spellType");
+    public static final NamespacedKey MANA_COST_KEY = new NamespacedKey(PLUGIN, "manaCost");
 
-    public static final NamespacedKey gemsKey = new NamespacedKey(plugin, "gems");
-    public static final NamespacedKey goldKey = new NamespacedKey(plugin, "gold");
-    public static final NamespacedKey crystalsKey = new NamespacedKey(plugin, "crystals");
+    public static final NamespacedKey GEMS_KEY = new NamespacedKey(PLUGIN, "gems");
+    public static final NamespacedKey GOLD_KEY = new NamespacedKey(PLUGIN, "gold");
+    public static final NamespacedKey CRYSTALS_KEY = new NamespacedKey(PLUGIN, "crystals");
 
-    public static final NamespacedKey elementsOwnedKey = new NamespacedKey(plugin, "elementsOwned");
-    public static final NamespacedKey cosmeticsOwnedKey = new NamespacedKey(plugin, "cosmeticsOwned");
+    public static final NamespacedKey ELEMENTS_OWNED_KEY = new NamespacedKey(PLUGIN, "elementsOwned");
+    public static final NamespacedKey COSMETICS_OWNED_KEY = new NamespacedKey(PLUGIN, "cosmeticsOwned");
 
-    public static final NamespacedKey isMovementStunnedKey = new NamespacedKey(plugin, "isMovementStunned");
-    public static final NamespacedKey jumpEffect = new NamespacedKey(plugin, "jumpEffect");
-    public static final NamespacedKey isInvisibleKey = new NamespacedKey(plugin, "isInvisible");
+    public static final NamespacedKey IS_MOVEMENT_STUNNED_KEY = new NamespacedKey(PLUGIN, "isMovementStunned");
+    public static final NamespacedKey JUMP_EFFECT_KEY = new NamespacedKey(PLUGIN, "jumpEffect");
+    public static final NamespacedKey IS_INVISIBLE_KEY = new NamespacedKey(PLUGIN, "isInvisible");
 
-    public static final NamespacedKey coolDownsKey = new NamespacedKey(plugin, "coolDowns");
-    public static final NamespacedKey damageDealtModifiersKey = new NamespacedKey(plugin, "dmgDealtModifiers");
-    public static final NamespacedKey damageTakenModifiersKey = new NamespacedKey(plugin, "dmgTakenModifiers");
-    public static final NamespacedKey walkSpeedModifiersKey = new NamespacedKey(plugin, "walkSpeedModifiers");
+    public static final NamespacedKey COOLDOWNS_KEY = new NamespacedKey(PLUGIN, "coolDowns");
+    public static final NamespacedKey DAMAGE_DEALT_MODIFIERS_KEY = new NamespacedKey(PLUGIN, "dmgDealtModifiers");
+    public static final NamespacedKey DAMAGE_TAKEN_MODIFIERS_KEY = new NamespacedKey(PLUGIN, "dmgTakenModifiers");
+    public static final NamespacedKey WALK_SPEED_MODIFIERS_KEY = new NamespacedKey(PLUGIN, "walkSpeedModifiers");
 
-    public static final NamespacedKey spellAffectAbleKey = new NamespacedKey(plugin, "spellAffectAble");
+    public static final NamespacedKey SPELL_AFFECT_ABLE_KEY = new NamespacedKey(PLUGIN, "spellAffectAble");
 }

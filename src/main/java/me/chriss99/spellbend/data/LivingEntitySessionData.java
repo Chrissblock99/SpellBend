@@ -89,14 +89,14 @@ public class LivingEntitySessionData {
     public static void setupLivingEntityData(@NotNull LivingEntity livingEntity) {
         PersistentDataContainer data = livingEntity.getPersistentDataContainer();
 
-        data.set(PersistentDataKeys.jumpEffect, PersistentDataType.INTEGER_ARRAY, new int[0]);
-        data.set(PersistentDataKeys.isInvisibleKey, PersistentDataType.INTEGER, 0);
+        data.set(PersistentDataKeys.JUMP_EFFECT_KEY, PersistentDataType.INTEGER_ARRAY, new int[0]);
+        data.set(PersistentDataKeys.IS_INVISIBLE_KEY, PersistentDataType.INTEGER, 0);
 
-        data.set(PersistentDataKeys.damageDealtModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
-        data.set(PersistentDataKeys.damageTakenModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
-        data.set(PersistentDataKeys.walkSpeedModifiersKey, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+        data.set(PersistentDataKeys.DAMAGE_DEALT_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+        data.set(PersistentDataKeys.DAMAGE_TAKEN_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+        data.set(PersistentDataKeys.WALK_SPEED_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
 
-        data.set(PersistentDataKeys.isMovementStunnedKey, PersistentDataType.INTEGER, 0);
+        data.set(PersistentDataKeys.IS_MOVEMENT_STUNNED_KEY, PersistentDataType.INTEGER, 0);
     }
 
     /**
@@ -107,14 +107,14 @@ public class LivingEntitySessionData {
     public static void removeLivingEntityData(@NotNull LivingEntity livingEntity) {
         PersistentDataContainer data = livingEntity.getPersistentDataContainer();
 
-        data.remove(PersistentDataKeys.jumpEffect);
-        data.remove(PersistentDataKeys.isInvisibleKey);
+        data.remove(PersistentDataKeys.JUMP_EFFECT_KEY);
+        data.remove(PersistentDataKeys.IS_INVISIBLE_KEY);
 
-        data.remove(PersistentDataKeys.damageDealtModifiersKey);
-        data.remove(PersistentDataKeys.damageTakenModifiersKey);
-        data.remove(PersistentDataKeys.walkSpeedModifiersKey);
+        data.remove(PersistentDataKeys.DAMAGE_DEALT_MODIFIERS_KEY);
+        data.remove(PersistentDataKeys.DAMAGE_TAKEN_MODIFIERS_KEY);
+        data.remove(PersistentDataKeys.WALK_SPEED_MODIFIERS_KEY);
 
-        data.remove(PersistentDataKeys.isMovementStunnedKey);
+        data.remove(PersistentDataKeys.IS_MOVEMENT_STUNNED_KEY);
     }
 
     protected LivingEntitySessionData(@NotNull LivingEntity livingEntity) {
@@ -123,8 +123,8 @@ public class LivingEntitySessionData {
         jumpEffect = new JumpEffect(livingEntity);
         isInvisible = new IsInvisible(livingEntity);
 
-        damageDealtModifiers = new PercentageModifier(livingEntity, PersistentDataKeys.damageDealtModifiersKey, "damageDealtModifiers");
-        damageTakenModifiers = new PercentageModifier(livingEntity, PersistentDataKeys.damageTakenModifiersKey, "damageTakenModifiers");
+        damageDealtModifiers = new PercentageModifier(livingEntity, PersistentDataKeys.DAMAGE_DEALT_MODIFIERS_KEY, "damageDealtModifiers");
+        damageTakenModifiers = new PercentageModifier(livingEntity, PersistentDataKeys.DAMAGE_TAKEN_MODIFIERS_KEY, "damageTakenModifiers");
         walkSpeedModifiers = new WalkSpeed(livingEntity);
         health = new Health(livingEntity);
 

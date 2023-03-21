@@ -362,9 +362,9 @@ public enum SpellEnum {
         displayItem = item;
         useItem = new ItemBuilder(displayItem.clone())
                 .addPersistentData(
-                        new PersistentData<>(PersistentDataKeys.spellNameKey, PersistentDataType.STRING, name()),
-                        new PersistentData<>(PersistentDataKeys.spellTypeKey, PersistentDataType.STRING, spellType),
-                        new PersistentData<>(PersistentDataKeys.manaCostKey, PersistentDataType.INTEGER, manaCost))
+                        new PersistentData<>(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING, name()),
+                        new PersistentData<>(PersistentDataKeys.SPELL_TYPE_KEY, PersistentDataType.STRING, spellType),
+                        new PersistentData<>(PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER, manaCost))
                 .build();
         this.price = price;
 

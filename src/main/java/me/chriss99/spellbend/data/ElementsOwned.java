@@ -26,12 +26,12 @@ public class ElementsOwned {
     public ElementsOwned(@NotNull Player player) {
         this.player = player;
 
-        String gsonString = player.getPersistentDataContainer().get(PersistentDataKeys.elementsOwnedKey, PersistentDataType.STRING);
+        String gsonString = player.getPersistentDataContainer().get(PersistentDataKeys.ELEMENTS_OWNED_KEY, PersistentDataType.STRING);
 
         if (gsonString == null) {
             Bukkit.getLogger().warning(player.getName() + "'s coolDowns were not setup when loading, fixing now!");
             elementsOwned = new EnumMap<>(ElementEnum.class);
-            player.getPersistentDataContainer().set(PersistentDataKeys.elementsOwnedKey, PersistentDataType.STRING, gson.toJson(elementsOwned));
+            player.getPersistentDataContainer().set(PersistentDataKeys.ELEMENTS_OWNED_KEY, PersistentDataType.STRING, gson.toJson(elementsOwned));
             return;
         }
 
@@ -105,6 +105,6 @@ public class ElementsOwned {
     }
 
     public void saveElementsOwned() {
-        player.getPersistentDataContainer().set(PersistentDataKeys.elementsOwnedKey, PersistentDataType.STRING, gson.toJson(elementsOwned));
+        player.getPersistentDataContainer().set(PersistentDataKeys.ELEMENTS_OWNED_KEY, PersistentDataType.STRING, gson.toJson(elementsOwned));
     }
 }

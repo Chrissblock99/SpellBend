@@ -197,7 +197,7 @@ public class SpellHandler {
                 spellType = spellEnum.getSpellType();
             this.spellType = spellType;
 
-            Integer manaCost = ItemData.getPersistentDataValue(spellItem, PersistentDataKeys.manaCostKey, PersistentDataType.INTEGER);
+            Integer manaCost = ItemData.getPersistentDataValue(spellItem, PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER);
             if (manaCost == null)
                 //noinspection DataFlowIssue
                 manaCost = spellEnum.getManaCost();

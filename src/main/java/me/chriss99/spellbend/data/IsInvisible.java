@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class IsInvisible extends ValueTracker {
     public IsInvisible(@NotNull LivingEntity livingEntity) {
-        super(livingEntity, PersistentDataKeys.isInvisibleKey, "isInvisible", 0);
+        super(livingEntity, PersistentDataKeys.IS_INVISIBLE_KEY, "isInvisible", 0);
         updateInvisibility();
     }
 

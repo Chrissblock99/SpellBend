@@ -133,14 +133,14 @@ public class LivingEntityUtil {
     public static boolean entityIsSpellAffectAble(@NotNull Entity entity) {
         if (entity instanceof Player)
             return true;
-        return entity.getPersistentDataContainer().has(PersistentDataKeys.spellAffectAbleKey);
+        return entity.getPersistentDataContainer().has(PersistentDataKeys.SPELL_AFFECT_ABLE_KEY);
     }
 
     public static void setLivingEntitySpellAffectAble(@NotNull LivingEntity livingEntity, boolean affectAble) {
         PersistentDataContainer data = livingEntity.getPersistentDataContainer();
         if (affectAble) {
             if (!entityIsSpellAffectAble(livingEntity)) {
-                data.set(PersistentDataKeys.spellAffectAbleKey, PersistentDataType.STRING, "");
+                data.set(PersistentDataKeys.SPELL_AFFECT_ABLE_KEY, PersistentDataType.STRING, "");
                 LivingEntitySessionData.setupLivingEntityData(livingEntity);
                 LivingEntitySessionData.loadLivingEntitySession(livingEntity);
             }
@@ -148,7 +148,7 @@ public class LivingEntityUtil {
             if (entityIsSpellAffectAble(livingEntity)) {
                 LivingEntitySessionData.getLivingEntitySession(livingEntity).endSession();
                 LivingEntitySessionData.removeLivingEntityData(livingEntity);
-                data.remove(PersistentDataKeys.spellAffectAbleKey);
+                data.remove(PersistentDataKeys.SPELL_AFFECT_ABLE_KEY);
             }
     }
 }

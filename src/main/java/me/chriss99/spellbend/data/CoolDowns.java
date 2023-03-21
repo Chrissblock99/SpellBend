@@ -23,12 +23,12 @@ public class CoolDowns {
     public CoolDowns(@NotNull Player player) {
         this.player = player;
 
-        String gsonString = player.getPersistentDataContainer().get(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING);
+        String gsonString = player.getPersistentDataContainer().get(PersistentDataKeys.COOLDOWNS_KEY, PersistentDataType.STRING);
 
         if (gsonString == null) {
             Bukkit.getLogger().warning(player.getName() + "'s coolDowns were not setup when loading, fixing now!");
             coolDowns = new HashMap<>();
-            player.getPersistentDataContainer().set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(coolDowns));
+            player.getPersistentDataContainer().set(PersistentDataKeys.COOLDOWNS_KEY, PersistentDataType.STRING, gson.toJson(coolDowns));
             return;
         }
 
@@ -172,6 +172,6 @@ public class CoolDowns {
      */
     public void saveCoolDowns() {
         removeExpiredCoolDowns();
-        player.getPersistentDataContainer().set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(coolDowns));
+        player.getPersistentDataContainer().set(PersistentDataKeys.COOLDOWNS_KEY, PersistentDataType.STRING, gson.toJson(coolDowns));
     }
 }

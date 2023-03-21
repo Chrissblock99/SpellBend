@@ -32,7 +32,7 @@ public class InventoryUtil {
             return false;
 
         for (ItemStack item : inv.getContents())
-            if (ItemData.itemIsSpell(item) && spellName.equals(ItemData.getPersistentDataValue(item, PersistentDataKeys.spellNameKey, PersistentDataType.STRING)))
+            if (ItemData.itemIsSpell(item) && spellName.equals(ItemData.getPersistentDataValue(item, PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING)))
                 return true;
         return false;
     }

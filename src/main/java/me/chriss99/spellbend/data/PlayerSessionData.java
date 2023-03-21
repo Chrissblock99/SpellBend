@@ -101,13 +101,13 @@ public class PlayerSessionData extends LivingEntitySessionData {
         setupLivingEntityData(player);
         PersistentDataContainer data = player.getPersistentDataContainer();
 
-        data.set(PersistentDataKeys.gemsKey, PersistentDataType.FLOAT, 150f);
-        data.set(PersistentDataKeys.goldKey, PersistentDataType.FLOAT, 650f);
-        data.set(PersistentDataKeys.crystalsKey, PersistentDataType.FLOAT, 0f);
+        data.set(PersistentDataKeys.GEMS_KEY, PersistentDataType.FLOAT, 150f);
+        data.set(PersistentDataKeys.GOLD_KEY, PersistentDataType.FLOAT, 650f);
+        data.set(PersistentDataKeys.CRYSTALS_KEY, PersistentDataType.FLOAT, 0f);
 
-        data.set(PersistentDataKeys.elementsOwnedKey, PersistentDataType.STRING, gson.toJson(new EnumMap<>(ElementEnum.class)));
+        data.set(PersistentDataKeys.ELEMENTS_OWNED_KEY, PersistentDataType.STRING, gson.toJson(new EnumMap<>(ElementEnum.class)));
 
-        data.set(PersistentDataKeys.coolDownsKey, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
+        data.set(PersistentDataKeys.COOLDOWNS_KEY, PersistentDataType.STRING, gson.toJson(new HashMap<String, CoolDownEntry>()));
     }
 
     private PlayerSessionData(@NotNull Player player) {
@@ -119,9 +119,9 @@ public class PlayerSessionData extends LivingEntitySessionData {
         actionBarController = new ActionBarController(player);
 
         mana = new CurrencyTracker(player, 100, false, true);
-        gems = new CurrencyTracker(player, PersistentDataKeys.gemsKey, "Gems", 150, true, false);
-        gold = new CurrencyTracker(player, PersistentDataKeys.goldKey, "Gold", 650, true, false);
-        crystals = new CurrencyTracker(player, PersistentDataKeys.crystalsKey, "Crystals", 0, false, false);
+        gems = new CurrencyTracker(player, PersistentDataKeys.GEMS_KEY, "Gems", 150, true, false);
+        gold = new CurrencyTracker(player, PersistentDataKeys.GOLD_KEY, "Gold", 650, true, false);
+        crystals = new CurrencyTracker(player, PersistentDataKeys.CRYSTALS_KEY, "Crystals", 0, false, false);
 
         elementsOwned = new ElementsOwned(player);
 

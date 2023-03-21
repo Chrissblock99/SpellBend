@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class JumpEffect extends MultiValueTracker {
     public JumpEffect(@NotNull LivingEntity livingEntity) {
-        super(livingEntity, PersistentDataKeys.jumpEffect, "jumpEffect", new int[0]);
+        super(livingEntity, PersistentDataKeys.JUMP_EFFECT_KEY, "jumpEffect", new int[0]);
         updateJumpEffect();
     }
 

@@ -11,7 +11,7 @@ public class IsMovementStunned extends ValueTracker {
     private boolean subsAreIncreased = false;
 
     public IsMovementStunned(@NotNull LivingEntity livingEntity, @NotNull PercentageModifier walkSpeedModifiers, @NotNull MultiValueTracker jumpEffect) {
-        super(livingEntity, PersistentDataKeys.isMovementStunnedKey, "isMovementStunned", 0);
+        super(livingEntity, PersistentDataKeys.IS_MOVEMENT_STUNNED_KEY, "isMovementStunned", 0);
         this.walkSpeedModifiers = walkSpeedModifiers;
         this.jumpEffect = jumpEffect;
         updateStun();

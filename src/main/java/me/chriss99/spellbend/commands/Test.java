@@ -100,7 +100,7 @@ public class Test extends ReflectiveCommandBase {
     @ReflectCommand(path = "value item get manaCost")
     public void value_item_get_manaCost(CommandSender commandSender, Player player) {
         commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s held item's manaCost is " +
-                ItemData.getPersistentDataValue(ItemData.getHeldItem(player), PersistentDataKeys.manaCostKey, PersistentDataType.INTEGER) + "."));
+                ItemData.getPersistentDataValue(ItemData.getHeldItem(player), PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER) + "."));
     }
 
     @ReflectCommand(path = "value item set spellName")
@@ -115,7 +115,7 @@ public class Test extends ReflectiveCommandBase {
 
     @ReflectCommand(path = "value item set manaCost")
     public void value_item_set_manaCost(Player player, int manaCost) {
-        ItemData.setPersistentDataValue(ItemData.getHeldItem(player), PersistentDataKeys.manaCostKey, PersistentDataType.INTEGER, manaCost);
+        ItemData.setPersistentDataValue(ItemData.getHeldItem(player), PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER, manaCost);
     }
 
     @ReflectCommand(path = "value modifier get")
