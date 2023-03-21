@@ -2,7 +2,6 @@ package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,7 +24,7 @@ public class PlayerSwitchHeldItem implements Listener {
     }
 
     public static void processPlayerSwitchHeldItem(@NotNull Player player, @Nullable ItemStack oldItem, @Nullable ItemStack newItem) {
-        if (SpellHandler.itemIsSpell(oldItem) || SpellHandler.itemIsSpell(newItem)) {
+        if (ItemData.itemIsSpell(oldItem) || ItemData.itemIsSpell(newItem)) {
             String spellType = ItemData.getSpellType(newItem);
             PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
 

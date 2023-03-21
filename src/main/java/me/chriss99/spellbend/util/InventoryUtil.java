@@ -1,6 +1,5 @@
 package me.chriss99.spellbend.util;
 
-import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +16,7 @@ public class InventoryUtil {
     public static int spellsInsideInventory(@NotNull Inventory inv) {
         int num = 0;
         for (ItemStack item : inv.getContents())
-            if (SpellHandler.itemIsSpell(item))
+            if (ItemData.itemIsSpell(item))
                 num++;
         return num;
     }
@@ -33,7 +32,7 @@ public class InventoryUtil {
             return false;
 
         for (ItemStack item : inv.getContents())
-            if (SpellHandler.itemIsSpell(item) && spellName.equals(ItemData.getPersistentDataValue(item, PersistentDataKeys.spellNameKey, PersistentDataType.STRING)))
+            if (ItemData.itemIsSpell(item) && spellName.equals(ItemData.getPersistentDataValue(item, PersistentDataKeys.spellNameKey, PersistentDataType.STRING)))
                 return true;
         return false;
     }

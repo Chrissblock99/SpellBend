@@ -2,7 +2,7 @@ package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.data.SpellHandler;
+import me.chriss99.spellbend.util.ItemData;
 import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,7 +21,7 @@ public class PlayerInteractBlock implements Listener {
             //spellHandling
             if (event.hasItem())
                 if (Action.RIGHT_CLICK_AIR.equals(event.getAction()) || Action.RIGHT_CLICK_BLOCK.equals(event.getAction()))
-                    if (SpellHandler.itemIsRegisteredSpell(event.getItem()))
+                    if (ItemData.itemIsExecutableSpell(event.getItem()))
                         PlayerSessionData.getPlayerSession(event.getPlayer()).getSpellHandler().playerClickedSpellItem(event.getItem());
         }
     }

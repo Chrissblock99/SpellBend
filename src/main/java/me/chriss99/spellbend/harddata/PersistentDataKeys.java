@@ -8,7 +8,7 @@ public class PersistentDataKeys {
 
     public static final NamespacedKey spellNameKey = new NamespacedKey(plugin, "spellName");
     public static final NamespacedKey spellTypeKey = new NamespacedKey(plugin, "spellType");
-    public static final NamespacedKey itemActionKey = new NamespacedKey(plugin, "itemAction");
+    public static final NamespacedKey manaCostKey = new NamespacedKey(plugin, "manaCost");
 
     public static final NamespacedKey gemsKey = new NamespacedKey(plugin, "gems");
     public static final NamespacedKey goldKey = new NamespacedKey(plugin, "gold");

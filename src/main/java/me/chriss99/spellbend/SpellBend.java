@@ -12,7 +12,6 @@ import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.events.paper.*;
 //import me.chriss99.spellbend.events.protocollib.*;
-import me.chriss99.spellbend.spells.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.Bukkit;
@@ -33,7 +32,6 @@ public final class SpellBend extends JavaPlugin {
 
         registerAllPaperEvents();
         registerAllPacketListeners();
-        registerAllSpells();
         registerAllCommands();
         PlayerDataBoard.startUpdater();
         ActionBarController.startUpdater();
@@ -64,15 +62,6 @@ public final class SpellBend extends JavaPlugin {
     private static void registerAllPacketListeners() {
         //new PlayClientPosition();
         //new PlayClientPositionLook();
-    }
-
-    private static void registerAllSpells() {
-        Test_Spell.register();
-
-        Fiery_Rage.register();
-        Ember_Blast.register();
-        Escape_Through_Time.register();
-        Seismic_Shock.register();
     }
 
     private static void registerAllCommands() {

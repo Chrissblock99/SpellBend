@@ -3,7 +3,6 @@ package me.chriss99.spellbend.spells;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.math.MathUtil;
@@ -24,12 +23,8 @@ public class Fiery_Rage extends Spell implements Killable {
 
     private final PlayerSessionData sessionData;
 
-    public static void register() {
-        SpellHandler.registerSpell("fiery_rage", 40, Fiery_Rage::new);
-    }
-
-    public Fiery_Rage(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, "AURA", item);
+    public Fiery_Rage(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
+        super(caster, spellType, item);
         sessionData = PlayerSessionData.getPlayerSession(caster);
         sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{1, 0, 10, 30});
         windup();

@@ -5,6 +5,7 @@ import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Action;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.harddata.Currency;
+import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.ItemData;
 import me.chriss99.spellbend.util.LivingEntityUtil;
@@ -13,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
 
@@ -95,6 +97,12 @@ public class Test extends ReflectiveCommandBase {
         commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s held item's spellType is " + ItemData.getHeldSpellType(player) + "."));
     }
 
+    @ReflectCommand(path = "value item get manaCost")
+    public void value_item_get_manaCost(CommandSender commandSender, Player player) {
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName() + "'s held item's manaCost is " +
+                ItemData.getPersistentDataValue(ItemData.getHeldItem(player), PersistentDataKeys.manaCostKey, PersistentDataType.INTEGER) + "."));
+    }
+
     @ReflectCommand(path = "value item set spellName")
     public void value_item_set_spellName(Player player, String spellName) {
         ItemData.setSpellName(ItemData.getHeldItem(player), spellName);
@@ -103,6 +111,11 @@ public class Test extends ReflectiveCommandBase {
     @ReflectCommand(path = "value item set spellType")
     public void value_item_set_spellType(Player player, String spellType) {
         ItemData.setSpellType(ItemData.getHeldItem(player), spellType);
+    }
+
+    @ReflectCommand(path = "value item set manaCost")
+    public void value_item_set_manaCost(Player player, int manaCost) {
+        ItemData.setPersistentDataValue(ItemData.getHeldItem(player), PersistentDataKeys.manaCostKey, PersistentDataType.INTEGER, manaCost);
     }
 
     @ReflectCommand(path = "value modifier get")

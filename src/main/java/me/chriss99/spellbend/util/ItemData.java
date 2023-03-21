@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.util;
 
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.harddata.SpellEnum;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -145,5 +146,68 @@ public class ItemData {
         if (!meta.getPersistentDataContainer().has(key, persistentDataType))
             return null;
         return meta.getPersistentDataContainer().get(key, persistentDataType);
+    }
+
+    /**
+     * @param item The item to set the PersistentData of
+     * @param key The key to use
+     * @param persistentDataType The type to set
+     * @param <T> the primary object type that is stored in the given tag (no clue what this means I copied it from the PersistentDataType doc)
+     * @param <Z> The type of the value
+     */
+    public static <T, Z> void setPersistentDataValue(@NotNull ItemStack item, @NotNull NamespacedKey key, @NotNull PersistentDataType<T, Z> persistentDataType, Z value) {
+        if (!item.hasItemMeta()) //TODO //HACK this does not seem like the correct way to do it
+            item.setItemMeta(new ItemStack(Material.STONE).getItemMeta());
+
+        ItemMeta meta = item.getItemMeta();
+        meta.getPersistentDataContainer().set(key, persistentDataType, value);
+        item.setItemMeta(meta);
+    }
+
+    /**
+     * Checks if the item has a spellName and spellType argument, both not being null
+     *
+     * @param item The item to be checked
+     * @return If it is a spell
+     */
+    public static boolean itemIsSpell(@Nullable ItemStack item) {
+        if (item == null)
+            return false;
+
+        if (item.hasItemMeta()) {
+            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
+            if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING))
+                return data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING) != null;
+        }
+        return false;
+    }
+
+    /**
+     * Checks itemIsSpell() and if the name is contained in SpellEnum
+     *
+     * @param item The item to be checked
+     * @return If it is a registered spell
+     */
+    public static boolean itemIsRegisteredSpell(@Nullable ItemStack item) {
+        if (item == null)
+            return false;
+
+        //noinspection ConstantConditions
+        return itemIsSpell(item) && SpellEnum.spellExists(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING));
+    }
+
+    /**
+     * Checks itemIsSpell() and if the name is contained in the nameToSpellBuilderMap
+     *
+     * @param item The item to be checked
+     * @return If it is a registered spell
+     */
+    public static boolean itemIsExecutableSpell(@Nullable ItemStack item) {
+        if (item == null)
+            return false;
+
+        //noinspection ConstantConditions
+        return itemIsRegisteredSpell(item) &&
+                SpellEnum.spellEnumOf(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING)).getSpellBuilder() != null;
     }
 }

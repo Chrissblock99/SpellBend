@@ -4,7 +4,6 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CurrencyTracker;
 import me.chriss99.spellbend.data.ElementsOwned;
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.guiframework.GuiButton;
 import me.chriss99.spellbend.guiframework.GuiInventory;
 import me.chriss99.spellbend.guiframework.GuiItem;
@@ -13,6 +12,7 @@ import me.chriss99.spellbend.harddata.SpellEnum;
 import me.chriss99.spellbend.util.GuiUtil;
 import me.chriss99.spellbend.util.InventoryUtil;
 import me.chriss99.spellbend.util.ItemBuilder;
+import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -90,7 +90,7 @@ public class ShopGui extends GuiInventory {
 
     public static void shopClick(@NotNull InventoryClickEvent event) {
         event.setCancelled(true);
-        if (SpellHandler.itemIsSpell(event.getCursor())) {
+        if (ItemData.itemIsSpell(event.getCursor())) {
             unequipMessage((Player) event.getWhoClicked(), event.getCursor());
             event.setCursor(null);
         }
@@ -99,7 +99,7 @@ public class ShopGui extends GuiInventory {
     public static void nonShopClick(@NotNull InventoryClickEvent event) {
         if (event.getClick().isShiftClick()) {
             event.setCancelled(true);
-            if (SpellHandler.itemIsSpell(event.getCurrentItem())) {
+            if (ItemData.itemIsSpell(event.getCurrentItem())) {
                 unequipMessage((Player) event.getWhoClicked(), event.getCurrentItem());
                 event.setCurrentItem(null);
             }

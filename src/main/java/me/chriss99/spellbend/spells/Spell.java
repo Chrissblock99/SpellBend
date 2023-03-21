@@ -4,9 +4,6 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public abstract class Spell {
     protected final Player caster;
@@ -18,9 +15,9 @@ public abstract class Spell {
      * @param spellType The spellType the spell is cast as
      * @param item The item used (name will appear in kill message)
      */
-    public Spell(@NotNull Player caster, @Nullable String spellType, @NotNull String standardSpellType, @NotNull ItemStack item) {
+    public Spell(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
         this.caster = caster;
-        this.spellType = Objects.requireNonNullElse(spellType, standardSpellType);
+        this.spellType = spellType;
         this.item = item;
     }
 

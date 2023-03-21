@@ -2,16 +2,16 @@ package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.harddata.SpellEnum;
 import me.chriss99.spellbend.spells.*;
 import me.chriss99.spellbend.util.ItemData;
-import me.chriss99.spellbend.util.TriFunction;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -22,10 +22,6 @@ import java.util.*;
 import java.util.function.Function;
 
 public class SpellHandler {
-    private static final Map<String, TriFunction<@NotNull Player, @Nullable String, @NotNull ItemStack, @NotNull Spell>> nameToSpellBuilderMap = new HashMap<>();
-    private static final Map<String, Function<@NotNull Player, @Nullable Component>> nameToPlayerStateValidatorMap = new HashMap<>();
-    private static final Map<String, Integer> nameToManaCostMap = new HashMap<>();
-
     private static final SpellBend plugin = SpellBend.getInstance();
 
     private final Player player;
@@ -35,48 +31,6 @@ public class SpellHandler {
 
     public SpellHandler(@NotNull Player player) {
         this.player = player;
-    }
-
-    /**
-     * @throws IllegalArgumentException If the name is already contained in the map
-     *
-     * @param name The name of the Spell to add
-     * @param spellBuilder The function to build this spell
-     * @param manaCost The manaCost of the spell
-     */
-    public static void registerSpell(@NotNull String name, int manaCost, @NotNull TriFunction<@NotNull Player, @Nullable String, @NotNull ItemStack, @NotNull Spell> spellBuilder) {
-        if (nameToSpellBuilderMap.containsKey(name))
-            throw new IllegalArgumentException("Spell name is already contained in the builderMap!");
-        if (nameToManaCostMap.containsKey(name))
-            throw new IllegalArgumentException("Spell name is already contained in the manaCostMap!");
-
-        name = name.toUpperCase();
-        nameToSpellBuilderMap.put(name, spellBuilder);
-        nameToManaCostMap.put(name, manaCost);
-    }
-
-    /**
-     * @throws IllegalArgumentException If the name is already contained in the map
-     *
-     * @param name The name of the Spell to add
-     * @param spellBuilder The function to build this spell
-     * @param manaCost The manaCost of the spell
-     * @param playerStateValidator The playerStateValidator
-     */
-    public static void registerSpell(@NotNull String name, int manaCost, @NotNull TriFunction<@NotNull Player, @Nullable String, @NotNull ItemStack, @NotNull Spell> spellBuilder,
-                                     @NotNull Function<@NotNull Player, @Nullable Component> playerStateValidator) {
-
-        if (nameToSpellBuilderMap.containsKey(name))
-            throw new IllegalArgumentException("Spell name is already contained in the builderMap!");
-        if (nameToManaCostMap.containsKey(name))
-            throw new IllegalArgumentException("Spell name is already contained in the manaCostMap!");
-        if (nameToPlayerStateValidatorMap.containsKey(name))
-            throw new IllegalArgumentException("Spell name is already contained in the stateValidatorMap!");
-
-        name = name.toUpperCase();
-        nameToSpellBuilderMap.put(name, spellBuilder);
-        nameToManaCostMap.put(name, manaCost);
-        nameToPlayerStateValidatorMap.put(name, playerStateValidator);
     }
 
     /**
@@ -139,115 +93,11 @@ public class SpellHandler {
             return;
         }
 
-        letPlayerCastSpell(spellName, spellType, spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
+        getSpellInitializer(spellItem).cast();
     }
 
-    /**
-     * Creates a spell of item's named type and adds it to the players activeSpellSet.
-     *
-     * @param spellItem The item used (HAS to be a spell)
-     * @return If the spell was cast or not
-     */
-    @SuppressWarnings("UnusedReturnValue")
-    public boolean letPlayerCastSpell(@NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
-    }
-
-    /**
-     * Creates a spell of named type and adds it to the players activeSpellSet.
-     *
-     * @param spellName The name of the spell
-     * @param spellItem The item used (DOESN'T HAVE to be a spell)
-     * @return If the spell was cast or not
-     */
-    public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(spellName, spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
-    }
-
-    /**
-     * Creates a spell of named type and adds it to the players activeSpellSet.
-     *
-     * @param spellName The name of the spell
-     * @param spellType The spellType (can be null)
-     * @param spellItem The item used (DOESN'T HAVE to be a spell)
-     * @return If the spell was cast or not
-     */
-    public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem) {
-        return letPlayerCastSpell(spellName, spellType, spellItem, EnumSet.noneOf(IgnoreConditionFlag.class));
-    }
-
-    /**
-     * Creates a spell of item's named type and adds it to the players activeSpellSet.
-     *
-     * @param spellItem The item used (HAS to be a spell)
-     * @param ignoreConditionFlags The Conditions which should not be considered for casting the spell
-     * @return If the spell was cast or not
-     */
-    public boolean letPlayerCastSpell(@NotNull ItemStack spellItem, EnumSet<IgnoreConditionFlag> ignoreConditionFlags) {
-        if (!itemIsRegisteredSpell(spellItem)) {
-            Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
-            return false;
-        }
-
-        //noinspection ConstantConditions because it can only get here if it is a spell, therefore the name is present and not null
-        return letPlayerCastSpell(ItemData.getSpellName(spellItem), spellItem, ignoreConditionFlags);
-    }
-
-    /**
-     * Creates a spell of named type and adds it to the players activeSpellSet.
-     *
-     * @param spellName The name of the spell
-     * @param spellItem The item used (HAS to be a spell)
-     * @param ignoreConditionFlags The Conditions which should not be considered for casting the spell
-     * @return If the spell was cast or not
-     */
-    public boolean letPlayerCastSpell(@NotNull String spellName, @NotNull ItemStack spellItem, EnumSet<IgnoreConditionFlag> ignoreConditionFlags) {
-        if (!itemIsRegisteredSpell(spellItem)) {
-            Bukkit.getLogger().warning("The spell item \"" + spellItem + "\" " + player.getName() + " tried to cast is not a registered spell, casting skipped!");
-            return false;
-        }
-
-        return letPlayerCastSpell(spellName, ItemData.getSpellType(spellItem), spellItem, ignoreConditionFlags);
-    }
-
-    /**
-     * Creates a spell of named type and adds it to the players activeSpellSet.
-     *
-     * @param spellName The name of the spell
-     * @param spellType The spellType it should be used under (can be null, spell will overwrite with its own)
-     * @param spellItem The item used (DOESN'T HAVE to be a spell)
-     * @param ignoreConditionFlags The Conditions which should not be considered for casting the spell
-     * @return If the spell was cast or not
-     */
-    public boolean letPlayerCastSpell(@NotNull String spellName, @Nullable String spellType, @NotNull ItemStack spellItem, EnumSet<IgnoreConditionFlag> ignoreConditionFlags) {
-        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType))
-            return false;
-        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.STUN) && isStunned())
-            return false;
-
-        PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
-        spellName = spellName.toUpperCase();
-
-        int manaCost = nameToManaCostMap.get(spellName);
-        CurrencyTracker mana = sessionData.getMana();
-        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.MANA) && mana.getCurrency() < manaCost) {
-            sessionData.getActionBarController().displayMessage(SpellBend.getMiniMessage().deserialize("<red><bold>Not enough mana!</red>"));
-            return false;
-        }
-
-        Function<@NotNull Player, @Nullable Component> playerStateValidator = nameToPlayerStateValidatorMap.get(spellName);
-        if (!ignoreConditionFlags.contains(IgnoreConditionFlag.PLAYER_STATE) && playerStateValidator != null) {
-            Component errorMessage = playerStateValidator.apply(player);
-            if (errorMessage != null) {
-                sessionData.getActionBarController().displayMessage(errorMessage);
-                return false;
-            }
-        }
-
-        mana.addCurrency(-manaCost);
-        Spell spell = nameToSpellBuilderMap.get(spellName).apply(player, spellType, spellItem);
-        activeSpells.add(spell);
-        return true;
+    public SpellInitializer getSpellInitializer(@NotNull ItemStack spellItem) {
+        return new SpellInitializer(spellItem);
     }
 
     public Set<Spell> getActivePlayerSpells() {
@@ -309,46 +159,109 @@ public class SpellHandler {
     }
 
 
-    public static boolean spellBuilderIsRegistered(@NotNull String name) {
-        return nameToSpellBuilderMap.containsKey(name.toUpperCase());
-    }
-
-    /**
-     * Checks if the item has a spellName and spellType argument, both not being null
-     *
-     * @param item The item to be checked
-     * @return If it is a spell
-     */
-    public static boolean itemIsSpell(@Nullable ItemStack item) {
-        if (item == null)
-            return false;
-
-        if (item.hasItemMeta()) {
-            PersistentDataContainer data = item.getItemMeta().getPersistentDataContainer();
-            if (data.has(PersistentDataKeys.spellNameKey, PersistentDataType.STRING))
-                return data.get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING) != null;
-        }
-        return false;
-    }
-
-    /**
-     * Checks itemIsSpell() and if the name is contained in the nameToSpellBuilderMap
-     *
-     * @param item The item to be checked
-     * @return If it is a registered spell
-     */
-    public static boolean itemIsRegisteredSpell(@Nullable ItemStack item) {
-        if (item == null)
-            return false;
-
-        //noinspection ConstantConditions
-        return itemIsSpell(item) && spellBuilderIsRegistered(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.spellNameKey, PersistentDataType.STRING));
-    }
-
     public enum IgnoreConditionFlag {
         COOLDOWN,
         STUN,
         MANA,
         PLAYER_STATE
+    }
+
+    private class SpellInitializer {
+        private final @NotNull ItemStack spellItem;
+        private final @NotNull SpellEnum spellEnum;
+        private @NotNull String spellType;
+        private int manaCost;
+        private @Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator;
+
+        private EnumSet<IgnoreConditionFlag> ignoreConditionFlags = EnumSet.noneOf(IgnoreConditionFlag.class);
+        private boolean valid = true;
+
+        public SpellInitializer(@NotNull ItemStack spellItem) {
+            if (!ItemData.itemIsExecutableSpell(spellItem)) {
+                Bukkit.getLogger().warning(spellItem + " is not an executable spell but was supposed to be cast by player " + player + "!");
+                valid = false;
+                //these are only here such that intelliJ doesn't complain
+                this.spellItem = new ItemStack(Material.AIR);
+                spellEnum = SpellEnum.MAGMA_BURST;
+                spellType = "";
+                return;
+            }
+
+            this.spellItem = spellItem;
+            //noinspection DataFlowIssue cant be null as it only gets here if it is a spell
+            spellEnum = SpellEnum.spellEnumOf(ItemData.getSpellName(spellItem).toUpperCase());
+
+            String spellType = ItemData.getSpellType(spellItem);
+            if (spellType == null)
+                //noinspection DataFlowIssue
+                spellType = spellEnum.getSpellType();
+            this.spellType = spellType;
+
+            Integer manaCost = ItemData.getPersistentDataValue(spellItem, PersistentDataKeys.manaCostKey, PersistentDataType.INTEGER);
+            if (manaCost == null)
+                //noinspection DataFlowIssue
+                manaCost = spellEnum.getManaCost();
+            this.manaCost = manaCost;
+
+            //noinspection DataFlowIssue
+            playerStateValidator = spellEnum.getPlayerStateValidator();
+        }
+
+        public SpellInitializer setSpellType(@NotNull String spellType) {
+            this.spellType = spellType;
+            return this;
+        }
+
+        public SpellInitializer setManaCost(int manaCost) {
+            this.manaCost = manaCost;
+            return this;
+        }
+
+        public SpellInitializer setPlayerStateValidator(@Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator) {
+            this.playerStateValidator = playerStateValidator;
+            return this;
+        }
+
+        public SpellInitializer setIgnoreConditionFlags(@NotNull EnumSet<IgnoreConditionFlag> ignoreConditionFlags) {
+            this.ignoreConditionFlags = ignoreConditionFlags;
+            return this;
+        }
+
+        /**
+         * Attempts to cast the spell
+         *
+         * @return If the spell was cast
+         */
+        public boolean cast() {
+            if (!valid)
+                return false;
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType) &&
+                    !spellType.equals("NO_COOLDOWN"))
+                return false;
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.STUN) && isStunned())
+                return false;
+
+            PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+
+            CurrencyTracker mana = sessionData.getMana();
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.MANA) && mana.getCurrency() < manaCost) {
+                sessionData.getActionBarController().displayMessage(SpellBend.getMiniMessage().deserialize("<red><bold>Not enough mana!</red>"));
+                return false;
+            }
+
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.PLAYER_STATE) && playerStateValidator != null) {
+                Component errorMessage = playerStateValidator.apply(player);
+                if (errorMessage != null) {
+                    sessionData.getActionBarController().displayMessage(errorMessage);
+                    return false;
+                }
+            }
+
+            mana.addCurrency(-manaCost);
+            //noinspection DataFlowIssue
+            Spell spell = spellEnum.getSpellBuilder().apply(player, spellType, spellItem);
+            activeSpells.add(spell);
+            return true;
+        }
     }
 }

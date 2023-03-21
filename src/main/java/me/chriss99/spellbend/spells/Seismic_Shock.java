@@ -3,7 +3,6 @@ package me.chriss99.spellbend.spells;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.LivingEntityUtil;
@@ -34,17 +33,8 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     private BukkitTask windupTask;
     private BukkitTask activeTask;
 
-    public static void register() {
-        SpellHandler.registerSpell("seismic_shock", 35, Seismic_Shock::new,
-                (player) -> {
-                    if (LivingEntityUtil.isOnGround(player))
-                        return null;
-                    return SpellBend.getMiniMessage().deserialize("<red><bold>Get on the Ground!");
-            });
-    }
-
-    public Seismic_Shock(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, "TEST", item);
+    public Seismic_Shock(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
+        super(caster, spellType, item);
         sessionData = PlayerSessionData.getPlayerSession(caster);
         sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{0.5f, 1.5f, 0.25f, 10});
         sessionData.getIsMovementStunned().displaceValue(1);

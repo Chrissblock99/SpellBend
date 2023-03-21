@@ -32,13 +32,8 @@ public class Escape_Through_Time extends Spell implements Killable {
     private final CoolDownEntry coolDown;
     private ArmorStand armorStand;
     private final SpellHandler spellHandler;
-
-    public static void register() {
-        SpellHandler.registerSpell("escape_through_time", 25, Escape_Through_Time::new);
-    }
-
-    public Escape_Through_Time(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, "TRANSPORT", item);
+    public Escape_Through_Time(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
+        super(caster, spellType, item);
         coolDown = PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{0, 0, 15, 5});
         armorStandOrigin = caster.getLocation();
         setupArmorStand();
