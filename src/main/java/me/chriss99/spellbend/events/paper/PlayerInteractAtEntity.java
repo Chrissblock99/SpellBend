@@ -24,7 +24,7 @@ public class PlayerInteractAtEntity implements Listener {
             event.setCancelled(true);  //basically noInteract for normal players
             //noinspection ConstantConditions
             if (!InteractableEntityManager.isInteractableEntity(event.getRightClicked()))
-                if (ItemData.itemIsExecutableSpell(event.getPlayer().getInventory().getItemInMainHand()))
+                if (ItemData.itemIsRegisteredSpell(event.getPlayer().getInventory().getItemInMainHand()))
                     PlayerSessionData.getPlayerSession(event.getPlayer()).getSpellHandler().playerClickedSpellItem(event.getPlayer().getInventory().getItemInMainHand());
         }
     }

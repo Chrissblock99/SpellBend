@@ -21,7 +21,7 @@ public class PlayerInteractBlock implements Listener {
             //spellHandling
             if (event.hasItem())
                 if (Action.RIGHT_CLICK_AIR.equals(event.getAction()) || Action.RIGHT_CLICK_BLOCK.equals(event.getAction()))
-                    if (ItemData.itemIsExecutableSpell(event.getItem()))
+                    if (ItemData.itemIsRegisteredSpell(event.getItem()))
                         PlayerSessionData.getPlayerSession(event.getPlayer()).getSpellHandler().playerClickedSpellItem(event.getItem());
         }
     }

@@ -195,19 +195,4 @@ public class ItemData {
         //noinspection ConstantConditions
         return itemIsSpell(item) && SpellEnum.spellExists(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING));
     }
-
-    /**
-     * Checks itemIsSpell() and if the name is contained in the nameToSpellBuilderMap
-     *
-     * @param item The item to be checked
-     * @return If it is a registered spell
-     */
-    public static boolean itemIsExecutableSpell(@Nullable ItemStack item) {
-        if (item == null)
-            return false;
-
-        //noinspection ConstantConditions
-        return itemIsRegisteredSpell(item) &&
-                SpellEnum.spellEnumOf(item.getItemMeta().getPersistentDataContainer().get(PersistentDataKeys.SPELL_NAME_KEY, PersistentDataType.STRING)).getSpellBuilder() != null;
-    }
 }

@@ -177,8 +177,8 @@ public class SpellHandler {
         private boolean valid = true;
 
         public SpellInitializer(@NotNull ItemStack spellItem) {
-            if (!ItemData.itemIsExecutableSpell(spellItem)) {
-                Bukkit.getLogger().warning(spellItem + " is not an executable spell but was supposed to be cast by player " + player + "!");
+            if (!ItemData.itemIsRegisteredSpell(spellItem)) {
+                Bukkit.getLogger().warning(spellItem + " is not a registered spell but was supposed to be cast by player " + player + "!");
                 valid = false;
                 //these are only here such that intelliJ doesn't complain
                 this.spellItem = new ItemStack(Material.AIR);
@@ -258,7 +258,6 @@ public class SpellHandler {
             }
 
             mana.addCurrency(-manaCost);
-            //noinspection DataFlowIssue
             Spell spell = spellEnum.getSpellBuilder().apply(player, spellType, spellItem);
             activeSpells.add(spell);
             return true;
