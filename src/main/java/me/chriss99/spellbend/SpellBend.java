@@ -12,6 +12,7 @@ import me.chriss99.spellbend.data.PlayerDataBoard;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.events.paper.*;
 //import me.chriss99.spellbend.events.protocollib.*;
+import me.chriss99.spellbend.manager.BlockManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import org.bukkit.Bukkit;
@@ -43,6 +44,7 @@ public final class SpellBend extends JavaPlugin {
     @Override
     public void onDisable() {
         PlayerSessionData.endAllSessions();
+        BlockManager.clearOverrides();
 
         Bukkit.getLogger().info("SpellBend disabled!");
     }
