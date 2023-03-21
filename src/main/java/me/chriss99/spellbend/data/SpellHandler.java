@@ -259,7 +259,8 @@ public class SpellHandler {
 
             mana.addCurrency(-manaCost);
             Spell spell = spellEnum.getSpellBuilder().apply(player, spellType, spellItem);
-            activeSpells.add(spell);
+            if (!spell.spellEnded())
+                activeSpells.add(spell);
             return true;
         }
     }

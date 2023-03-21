@@ -9,6 +9,8 @@ public abstract class Spell {
     protected final Player caster;
     protected final String spellType;
     protected final ItemStack item;
+    
+    private boolean spellEnded = false;
 
     /**
      * @param caster The player that is casting the spell
@@ -26,6 +28,7 @@ public abstract class Spell {
      * <b>Is supposed to be called when the spell ends with its normal process</b>
      */
     protected void naturalSpellEnd() {
+        spellEnded = true;
         PlayerSessionData.getPlayerSession(caster).getSpellHandler().getActivePlayerSpells().remove(this);
     }
 
@@ -39,6 +42,10 @@ public abstract class Spell {
 
     public @NotNull ItemStack getItem() {
         return item;
+    }
+    
+    public boolean spellEnded() {
+        return spellEnded;
     }
 
     public abstract void casterLeave();
