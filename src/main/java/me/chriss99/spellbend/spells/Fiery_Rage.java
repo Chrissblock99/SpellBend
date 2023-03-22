@@ -3,7 +3,6 @@ package me.chriss99.spellbend.spells;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Colors;
-import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.*;
@@ -119,12 +118,6 @@ public class Fiery_Rage extends Spell {
                 time--;
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 1);
-    }
-
-    @Override
-    public void casterLeave() {
-        coolDown.transformToStage(CoolDownStage.COOLDOWN);
-        cancelSpell();
     }
 
     @Override

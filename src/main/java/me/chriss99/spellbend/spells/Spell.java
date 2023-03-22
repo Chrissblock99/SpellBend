@@ -58,6 +58,10 @@ public abstract class Spell {
         cancelSpell();
     }
 
-    public abstract void casterLeave();
+    public void casterLeave() {
+        coolDown.transformToStage(CoolDownStage.COOLDOWN);
+        cancelSpell();
+    }
+
     public abstract void cancelSpell();
 }

@@ -12,12 +12,5 @@ public class Ember_Blast extends Spell { //TODO this
     }
 
     @Override
-    public void casterLeave() {
-
-    }
-
-    @Override
-    public void cancelSpell() {
-
-    }
+    public void cancelSpell() {}
 }

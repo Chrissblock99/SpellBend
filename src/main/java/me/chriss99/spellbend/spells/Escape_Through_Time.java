@@ -132,6 +132,7 @@ public class Escape_Through_Time extends Spell {
 
     @Override
     public void casterLeave() {
+        coolDown.skipToStage(CoolDownStage.COOLDOWN);
         cancelSpell();
     }
 

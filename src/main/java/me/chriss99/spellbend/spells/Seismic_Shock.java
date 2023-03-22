@@ -156,11 +156,6 @@ public class Seismic_Shock extends Spell implements Stunable {
     }
 
     @Override
-    public void casterLeave() {
-        cancelSpell();
-    }
-
-    @Override
     public void cancelSpell() {
         stunUndoTask.cancel();
         sessionData.getIsMovementStunned().displaceValue(-1);

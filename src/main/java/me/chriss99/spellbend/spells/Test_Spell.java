@@ -12,14 +12,7 @@ public class Test_Spell extends Spell implements Stunable {
     }
 
     @Override
-    public void casterLeave() {
-        cancelSpell();
-    }
-
-    @Override
-    public void cancelSpell() {
-
-    }
+    public void cancelSpell() {}
 
     @Override
     public void casterStun(int timeInTicks) {
