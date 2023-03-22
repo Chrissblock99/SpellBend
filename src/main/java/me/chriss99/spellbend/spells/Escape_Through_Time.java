@@ -137,6 +137,9 @@ public class Escape_Through_Time extends Spell {
     }
 
     @Override
+    public void casterStun(int timeInTicks) {}
+
+    @Override
     public void cancelSpell() {
         spellHandler.removeClickableSpellRunnable(item);
         armorStandTask.cancel();

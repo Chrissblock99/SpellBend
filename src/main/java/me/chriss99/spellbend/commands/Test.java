@@ -28,6 +28,16 @@ public class Test extends ReflectiveCommandBase {
         super("test", "test command for testing test stuff", new ArrayList<>());
     }
 
+    @ReflectCommand(path = "kill")
+    public void kill(Player toKill, Player killer) {
+        PlayerSessionData.getPlayerSession(toKill).getHealth().onPlayerDeath(killer, null);
+    }
+
+    @ReflectCommand(path = "stun")
+    public void stun(Player toStun, int timeInTicks) {
+        PlayerSessionData.getPlayerSession(toStun).stunEntity(timeInTicks);
+    }
+
     @ReflectCommand(path = "update sidebar")
     public void update_sidebar(Player commandSender) {
         PlayerSessionData.getPlayerSession(commandSender).getPlayerDataBoard().updateBoard();

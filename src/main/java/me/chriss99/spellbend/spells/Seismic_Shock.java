@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class Seismic_Shock extends Spell implements Stunable {
+public class Seismic_Shock extends Spell {
     public static final Vector[] ring1 = createRing1();
     public static final Vector[] ring2 = createRing2();
     public static final Vector[] ring3 = createRing3();
@@ -167,11 +167,6 @@ public class Seismic_Shock extends Spell implements Stunable {
         if (activeTask != null) {
             activeTask.cancel();
         }
-    }
-
-    @Override
-    public void casterStun(int timeInTicks) {
-        cancelSpell();
     }
 
     public static void shockLivingEntity(@NotNull LivingEntity livingEntity, int timeIn2ticks) {

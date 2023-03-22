@@ -107,9 +107,8 @@ public class SpellHandler {
      * @param timeInTicks The time to stun for
      */
     public void stunPlayer(int timeInTicks) {
-        for (Spell spell : activeSpells)
-            if (spell instanceof Stunable stunable)
-                stunable.casterStun(timeInTicks);
+        for (Spell spell : new HashSet<>(activeSpells))
+            spell.casterStun(timeInTicks);
     }
 
     /**
@@ -118,9 +117,8 @@ public class SpellHandler {
      * @param killer The Nullable entity which killed them
      */
     public void killPlayer(@Nullable LivingEntity killer) {
-        for (Spell spell : activeSpells)
+        for (Spell spell : new HashSet<>(activeSpells))
             spell.casterDeath(killer);
-        activeSpells.clear();
     }
 
     /**

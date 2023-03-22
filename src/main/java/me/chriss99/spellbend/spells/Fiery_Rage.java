@@ -121,6 +121,9 @@ public class Fiery_Rage extends Spell {
     }
 
     @Override
+    public void casterStun(int timeInTicks) {}
+
+    @Override
     public void cancelSpell() {
         if (!windupTask.isCancelled()) {
             windupTask.cancel();

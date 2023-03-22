@@ -56,11 +56,18 @@ public abstract class Spell {
     public void casterDeath(@Nullable LivingEntity killer) {
         coolDown.skipToStage(CoolDownStage.COOLDOWN);
         cancelSpell();
+        naturalSpellEnd();
     }
 
     public void casterLeave() {
         coolDown.transformToStage(CoolDownStage.COOLDOWN);
         cancelSpell();
+    }
+
+    public void casterStun(int timeInTicks) {
+        coolDown.skipToStage(CoolDownStage.COOLDOWN);
+        cancelSpell();
+        naturalSpellEnd();
     }
 
     public abstract void cancelSpell();
