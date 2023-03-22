@@ -13,8 +13,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,12 +20,9 @@ import java.util.*;
 import java.util.function.Function;
 
 public class SpellHandler {
-    private static final SpellBend plugin = SpellBend.getInstance();
-
     private final Player player;
     private final Set<Spell> activeSpells = new HashSet<>();
     private final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
-    private BukkitTask stunReverseTask = null;
 
     public SpellHandler(@NotNull Player player) {
         this.player = player;
@@ -110,20 +105,6 @@ public class SpellHandler {
      * @param timeInTicks The time to stun for
      */
     public void stunPlayer(int timeInTicks) {
-        ValueTracker isMovementStunned = PlayerSessionData.getPlayerSession(player).getIsMovementStunned();
-
-        if (stunReverseTask != null)
-            stunReverseTask.cancel();
-        else isMovementStunned.displaceValue(1);
-
-        stunReverseTask = new BukkitRunnable(){
-            @Override
-            public void run() {
-                stunReverseTask = null;
-                isMovementStunned.displaceValue(-1);
-            }
-        }.runTaskLater(plugin, timeInTicks);
-
         for (Spell spell : activeSpells)
             if (spell instanceof Stunable stunable)
                 stunable.casterStun(timeInTicks);
@@ -152,10 +133,6 @@ public class SpellHandler {
             spell.casterLeave();
         }
         activeSpells.clear();
-    }
-
-    public boolean isStunned() {
-        return stunReverseTask != null;
     }
 
 
@@ -235,13 +212,12 @@ public class SpellHandler {
         public boolean cast() {
             if (!valid)
                 return false;
-            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType) &&
+            PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && sessionData.getCoolDowns().typeIsCooledDown(spellType) &&
                     !spellType.equals("NO_COOLDOWN"))
                 return false;
-            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.STUN) && isStunned())
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.STUN) && sessionData.isStunned())
                 return false;
-
-            PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
 
             CurrencyTracker mana = sessionData.getMana();
             if (!ignoreConditionFlags.contains(IgnoreConditionFlag.MANA) && mana.getCurrency() < manaCost) {
