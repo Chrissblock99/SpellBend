@@ -119,9 +119,7 @@ public class SpellHandler {
      */
     public void killPlayer(@Nullable LivingEntity killer) {
         for (Spell spell : activeSpells)
-            if (spell instanceof Killable killable)
-                killable.casterDeath(killer);
-            else spell.cancelSpell();
+            spell.casterDeath(killer);
         activeSpells.clear();
     }
 

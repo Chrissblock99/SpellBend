@@ -1,32 +1,28 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.*;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class Fiery_Rage extends Spell implements Killable {
+public class Fiery_Rage extends Spell {
     private BukkitTask windupTask;
     private BukkitTask activeTask;
 
     private final PlayerSessionData sessionData;
 
     public Fiery_Rage(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item);
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{1, 0, 10, 30}));
         sessionData = PlayerSessionData.getPlayerSession(caster);
-        sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{1, 0, 10, 30});
         windup();
     }
 
@@ -126,25 +122,8 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     @Override
-    public void casterDeath(@Nullable LivingEntity killer) {
-        CoolDownEntry entry = sessionData.getCoolDowns().getCoolDownEntry(spellType);
-        if (entry == null) {
-            Bukkit.getLogger().warning(caster.getName() + " had Fiery Rage active under the type \"" + spellType + "\" while dying, but no CoolDownEntry was found, skipping it's removal!");
-            return;
-        }
-
-        entry.skipToStage(CoolDownStage.COOLDOWN);
-    }
-
-    @Override
     public void casterLeave() {
-        CoolDownEntry entry = sessionData.getCoolDowns().getCoolDownEntry(spellType);
-        if (entry == null) {
-            Bukkit.getLogger().warning(caster.getName() + " left while having FieryRage active but had no corresponding CoolDown (" + spellType + ") active!");
-            return;
-        }
-
-        entry.transformToStage(CoolDownStage.COOLDOWN);
+        coolDown.transformToStage(CoolDownStage.COOLDOWN);
         cancelSpell();
     }
 

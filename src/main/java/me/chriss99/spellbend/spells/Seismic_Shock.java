@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class Seismic_Shock extends Spell implements Killable, Stunable {
+public class Seismic_Shock extends Spell implements Stunable {
     public static final Vector[] ring1 = createRing1();
     public static final Vector[] ring2 = createRing2();
     public static final Vector[] ring3 = createRing3();
@@ -40,9 +40,8 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     }
 
     public Seismic_Shock(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item);
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.5f, 1.5f, 0.25f, 10}));
         sessionData = PlayerSessionData.getPlayerSession(caster);
-        sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{0.5f, 1.5f, 0.25f, 10});
         sessionData.getIsMovementStunned().displaceValue(1);
 
         stunUndoTask = new BukkitRunnable(){
@@ -173,11 +172,6 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         if (activeTask != null) {
             activeTask.cancel();
         }
-    }
-
-    @Override
-    public void casterDeath(@Nullable LivingEntity killer) {
-        cancelSpell();
     }
 
     @Override
