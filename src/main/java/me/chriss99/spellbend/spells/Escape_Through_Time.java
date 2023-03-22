@@ -12,7 +12,6 @@ import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.sound.SoundStop;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -136,7 +135,7 @@ public class Escape_Through_Time extends Spell implements Killable {
     }
 
     @Override
-    public void casterDeath(@Nullable Entity Killer) {
+    public void casterDeath(@Nullable LivingEntity Killer) {
         cancelSpell();
     }
 

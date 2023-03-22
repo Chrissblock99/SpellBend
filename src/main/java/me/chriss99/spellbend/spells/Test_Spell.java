@@ -1,7 +1,7 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class Test_Spell extends Spell implements Killable, Stunable {
     }
 
     @Override
-    public void casterDeath(@Nullable Entity killer) {
+    public void casterDeath(@Nullable LivingEntity killer) {
         cancelSpell();
     }
 

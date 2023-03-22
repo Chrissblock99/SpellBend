@@ -8,7 +8,7 @@ import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -117,7 +117,7 @@ public class SpellHandler {
      *
      * @param killer The Nullable entity which killed them
      */
-    public void killPlayer(@Nullable Entity killer) {
+    public void killPlayer(@Nullable LivingEntity killer) {
         for (Spell spell : activeSpells)
             if (spell instanceof Killable killable)
                 killable.casterDeath(killer);

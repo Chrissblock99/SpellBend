@@ -8,7 +8,7 @@ import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.VectorConversion;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -126,7 +126,7 @@ public class Fiery_Rage extends Spell implements Killable {
     }
 
     @Override
-    public void casterDeath(@Nullable Entity killer) {
+    public void casterDeath(@Nullable LivingEntity killer) {
         CoolDownEntry entry = sessionData.getCoolDowns().getCoolDownEntry(spellType);
         if (entry == null) {
             Bukkit.getLogger().warning(caster.getName() + " had Fiery Rage active under the type \"" + spellType + "\" while dying, but no CoolDownEntry was found, skipping it's removal!");

@@ -10,7 +10,6 @@ import me.chriss99.spellbend.util.math.MathUtil;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -177,7 +176,7 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     }
 
     @Override
-    public void casterDeath(@Nullable Entity killer) {
+    public void casterDeath(@Nullable LivingEntity killer) {
         cancelSpell();
     }
 
