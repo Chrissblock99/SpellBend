@@ -8,7 +8,6 @@ import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -88,7 +87,10 @@ public class SpellHandler {
             return;
         }
 
-        getSpellInitializer(spellItem).cast();
+        SpellInitializer initializer = getSpellInitializer(spellItem).setSpellName(spellName);
+        if (spellType != null)
+            initializer.setSpellType(spellType);
+        initializer.cast();
     }
 
     public SpellInitializer getSpellInitializer(@NotNull ItemStack spellItem) {
@@ -145,57 +147,45 @@ public class SpellHandler {
 
     private class SpellInitializer {
         private final @NotNull ItemStack spellItem;
-        private final @NotNull SpellEnum spellEnum;
-        private @NotNull String spellType;
-        private int manaCost;
-        private @Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator;
+        private SpellEnum spellEnum = null;
+        private boolean spellEnumHasBeenSet = false;
+        private String spellType = null;
+        private boolean spellTypeHasBeenSet = false;
+        private int manaCost = 0;
+        private boolean manaCostHasBeenSet = false;
+        private @Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator = null;
+        private boolean validatorHasBeenSet = false;
 
         private EnumSet<IgnoreConditionFlag> ignoreConditionFlags = EnumSet.noneOf(IgnoreConditionFlag.class);
         private boolean valid = true;
 
         public SpellInitializer(@NotNull ItemStack spellItem) {
-            if (!ItemData.itemIsRegisteredSpell(spellItem)) {
-                Bukkit.getLogger().warning(spellItem + " is not a registered spell but was supposed to be cast by player " + player + "!");
-                valid = false;
-                //these are only here such that intelliJ doesn't complain
-                this.spellItem = new ItemStack(Material.AIR);
-                spellEnum = SpellEnum.MAGMA_BURST;
-                spellType = "";
-                return;
-            }
-
             this.spellItem = spellItem;
-            //noinspection DataFlowIssue cant be null as it only gets here if it is a spell
-            spellEnum = SpellEnum.spellEnumOf(ItemData.getSpellName(spellItem).toUpperCase());
+        }
 
-            String spellType = ItemData.getSpellType(spellItem);
-            if (spellType == null)
-                //noinspection DataFlowIssue
-                spellType = spellEnum.getSpellType();
-            this.spellType = spellType;
-
-            Integer manaCost = ItemData.getPersistentDataValue(spellItem, PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER);
-            if (manaCost == null)
-                //noinspection DataFlowIssue
-                manaCost = spellEnum.getManaCost();
-            this.manaCost = manaCost;
-
-            //noinspection DataFlowIssue
-            playerStateValidator = spellEnum.getPlayerStateValidator();
+        public SpellInitializer setSpellName(@NotNull String spellName) {
+            spellEnum = SpellEnum.spellEnumOf(spellName.toUpperCase());
+            if (spellEnum == null)
+                valid = false;
+            spellEnumHasBeenSet = true;
+            return this;
         }
 
         public SpellInitializer setSpellType(@NotNull String spellType) {
             this.spellType = spellType;
+            spellTypeHasBeenSet = true;
             return this;
         }
 
         public SpellInitializer setManaCost(int manaCost) {
             this.manaCost = manaCost;
+            manaCostHasBeenSet = true;
             return this;
         }
 
         public SpellInitializer setPlayerStateValidator(@Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator) {
             this.playerStateValidator = playerStateValidator;
+            validatorHasBeenSet = true;
             return this;
         }
 
@@ -204,14 +194,51 @@ public class SpellHandler {
             return this;
         }
 
+        private void addFallBackValues() {
+            if (!spellEnumHasBeenSet) {
+                String spellName = ItemData.getSpellName(spellItem);
+                if (spellName == null) {
+                    valid = false;
+                    return;
+                }
+
+                spellEnum = SpellEnum.spellEnumOf(spellName.toUpperCase());
+                if (spellEnum == null) {
+                    valid = false;
+                    return;
+                }
+            }
+
+            if (!spellTypeHasBeenSet) {
+                String spellType = ItemData.getSpellType(spellItem);
+                if (spellType == null)
+                    spellType = spellEnum.getSpellType();
+                this.spellType = spellType;
+            }
+
+            if (!manaCostHasBeenSet) {
+                Integer manaCost = ItemData.getPersistentDataValue(spellItem, PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER);
+                if (manaCost == null)
+                    manaCost = spellEnum.getManaCost();
+                this.manaCost = manaCost;
+            }
+
+            if (!validatorHasBeenSet)
+                playerStateValidator = spellEnum.getPlayerStateValidator();
+        }
+
         /**
          * Attempts to cast the spell
          *
          * @return If the spell was cast
          */
         public boolean cast() {
-            if (!valid)
+            addFallBackValues();
+            if (!valid) {
+                Bukkit.getLogger().warning(player + " was supposed to cast with an invalid Initializer!\n" + this);
                 return false;
+            }
+
             PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
             if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && sessionData.getCoolDowns().typeIsCooledDown(spellType) &&
                     !spellType.equals("NO_COOLDOWN"))
@@ -238,6 +265,23 @@ public class SpellHandler {
             if (!spell.spellEnded())
                 activeSpells.add(spell);
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "SpellInitializer{" +
+                    "spellItem=" + spellItem +
+                    ", spellEnum=" + spellEnum +
+                    ", spellEnumHasBeenSet=" + spellEnumHasBeenSet +
+                    ", spellType='" + spellType + '\'' +
+                    ", spellTypeHasBeenSet=" + spellTypeHasBeenSet +
+                    ", manaCost=" + manaCost +
+                    ", manaCostHasBeenSet=" + manaCostHasBeenSet +
+                    ", playerStateValidator=" + playerStateValidator +
+                    ", validatorHasBeenSet=" + validatorHasBeenSet +
+                    ", ignoreConditionFlags=" + ignoreConditionFlags +
+                    ", valid=" + valid +
+                    '}';
         }
     }
 }
