@@ -118,11 +118,10 @@ public class SpellHandler {
      * @param killer The Nullable entity which killed them
      */
     public void killPlayer(@Nullable Entity killer) {
-        for (Spell spell : activeSpells) {
+        for (Spell spell : activeSpells)
             if (spell instanceof Killable killable)
                 killable.casterDeath(killer);
-            spell.cancelSpell();
-        }
+            else spell.cancelSpell();
         activeSpells.clear();
     }
 
@@ -131,9 +130,8 @@ public class SpellHandler {
      * <b>This is only intended to be used if the player leaves the server.</b>
      */
     public void playerLeave() {
-        for (Spell spell : activeSpells) {
+        for (Spell spell : activeSpells)
             spell.casterLeave();
-        }
         activeSpells.clear();
     }
 
