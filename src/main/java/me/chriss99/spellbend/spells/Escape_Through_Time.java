@@ -120,9 +120,9 @@ public class Escape_Through_Time extends Spell implements Killable {
         for (Map.Entry<LivingEntity, Double> entry : players.entrySet()) {
             LivingEntity livingEntity = entry.getKey();
 
-            LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 3, item);
-            if (livingEntity instanceof Player player)
-                PlayerSessionData.getPlayerSession(player).getSpellHandler().stunPlayer(20);
+            LivingEntitySessionData sessionData = LivingEntitySessionData.getLivingEntitySession(livingEntity);
+            sessionData.getHealth().damageLivingEntity(caster, 3, item);
+            sessionData.stunEntity(20);
 
             world.spawnParticle(Particle.FLASH, livingEntity.getLocation(), 1, 0, 0, 0, 0);
             //player.moveUp(1);

@@ -142,9 +142,9 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                         livingEntity.setVelocity(livingEntity.getVelocity().add(new Vector(0, 0.5, 0)));
                     shockLivingEntity(livingEntity, 1);
 
-                    LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 2.5, item);
-                    if (livingEntity instanceof Player player)
-                        PlayerSessionData.getPlayerSession(player).getSpellHandler().stunPlayer(4);
+                    LivingEntitySessionData victimSession = LivingEntitySessionData.getLivingEntitySession(livingEntity);
+                    victimSession.getHealth().damageLivingEntity(caster, 2.5, item);
+                    victimSession.stunEntity(4);
                 }
 
                 if (time == 1) {
