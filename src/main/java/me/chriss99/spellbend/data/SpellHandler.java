@@ -8,17 +8,22 @@ import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SpellHandler {
+    private static final Map<FallingBlock, Consumer<EntityChangeBlockEvent>> fallingBlockHitGroundEventListeners = new HashMap<>();
+
     private final Player player;
     private final Set<Spell> activeSpells = new HashSet<>();
     private final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
@@ -26,6 +31,27 @@ public class SpellHandler {
     public SpellHandler(@NotNull Player player) {
         this.player = player;
     }
+
+    /**
+     * Adds a falling block to the fallingBlockHitGroundEventListeners
+     *
+     * @param fallingBlock The falling block to listen for
+     * @param listener The listener to execute
+     */
+    public static void registerFallingBlockHitGroundEventListener(@NotNull FallingBlock fallingBlock, @NotNull Consumer<EntityChangeBlockEvent> listener) {
+        fallingBlockHitGroundEventListeners.put(fallingBlock, listener);
+    }
+
+    public static void fallingBlockHitGround(@NotNull EntityChangeBlockEvent event) {
+        FallingBlock fallingBlock = (FallingBlock) event.getEntity();
+        Consumer<EntityChangeBlockEvent> listener = fallingBlockHitGroundEventListeners.get(fallingBlock);
+        if (listener == null)
+            return;
+
+        fallingBlockHitGroundEventListeners.remove(fallingBlock);
+        listener.accept(event);
+    }
+
 
     /**
      * Adds an item and runnable to the clickableSpellRunnables

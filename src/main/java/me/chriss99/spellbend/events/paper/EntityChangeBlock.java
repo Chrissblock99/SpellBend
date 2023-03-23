@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.events.paper;
 
 import me.chriss99.spellbend.SpellBend;
+import me.chriss99.spellbend.data.SpellHandler;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +14,9 @@ public class EntityChangeBlock implements Listener {
 
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-        if (event.getEntityType().equals(EntityType.FALLING_BLOCK))
+        if (event.getEntityType().equals(EntityType.FALLING_BLOCK)) {
             event.setCancelled(true);
+            SpellHandler.fallingBlockHitGround(event);
+        }
     }
 }
