@@ -7,6 +7,8 @@ import org.bukkit.block.data.BlockData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,9 +45,19 @@ public class BlockManager {
         block.setBlockData(blockOverride.getActiveBlockData(), false);
     }
 
+    public static void clearOverride(@NotNull Location location) {
+        BlockOverride override = blockOverrides.remove(location.getBlock());
+        if (override != null)
+            location.getBlock().setBlockData(override.getOriginal());
+    }
+
     public static void clearOverrides() {
         for (Map.Entry<Block, BlockOverride> override : blockOverrides.entrySet())
             override.getKey().setBlockData(override.getValue().getOriginal());
         blockOverrides.clear();
+    }
+
+    public static List<Map.Entry<Block, BlockOverride>> getOverrideView() {
+        return new LinkedList<>(blockOverrides.entrySet());
     }
 }

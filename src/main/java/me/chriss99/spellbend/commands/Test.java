@@ -6,10 +6,16 @@ import me.chriss99.spellbend.harddata.Action;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.harddata.Currency;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
+import me.chriss99.spellbend.manager.BlockManager;
+import me.chriss99.spellbend.manager.BlockOverride;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.ItemData;
 import me.chriss99.spellbend.util.LivingEntityUtil;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -18,12 +24,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
+import java.util.*;
 
 public class Test extends ReflectiveCommandBase {
+    private static final MiniMessage miniMessage = SpellBend.getMiniMessage();
+
     public Test() {
         super("test", "test command for testing test stuff", new ArrayList<>());
     }
@@ -45,14 +50,48 @@ public class Test extends ReflectiveCommandBase {
 
     @ReflectCommand(path = "memory spell")
     public void memory_spell(CommandSender commandSender, Player player) {
-        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Spells:"));
+        commandSender.sendMessage(miniMessage.deserialize("Spells:"));
         Set<Spell> playerSpells = PlayerSessionData.getPlayerSession(player).getSpellHandler().getActivePlayerSpells();
         if (playerSpells.size() == 0) {
-            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
+            commandSender.sendMessage(miniMessage.deserialize("none"));
             return;
         }
         for (Spell spell : playerSpells)
-            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(spell.getClass().getName()));
+            commandSender.sendMessage(miniMessage.deserialize(spell.getClass().getName()));
+    }
+
+    @ReflectCommand(path = "memory block")
+    public void memory_block(CommandSender commandSender) {
+        commandSender.sendMessage(miniMessage.deserialize("Block overrides:"));
+        List<Map.Entry<Block, BlockOverride>> blockOverrides = BlockManager.getOverrideView();
+        if (blockOverrides.size() == 0) {
+            commandSender.sendMessage(miniMessage.deserialize("none"));
+            return;
+        }
+
+        for (Map.Entry<Block, BlockOverride> overrideEntry : blockOverrides) {
+            Location location = overrideEntry.getKey().getLocation();
+            commandSender.sendMessage(miniMessage.deserialize("Location: " + location.getX() + " " + location.getY() + " " + location.getZ() +
+                    "\nMaterial: " + overrideEntry.getKey().getType() +
+                    "\nOriginal: " + overrideEntry.getValue().getOriginal().getMaterial() +
+                    "\n  Overrides: " + Arrays.toString(overrideEntry.getValue().getOverridesView().stream().map(BlockData::getMaterial).toArray())));
+        }
+    }
+
+    @ReflectCommand(path = "memory block remove")
+    public void memory_block_remove(Player commandSender) {
+        Block targetBlock = commandSender.getTargetBlock(4);
+        if (targetBlock == null) {
+            commandSender.sendMessage(miniMessage.deserialize("<red>Your not facing a block!"));
+            return;
+        }
+
+        BlockManager.clearOverride(targetBlock.getLocation());
+    }
+
+    @ReflectCommand(path = "memory block removeExact")
+    public void memory_block_removeExact(Player commandSender) {
+        BlockManager.clearOverride(commandSender.getLocation());
     }
 
     @ReflectCommand(path = "memory tasks")
