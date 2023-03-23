@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.data.CoolDowns;
 import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
@@ -21,29 +20,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
 
-public class Ember_Blast extends Spell { //TODO this
+public class Ember_Blast extends Spell {
     private BukkitTask windupTask;
-    private final Spell instance;
-    private final CoolDowns coolDowns;
     private Fireball fireball;
 
-    public static void register() {
-        SpellHandler.registerSpell("ember_blast", 35, new SpellSubClassBuilder() {
-            @Override
-            public Spell createSpell(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-                return new Ember_Blast(caster, spellType, item);
-            }
-        });
-    }
-
-    public Ember_Blast(@NotNull Player caster, @Nullable String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, "BLAST", item);
-        instance = this;
-        coolDowns = PlayerSessionData.getPlayerSession(caster).getCoolDowns();
-        coolDowns.setCoolDown(super.spellType, new float[]{2, 0, 0, 0});
+    public Ember_Blast(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{2, 0, 0, 0}));
         windup();
     }
 
@@ -100,8 +84,6 @@ public class Ember_Blast extends Spell { //TODO this
     private void activate() {
         fireball = caster.getWorld().spawn(caster.getEyeLocation().add(caster.getEyeLocation().getDirection()), Fireball.class, (projectile) -> projectile.setVelocity(caster.getEyeLocation().getDirection()),CreatureSpawnEvent.SpawnReason.CUSTOM);
         SpellHandler.addProjectileConsumer(fireball, this::fireBallHit);
-
-        naturalSpellEnd(); //TODO execute this when the fireball existence time limit has run out (which we define for the sake of cooldowns)
     }
 
     private void fireBallHit(@NotNull ProjectileHitEvent event) {
