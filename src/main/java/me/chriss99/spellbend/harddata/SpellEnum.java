@@ -286,6 +286,7 @@ public enum SpellEnum {
             "<yellow>damage <gold>to oblivious",
             "<gold>bypassers."),
     BLAST_OFF(Material.PISTON, "Blast off", "gold", "AREA_OF_EFFECT", 900, 30, Test_Spell::new,
+            Seismic_Shock::validatePlayerState, null,
             "<gold>User <yellow>soars into the air",
             "<gold>out of combat, <yellow>flinging nearby",
             "<yellow>enemies <gold>and dealing <yellow>medium",
