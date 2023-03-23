@@ -188,7 +188,8 @@ public class Test extends ReflectiveCommandBase {
             }
             for (Map.Entry<String, CoolDownEntry> entry : entries) {
                 CoolDownEntry coolDownEntry = entry.getValue();
-                commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType()));
+                commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " +
+                        coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType()));
             }
             return;
         }
@@ -241,7 +242,7 @@ public class Test extends ReflectiveCommandBase {
 
     @ReflectCommand(path = "value entity set isSpellAffectAble")
     public void value_entity_set_isSpellAffectAble(Player commandSender, boolean affectAble) {
-        Entity targetEntity = commandSender.getTargetEntity(2);
+        Entity targetEntity = commandSender.getTargetEntity(4);
         if (!(targetEntity instanceof LivingEntity livingEntity)) {
             commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>Targeted entity is not a livingEntity!"));
             return;
@@ -252,7 +253,7 @@ public class Test extends ReflectiveCommandBase {
 
     @ReflectCommand(path = "value entity get isSpellAffectAble")
     public void value_entity_get_isSpellAffectAble(Player commandSender) {
-        Entity targetEntity = commandSender.getTargetEntity(2);
+        Entity targetEntity = commandSender.getTargetEntity(4);
         if (!(targetEntity instanceof LivingEntity livingEntity)) {
             commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("<red>Targeted entity is not a livingEntity!"));
             return;
