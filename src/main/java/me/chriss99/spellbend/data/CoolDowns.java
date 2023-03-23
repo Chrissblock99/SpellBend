@@ -153,14 +153,9 @@ public class CoolDowns {
         return coolDowns.get(spellType);
     }
 
-    /**
-     * @return The coolDown Map
-     * @deprecated gives too much access
-     */
-    @Deprecated
-    public Map<String, CoolDownEntry> getCoolDowns() {
+    public List<Map.Entry<String, CoolDownEntry>> getCoolDownsView() {
         removeExpiredCoolDowns();
-        return coolDowns;
+        return new LinkedList<>(coolDowns.entrySet());
     }
 
     public Player getPlayer() {

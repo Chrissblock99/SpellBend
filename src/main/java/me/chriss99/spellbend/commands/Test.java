@@ -181,12 +181,12 @@ public class Test extends ReflectiveCommandBase {
 
         if (spellType.equals("ALL")) {
             commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("active CoolDowns of " + player.getName() + ":"));
-            Set<Map.Entry<String, CoolDownEntry>> entrySet = coolDowns.getCoolDowns().entrySet();
-            if (entrySet.size() == 0) {
+            List<Map.Entry<String, CoolDownEntry>> entries = coolDowns.getCoolDownsView();
+            if (entries.size() == 0) {
                 commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
                 return;
             }
-            for (Map.Entry<String, CoolDownEntry> entry : entrySet) {
+            for (Map.Entry<String, CoolDownEntry> entry : entries) {
                 CoolDownEntry coolDownEntry = entry.getValue();
                 commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(entry.getKey() + ": " + coolDownEntry.getRemainingCoolDownTimeInS() + ", " + coolDownEntry.getTimeInS() + ", " + coolDownEntry.getSpellType()));
             }
