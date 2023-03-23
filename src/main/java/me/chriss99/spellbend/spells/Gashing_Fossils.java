@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -189,10 +190,10 @@ public class Gashing_Fossils extends Spell {
         }.runTaskTimer(plugin, 1, 3);
     }
 
-    /*public void casterDeath(@Nullable LivingEntity killer) {
+    public void casterDeath(@Nullable LivingEntity killer) {
         coolDown.skipToStage(CoolDownStage.COOLDOWN);
         naturalSpellEnd();
-    }*/
+    }
 
     public void casterStun(int timeInTicks) {
         coolDown.skipToStage(CoolDownStage.COOLDOWN);
