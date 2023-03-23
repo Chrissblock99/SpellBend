@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.chriss99</groupId>
-    <artifactId>spellbend</artifactId>
+    <artifactId>SpellBend</artifactId>
     <version>0.10-SNAPSHOT</version>
     <packaging>jar</packaging>
 
