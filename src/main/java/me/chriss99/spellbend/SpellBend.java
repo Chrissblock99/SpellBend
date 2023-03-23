@@ -53,6 +53,7 @@ public final class SpellBend extends JavaPlugin {
         new PlayerInteractBlock();
         new PlayerInteractEntity();
         new PlayerInteractAtEntity();
+        new EntityChangeBlock();
         new PlayerJoin();
         new PlayerQuit();
         new FoodLevelChange();
