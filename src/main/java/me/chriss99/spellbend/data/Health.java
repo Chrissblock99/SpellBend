@@ -155,7 +155,10 @@ public class Health {
      * @param killer The entity that killed them
      * @param item The item used
      */
-    public void onPlayerDeath(@Nullable Entity killer, @Nullable ItemStack item) {
+    public void onPlayerDeath(@Nullable LivingEntity killer, @Nullable ItemStack item) {
+        if (LivingEntitySessionData.getLivingEntitySession(livingEntity) instanceof PlayerSessionData playerSessionData)
+            playerSessionData.getSpellHandler().killPlayer(killer);
+
         //TODO use LuckPerms here ALSO implement cosmetics at some point
         StringBuilder messageBuilder = new StringBuilder("<dark_grey>[<red>☠<dark_grey>] <yellow><bold>" + livingEntity.getName() + "<reset><red>");
         switch ((killer != null) + "-" + (item != null)) {

@@ -7,17 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class Ember_Blast extends Spell { //TODO this
     public Ember_Blast(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item);
-        PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{0, 0, 0, 0});
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0, 0, 0, 0}));
+        naturalSpellEnd();
     }
 
     @Override
-    public void casterLeave() {
-
-    }
-
-    @Override
-    public void cancelSpell() {
-
-    }
+    public void cancelSpell() {}
 }

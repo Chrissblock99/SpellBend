@@ -1,15 +1,19 @@
 package me.chriss99.spellbend.spells;
 
+import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.harddata.CoolDownStage;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class Spell {
     protected final Player caster;
     protected final String spellType;
     protected final ItemStack item;
-    
+    protected final CoolDownEntry coolDown;
     private boolean spellEnded = false;
 
     /**
@@ -17,10 +21,11 @@ public abstract class Spell {
      * @param spellType The spellType the spell is cast as
      * @param item The item used (name will appear in kill message)
      */
-    public Spell(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
+    public Spell(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item, @NotNull CoolDownEntry coolDown) {
         this.caster = caster;
         this.spellType = spellType;
         this.item = item;
+        this.coolDown = coolDown;
     }
 
     /**
@@ -48,6 +53,22 @@ public abstract class Spell {
         return spellEnded;
     }
 
-    public abstract void casterLeave();
+    public void casterDeath(@Nullable LivingEntity killer) {
+        coolDown.skipToStage(CoolDownStage.COOLDOWN);
+        cancelSpell();
+        naturalSpellEnd();
+    }
+
+    public void casterLeave() {
+        coolDown.transformToStage(CoolDownStage.COOLDOWN);
+        cancelSpell();
+    }
+
+    public void casterStun(int timeInTicks) {
+        coolDown.skipToStage(CoolDownStage.COOLDOWN);
+        cancelSpell();
+        naturalSpellEnd();
+    }
+
     public abstract void cancelSpell();
 }

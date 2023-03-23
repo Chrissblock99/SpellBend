@@ -10,7 +10,6 @@ import me.chriss99.spellbend.util.math.MathUtil;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class Seismic_Shock extends Spell implements Killable, Stunable {
+public class Seismic_Shock extends Spell {
     public static final Vector[] ring1 = createRing1();
     public static final Vector[] ring2 = createRing2();
     public static final Vector[] ring3 = createRing3();
@@ -41,9 +40,8 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
     }
 
     public Seismic_Shock(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item);
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.5f, 1.5f, 0.25f, 10}));
         sessionData = PlayerSessionData.getPlayerSession(caster);
-        sessionData.getCoolDowns().setCoolDown(super.spellType, new float[]{0.5f, 1.5f, 0.25f, 10});
         sessionData.getIsMovementStunned().displaceValue(1);
 
         stunUndoTask = new BukkitRunnable(){
@@ -142,9 +140,9 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                         livingEntity.setVelocity(livingEntity.getVelocity().add(new Vector(0, 0.5, 0)));
                     shockLivingEntity(livingEntity, 1);
 
-                    LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 2.5, item);
-                    if (livingEntity instanceof Player player)
-                        PlayerSessionData.getPlayerSession(player).getSpellHandler().stunPlayer(4);
+                    LivingEntitySessionData victimSession = LivingEntitySessionData.getLivingEntitySession(livingEntity);
+                    victimSession.getHealth().damageLivingEntity(caster, 2.5, item);
+                    victimSession.stunEntity(4);
                 }
 
                 if (time == 1) {
@@ -155,11 +153,6 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
                 time--;
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 2);
-    }
-
-    @Override
-    public void casterLeave() {
-        cancelSpell();
     }
 
     @Override
@@ -174,16 +167,6 @@ public class Seismic_Shock extends Spell implements Killable, Stunable {
         if (activeTask != null) {
             activeTask.cancel();
         }
-    }
-
-    @Override
-    public void casterDeath(@Nullable Entity killer) {
-        cancelSpell();
-    }
-
-    @Override
-    public void casterStun(int timeInTicks) {
-        cancelSpell();
     }
 
     public static void shockLivingEntity(@NotNull LivingEntity livingEntity, int timeIn2ticks) {

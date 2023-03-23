@@ -9,6 +9,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -16,10 +18,12 @@ import java.util.Map;
 import java.util.Objects;
 
 public class LivingEntitySessionData {
+    private static final SpellBend plugin = SpellBend.getInstance();
     protected static final Gson gson = SpellBend.getGson();
     private static final Map<LivingEntity, LivingEntitySessionData> livingEntitySessions = new HashMap<>();
 
     private final LivingEntity livingEntity;
+    private BukkitTask stunReverseTask = null;
 
     private final MultiValueTracker jumpEffect;
     private final ValueTracker isInvisible;
@@ -129,6 +133,24 @@ public class LivingEntitySessionData {
         health = new Health(livingEntity);
 
         isMovementStunned = new IsMovementStunned(livingEntity, walkSpeedModifiers, jumpEffect);
+    }
+
+    public void stunEntity(int timeInTicks) {
+        if (stunReverseTask != null)
+            stunReverseTask.cancel();
+        else isMovementStunned.displaceValue(1);
+
+        stunReverseTask = new BukkitRunnable(){
+            @Override
+            public void run() {
+                stunReverseTask = null;
+                isMovementStunned.displaceValue(-1);
+            }
+        }.runTaskLater(plugin, timeInTicks);
+    }
+
+    public boolean isStunned() {
+        return stunReverseTask != null;
     }
 
     public LivingEntity getLivingEntity() {

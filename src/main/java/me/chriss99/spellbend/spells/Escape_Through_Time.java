@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.SpellBend;
-import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
@@ -12,7 +11,6 @@ import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.sound.SoundStop;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,20 +19,17 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class Escape_Through_Time extends Spell implements Killable {
+public class Escape_Through_Time extends Spell {
     private final Location armorStandOrigin;
     private BukkitTask armorStandTask;
     private BukkitTask escapeTask;
-    private final CoolDownEntry coolDown;
     private ArmorStand armorStand;
     private final SpellHandler spellHandler;
     public Escape_Through_Time(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item);
-        coolDown = PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(super.spellType, new float[]{0, 0, 15, 5});
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0, 0, 15, 5}));
         armorStandOrigin = caster.getLocation();
         setupArmorStand();
         spellHandler = PlayerSessionData.getPlayerSession(caster).getSpellHandler();
@@ -120,9 +115,9 @@ public class Escape_Through_Time extends Spell implements Killable {
         for (Map.Entry<LivingEntity, Double> entry : players.entrySet()) {
             LivingEntity livingEntity = entry.getKey();
 
-            LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 3, item);
-            if (livingEntity instanceof Player player)
-                PlayerSessionData.getPlayerSession(player).getSpellHandler().stunPlayer(20);
+            LivingEntitySessionData sessionData = LivingEntitySessionData.getLivingEntitySession(livingEntity);
+            sessionData.getHealth().damageLivingEntity(caster, 3, item);
+            sessionData.stunEntity(20);
 
             world.spawnParticle(Particle.FLASH, livingEntity.getLocation(), 1, 0, 0, 0, 0);
             //player.moveUp(1);
@@ -136,24 +131,17 @@ public class Escape_Through_Time extends Spell implements Killable {
     }
 
     @Override
-    public void casterDeath(@Nullable Entity Killer) {
+    public void casterLeave() {
+        coolDown.skipToStage(CoolDownStage.COOLDOWN);
         cancelSpell();
     }
 
     @Override
-    public void casterLeave() {
-        cancelSpell();
-    }
+    public void casterStun(int timeInTicks) {}
 
     @Override
     public void cancelSpell() {
-        if (coolDown != null)
-            coolDown.skipToStage(CoolDownStage.COOLDOWN);
-            //only needed for extreme edge cases that currently (25.12.2022) never happen in the code
-        else Bukkit.getLogger().warning(caster.getName() + " had Escape Through Time Active but no corresponding CoolDown of type " + spellType + " was found!");
-
         spellHandler.removeClickableSpellRunnable(item);
-        armorStand.remove();
         armorStandTask.cancel();
         if (escapeTask != null)
             escapeTask.cancel();

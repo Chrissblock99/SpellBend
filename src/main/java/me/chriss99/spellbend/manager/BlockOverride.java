@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class BlockOverride {
     private final BlockData original;
@@ -49,5 +50,10 @@ public class BlockOverride {
         if (active == null)
             active = original;
         return active;
+    }
+
+    public List<BlockData> getOverridesView() {
+        //noinspection unchecked
+        return (List<BlockData>) overrides.clone();
     }
 }

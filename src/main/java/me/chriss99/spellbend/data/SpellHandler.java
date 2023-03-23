@@ -8,30 +8,50 @@ import me.chriss99.spellbend.util.ItemData;
 import net.kyori.adventure.text.Component;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SpellHandler {
-    private static final SpellBend plugin = SpellBend.getInstance();
+    private static final Map<FallingBlock, Consumer<EntityChangeBlockEvent>> fallingBlockHitGroundEventListeners = new HashMap<>();
 
     private final Player player;
     private final Set<Spell> activeSpells = new HashSet<>();
     private final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
-    private BukkitTask stunReverseTask = null;
 
     public SpellHandler(@NotNull Player player) {
         this.player = player;
     }
+
+    /**
+     * Adds a falling block to the fallingBlockHitGroundEventListeners
+     *
+     * @param fallingBlock The falling block to listen for
+     * @param listener The listener to execute
+     */
+    public static void registerFallingBlockHitGroundEventListener(@NotNull FallingBlock fallingBlock, @NotNull Consumer<EntityChangeBlockEvent> listener) {
+        fallingBlockHitGroundEventListeners.put(fallingBlock, listener);
+    }
+
+    public static void fallingBlockHitGround(@NotNull EntityChangeBlockEvent event) {
+        FallingBlock fallingBlock = (FallingBlock) event.getEntity();
+        Consumer<EntityChangeBlockEvent> listener = fallingBlockHitGroundEventListeners.get(fallingBlock);
+        if (listener == null)
+            return;
+
+        fallingBlockHitGroundEventListeners.remove(fallingBlock);
+        listener.accept(event);
+    }
+
 
     /**
      * Adds an item and runnable to the clickableSpellRunnables
@@ -93,7 +113,10 @@ public class SpellHandler {
             return;
         }
 
-        getSpellInitializer(spellItem).cast();
+        SpellInitializer initializer = getSpellInitializer(spellItem).setSpellName(spellName);
+        if (spellType != null)
+            initializer.setSpellType(spellType);
+        initializer.cast();
     }
 
     public SpellInitializer getSpellInitializer(@NotNull ItemStack spellItem) {
@@ -110,23 +133,8 @@ public class SpellHandler {
      * @param timeInTicks The time to stun for
      */
     public void stunPlayer(int timeInTicks) {
-        ValueTracker isMovementStunned = PlayerSessionData.getPlayerSession(player).getIsMovementStunned();
-
-        if (stunReverseTask != null)
-            stunReverseTask.cancel();
-        else isMovementStunned.displaceValue(1);
-
-        stunReverseTask = new BukkitRunnable(){
-            @Override
-            public void run() {
-                stunReverseTask = null;
-                isMovementStunned.displaceValue(-1);
-            }
-        }.runTaskLater(plugin, timeInTicks);
-
-        for (Spell spell : activeSpells)
-            if (spell instanceof Stunable stunable)
-                stunable.casterStun(timeInTicks);
+        for (Spell spell : new HashSet<>(activeSpells))
+            spell.casterStun(timeInTicks);
     }
 
     /**
@@ -134,13 +142,9 @@ public class SpellHandler {
      *
      * @param killer The Nullable entity which killed them
      */
-    public void killPlayer(@Nullable Entity killer) {
-        for (Spell spell : activeSpells) {
-            if (spell instanceof Killable killable)
-                killable.casterDeath(killer);
-            spell.cancelSpell();
-        }
-        activeSpells.clear();
+    public void killPlayer(@Nullable LivingEntity killer) {
+        for (Spell spell : new HashSet<>(activeSpells))
+            spell.casterDeath(killer);
     }
 
     /**
@@ -148,14 +152,9 @@ public class SpellHandler {
      * <b>This is only intended to be used if the player leaves the server.</b>
      */
     public void playerLeave() {
-        for (Spell spell : activeSpells) {
+        for (Spell spell : activeSpells)
             spell.casterLeave();
-        }
         activeSpells.clear();
-    }
-
-    public boolean isStunned() {
-        return stunReverseTask != null;
     }
 
 
@@ -168,57 +167,45 @@ public class SpellHandler {
 
     private class SpellInitializer {
         private final @NotNull ItemStack spellItem;
-        private final @NotNull SpellEnum spellEnum;
-        private @NotNull String spellType;
-        private int manaCost;
-        private @Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator;
+        private SpellEnum spellEnum = null;
+        private boolean spellEnumHasBeenSet = false;
+        private String spellType = null;
+        private boolean spellTypeHasBeenSet = false;
+        private int manaCost = 0;
+        private boolean manaCostHasBeenSet = false;
+        private @Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator = null;
+        private boolean validatorHasBeenSet = false;
 
         private EnumSet<IgnoreConditionFlag> ignoreConditionFlags = EnumSet.noneOf(IgnoreConditionFlag.class);
         private boolean valid = true;
 
         public SpellInitializer(@NotNull ItemStack spellItem) {
-            if (!ItemData.itemIsRegisteredSpell(spellItem)) {
-                Bukkit.getLogger().warning(spellItem + " is not a registered spell but was supposed to be cast by player " + player + "!");
-                valid = false;
-                //these are only here such that intelliJ doesn't complain
-                this.spellItem = new ItemStack(Material.AIR);
-                spellEnum = SpellEnum.MAGMA_BURST;
-                spellType = "";
-                return;
-            }
-
             this.spellItem = spellItem;
-            //noinspection DataFlowIssue cant be null as it only gets here if it is a spell
-            spellEnum = SpellEnum.spellEnumOf(ItemData.getSpellName(spellItem).toUpperCase());
+        }
 
-            String spellType = ItemData.getSpellType(spellItem);
-            if (spellType == null)
-                //noinspection DataFlowIssue
-                spellType = spellEnum.getSpellType();
-            this.spellType = spellType;
-
-            Integer manaCost = ItemData.getPersistentDataValue(spellItem, PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER);
-            if (manaCost == null)
-                //noinspection DataFlowIssue
-                manaCost = spellEnum.getManaCost();
-            this.manaCost = manaCost;
-
-            //noinspection DataFlowIssue
-            playerStateValidator = spellEnum.getPlayerStateValidator();
+        public SpellInitializer setSpellName(@NotNull String spellName) {
+            spellEnum = SpellEnum.spellEnumOf(spellName.toUpperCase());
+            if (spellEnum == null)
+                valid = false;
+            spellEnumHasBeenSet = true;
+            return this;
         }
 
         public SpellInitializer setSpellType(@NotNull String spellType) {
             this.spellType = spellType;
+            spellTypeHasBeenSet = true;
             return this;
         }
 
         public SpellInitializer setManaCost(int manaCost) {
             this.manaCost = manaCost;
+            manaCostHasBeenSet = true;
             return this;
         }
 
         public SpellInitializer setPlayerStateValidator(@Nullable Function<@NotNull Player, @Nullable Component> playerStateValidator) {
             this.playerStateValidator = playerStateValidator;
+            validatorHasBeenSet = true;
             return this;
         }
 
@@ -227,21 +214,57 @@ public class SpellHandler {
             return this;
         }
 
+        private void addFallBackValues() {
+            if (!spellEnumHasBeenSet) {
+                String spellName = ItemData.getSpellName(spellItem);
+                if (spellName == null) {
+                    valid = false;
+                    return;
+                }
+
+                spellEnum = SpellEnum.spellEnumOf(spellName.toUpperCase());
+                if (spellEnum == null) {
+                    valid = false;
+                    return;
+                }
+            }
+
+            if (!spellTypeHasBeenSet) {
+                String spellType = ItemData.getSpellType(spellItem);
+                if (spellType == null)
+                    spellType = spellEnum.getSpellType();
+                this.spellType = spellType;
+            }
+
+            if (!manaCostHasBeenSet) {
+                Integer manaCost = ItemData.getPersistentDataValue(spellItem, PersistentDataKeys.MANA_COST_KEY, PersistentDataType.INTEGER);
+                if (manaCost == null)
+                    manaCost = spellEnum.getManaCost();
+                this.manaCost = manaCost;
+            }
+
+            if (!validatorHasBeenSet)
+                playerStateValidator = spellEnum.getPlayerStateValidator();
+        }
+
         /**
          * Attempts to cast the spell
          *
          * @return If the spell was cast
          */
         public boolean cast() {
-            if (!valid)
+            addFallBackValues();
+            if (!valid) {
+                Bukkit.getLogger().warning(player + " was supposed to cast with an invalid Initializer!\n" + this);
                 return false;
-            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(spellType) &&
-                    !spellType.equals("NO_COOLDOWN"))
-                return false;
-            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.STUN) && isStunned())
-                return false;
+            }
 
             PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.COOLDOWN) && sessionData.getCoolDowns().typeIsCooledDown(spellType) &&
+                    !spellType.equals("NO_COOLDOWN"))
+                return false;
+            if (!ignoreConditionFlags.contains(IgnoreConditionFlag.STUN) && sessionData.isStunned())
+                return false;
 
             CurrencyTracker mana = sessionData.getMana();
             if (!ignoreConditionFlags.contains(IgnoreConditionFlag.MANA) && mana.getCurrency() < manaCost) {
@@ -262,6 +285,23 @@ public class SpellHandler {
             if (!spell.spellEnded())
                 activeSpells.add(spell);
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "SpellInitializer{" +
+                    "spellItem=" + spellItem +
+                    ", spellEnum=" + spellEnum +
+                    ", spellEnumHasBeenSet=" + spellEnumHasBeenSet +
+                    ", spellType='" + spellType + '\'' +
+                    ", spellTypeHasBeenSet=" + spellTypeHasBeenSet +
+                    ", manaCost=" + manaCost +
+                    ", manaCostHasBeenSet=" + manaCostHasBeenSet +
+                    ", playerStateValidator=" + playerStateValidator +
+                    ", validatorHasBeenSet=" + validatorHasBeenSet +
+                    ", ignoreConditionFlags=" + ignoreConditionFlags +
+                    ", valid=" + valid +
+                    '}';
         }
     }
 }

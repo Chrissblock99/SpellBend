@@ -128,6 +128,12 @@ public class PlayerSessionData extends LivingEntitySessionData {
         coolDowns = new CoolDowns(player);
     }
 
+    @Override
+    public void stunEntity(int timeInTicks) {
+        super.stunEntity(timeInTicks);
+        spellHandler.stunPlayer(timeInTicks);
+    }
+
     public Player getPlayer() {
         return player;
     }
