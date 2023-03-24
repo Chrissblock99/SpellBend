@@ -118,7 +118,7 @@ public enum SpellEnum {
             "<gold>User <yellow>strikes lightning",
             "<gold>through a <yellow>lightspeed blast<gold>,",
             "<gold>dealing <yellow>medium damage<gold>."),
-    FLASH(Material.TIPPED_ARROW, "Flash", "aqua", "TRANSPORT", 200, 10, Test_Spell::new, null,
+    FLASH(Material.TIPPED_ARROW, "Flash", "aqua", "TRANSPORT", 200, 10, Flash::new, null,
             (item) -> {
                     PotionMeta meta = (PotionMeta) item.getItemMeta();
                     meta.setColor(Color.fromRGB(126, 178, 202));
