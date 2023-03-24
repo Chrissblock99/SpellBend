@@ -125,6 +125,34 @@ public class LivingEntityUtil {
     }
 
     /**
+     * Checks if the bounding box overlaps any blocks in the world
+     *
+     * @param world The world to check in
+     * @param boundingBox The box to check for
+     * @return If it overlaps
+     */
+    public static boolean BoundingBoxOverlapsBlocks(@NotNull World world, @NotNull BoundingBox boundingBox) {
+        List<BoundingBox> nearBoxes = new LinkedList<>();
+        int maxX = (int) Math.ceil(boundingBox.getMaxX());
+        int maxY = (int) Math.ceil(boundingBox.getMaxY());
+        int maxZ = (int) Math.ceil(boundingBox.getMaxZ());
+
+        for (int x = (int) Math.floor(boundingBox.getMinX()); x <= maxX; x++)
+            for (int y = (int) Math.floor(boundingBox.getMinY()); y <= maxY; y++)
+                for (int z = (int) Math.floor(boundingBox.getMinZ()); z <= maxZ; z++) {
+                    Vector position = new Vector(x, y, z);
+
+                    nearBoxes.addAll(world.getBlockAt(position.toLocation(world).toBlockLocation()).getCollisionShape().getBoundingBoxes().stream()
+                            .peek(a -> a.shift(position)).toList());
+                }
+
+        for (BoundingBox box : nearBoxes)
+            if (box.overlaps(boundingBox))
+                return true;
+        return false;
+    }
+
+    /**
      * Checks if the entity has the spellAffectAbleKey
      *
      * @param entity The entity to check for
