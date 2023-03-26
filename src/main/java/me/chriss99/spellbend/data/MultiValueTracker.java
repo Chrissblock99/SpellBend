@@ -16,7 +16,7 @@ public class MultiValueTracker {
     private final NamespacedKey key;
     private final List<Integer> values;
 
-        public MultiValueTracker(@NotNull LivingEntity livingEntity, @NotNull NamespacedKey key, @NotNull String name, int[] defaultArray) {
+    public MultiValueTracker(@NotNull LivingEntity livingEntity, @NotNull NamespacedKey key, @NotNull String name, int[] defaultArray) {
         this.livingEntity = livingEntity;
         this.key = key;
 
