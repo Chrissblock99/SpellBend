@@ -94,6 +94,11 @@ public class Test extends ReflectiveCommandBase {
         BlockManager.clearOverride(commandSender.getLocation());
     }
 
+    @ReflectCommand(path = "memory block clear")
+    public void memory_block_clear() {
+        BlockManager.clearOverrides();
+    }
+
     @ReflectCommand(path = "memory tasks")
     public void memory_tasks(CommandSender commandSender, String filter) {
         boolean filtering = !filter.equalsIgnoreCase("all");
