@@ -6,7 +6,7 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
-import org.bukkit.Bukkit;
+import me.chriss99.spellbend.util.math.RotationUtil;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
@@ -20,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaterniond;
 
 public class Ember_Blast extends Spell {
     private BukkitTask windupTask;
@@ -59,15 +58,9 @@ public class Ember_Blast extends Spell {
 
 
                     double radians = time * MathUtil.DEGTORAD;
-                    Location location = caster.getEyeLocation();
-                    Bukkit.getLogger().info(location.toString());
-                    Quaterniond quaternion = new Quaterniond(Math.cos(radians) * 1.25, Math.sin(radians) * 1.25, 0, 0);
-                    Bukkit.getLogger().info(quaternion.toString());
-                    quaternion.mul(new Quaterniond().rotationY(location.getYaw()*MathUtil.DEGTORAD)).mul(new Quaterniond().rotationX(location.getPitch()*MathUtil.DEGTORAD));
-                    Bukkit.getLogger().info(quaternion.toString());
+                    Location location = caster.getEyeLocation().clone();
 
-                    location.add(new Vector(quaternion.x, quaternion.y, quaternion.z));
-                    Bukkit.getLogger().info(location.toString());
+                    location.add(RotationUtil.rotateVectorAroundLocationRotation(new Vector(Math.cos(radians) * 1.25, Math.sin(radians) * 1.25, 1), location));
                     caster.getWorld().spawnParticle(Particle.FLAME, location, 1, 0.02, 0.02, 0.02, 0);
 
                     time += 6;
