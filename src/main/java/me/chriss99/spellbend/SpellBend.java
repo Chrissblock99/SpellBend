@@ -60,6 +60,7 @@ public final class SpellBend extends JavaPlugin {
         new PlayerSwitchHeldItem();
         new InventoryClick();
         new InventoryDrag();
+        new ProjectileHit();
     }
 
     private static void registerAllPacketListeners() {
