@@ -38,10 +38,10 @@ public class Ember_Blast extends Spell {
             @Override
             public void run() {
                 for (int i = 0;i<48;i++) {
-                    double radians = time * MathUtil.DEGTORAD;
+                    double radians = -time * MathUtil.DEGTORAD;
                     Location location = caster.getEyeLocation().clone();
 
-                    location.add(RotationUtil.rotateVectorAroundLocationRotation(new Vector(Math.cos(radians) * 1.25, Math.sin(radians) * 1.25, 1), location));
+                    location.add(RotationUtil.rotateVectorAroundLocationRotation(new Vector(Math.cos(radians) * -1.25, Math.sin(radians) * 1.25, 1), location));
                     world.spawnParticle(Particle.FLAME, location, 1, 0.02, 0.02, 0.02, 0);
 
                     time++;
