@@ -77,13 +77,14 @@ public class SpellHandler {
     /**
      * Runs the projectileHitEventConsumer of the given projectile if present
      *
-     * @param projectileHitEvent The projectile to trigger for
+     * @param projectileHitEvent The projectileEvent to trigger for
      */
     public static void projectileHit(@NotNull ProjectileHitEvent projectileHitEvent) {
         Consumer<ProjectileHitEvent> projectileConsumer = projectileHitEventConsumers.get(projectileHitEvent.getEntity());
         if (projectileConsumer == null)
             return;
 
+        projectileHitEvent.setCancelled(true);
         projectileConsumer.accept(projectileHitEvent);
     }
 
