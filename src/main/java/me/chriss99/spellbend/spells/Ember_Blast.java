@@ -149,7 +149,7 @@ public class Ember_Blast extends Spell {
 
     @Override
     public void casterDeath(@Nullable LivingEntity killer) {
-        if (!coolDown.getCoolDownStage().equals(CoolDownStage.ACTIVE))
+        if (!coolDown.getCoolDownStage().equals(CoolDownStage.PASSIVE))
             super.casterDeath(killer);
     }
 
