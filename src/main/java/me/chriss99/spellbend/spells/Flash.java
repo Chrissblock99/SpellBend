@@ -1,10 +1,8 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
-import me.chriss99.spellbend.util.LivingEntityUtil;
-import me.chriss99.spellbend.util.ParticleUtil;
+import me.chriss99.spellbend.util.math.RotationUtil;
 import org.bukkit.*;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
@@ -15,56 +13,53 @@ public class Flash extends Spell {
     public Flash(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
         super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0, 0, 0, 5}));
 
-        RayTraceResult rayTraceResult = caster.rayTraceBlocks(6);
-        /*Location location = caster.getEyeLocation();
-        double distance;
-        Vector direction;
-        Vector secondaryFix = null;
+        Location location = findNearest(caster.getEyeLocation(), 6).add(0, -1.62, 0);
+        //caster.teleport(location);
+        //caster.setVelocity(caster.getVelocity().add(location.getDirection().multiply(0.5)));
 
-        if (rayTraceResult != null) {
-            distance = Math.min(6, location.distance(rayTraceResult.getHitPosition().toLocation(location.getWorld())));
-
-            BlockFace hitFace = rayTraceResult.getHitBlockFace();
-            if (hitFace != null)
-                secondaryFix = hitFace.getDirection();
-        } else distance = 6;
-
-        direction = location.getDirection().multiply(distance);
-
-        if (secondaryFix == null) {
-            byte[] highest = new byte[]{(byte) Math.copySign(1, direction.getX()), 0, 0};
-            if (Math.abs(direction.getY()) > Math.abs(direction.getX()))
-                highest = new byte[]{0, (byte) Math.copySign(1, direction.getY()), 0};
-            if (Math.abs(direction.getZ()) > Math.abs(direction.getY()))
-                highest = new byte[]{0, 0, (byte) Math.copySign(1, direction.getZ())};
-
-            secondaryFix = new Vector(highest[0], highest[1], highest[2]);
-        }
-        if (distance < 1.62)
-            secondaryFix = new Vector();
-
-
-        for (int i = 0; LivingEntityUtil.BoundingBoxOverlapsBlocks(caster.getWorld(), caster.getBoundingBox().clone().shift(direction)) && i*0.1 <= distance; i++) {
-            direction = location.getDirection().multiply(distance - i*0.1);
-
-            for (int j = 0; LivingEntityUtil.BoundingBoxOverlapsBlocks(caster.getWorld(), caster.getBoundingBox().clone().shift(direction)) && j*0.1 <= 0.5; j++)
-                direction = direction.add(secondaryFix.clone().multiply(j*0.1));
-        }
-
-        if (LivingEntityUtil.BoundingBoxOverlapsBlocks(caster.getWorld(), caster.getBoundingBox().clone().shift(direction)))
-            direction = new Vector();*/
-
-        location = location.add(direction).add(0, -1.62, 0);
-        caster.teleport(location);
-        caster.setVelocity(caster.getVelocity().add(location.getDirection().multiply(0.5)));
-
-        //eTrail(location 1.3 above player,{_l},2)
         World world = caster.getWorld();
+        //eTrail(location 1.3 above player,{_l},2)
         world.playSound(location, Sound.ENTITY_ILLUSIONER_MIRROR_MOVE, 2f, 1.2f);
         world.playSound(location, Sound.ENTITY_ENDER_DRAGON_FLAP, 2f, 1.2f);
         world.spawnParticle(Particle.VILLAGER_ANGRY, location, 3);
 
         naturalSpellEnd();
+    }
+
+    private static Location findNearest(@NotNull Location location, double distance) {
+        Location bestCase = location.clone().add(location.getDirection().clone().multiply(distance));
+        World world = location.getWorld();
+
+        if (world.rayTraceBlocks(location, location.getDirection(), distance) == null)
+            return bestCase;
+
+        Location nearest = location;
+        double smallestDistanceSquared = 6*6;
+        for (float x = -1; x < 1; x += 0.2) {
+            for (float y = -1; y < 1; y += 0.2) {
+                if (x*x + y*y > 1)
+                    continue;
+
+                Vector grid = new Vector(x, y, 0);
+                Vector rotatedCircleGrid = RotationUtil.rotateVectorAroundLocationRotation(grid, location);
+                Location circleGridLocation = location.clone().add(rotatedCircleGrid);
+                world.spawnParticle(Particle.DRIPPING_HONEY, circleGridLocation, 1, 0, 0, 0, 0);
+
+                RayTraceResult rayTraceResult = world.rayTraceBlocks(circleGridLocation, location.getDirection(), distance);
+                Location hit;
+                if (rayTraceResult != null)
+                    hit = rayTraceResult.getHitPosition().toLocation(world);
+                else hit = circleGridLocation.clone().add(location.getDirection().clone().multiply(distance));
+
+                double distanceSquared = nearest.distanceSquared(hit);
+                if (distanceSquared < smallestDistanceSquared) {
+                    nearest = hit;
+                    smallestDistanceSquared = distanceSquared;
+                }
+            }
+        }
+
+        return nearest;
     }
 
     @Override
