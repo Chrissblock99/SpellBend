@@ -4,6 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
+import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.RotationUtil;
@@ -17,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Ember_Blast extends Spell {
     private static final SpellBend plugin = SpellBend.getInstance();
@@ -73,21 +75,45 @@ public class Ember_Blast extends Spell {
 
     private void activateLoop() {
         activeTask = new BukkitRunnable() {
+            int time = 1;
+            Location lastLocation = caster.getEyeLocation();
             @Override
             public void run() {
-                //visuals here
+                for (int i = 0; i < 6; i += 2) {
+                    Color color;
+                    if (time % 2 == 0)
+                        color = Colors.orange3;
+                    else color = Colors.orange4;
 
-                if (fireball.isDead())
-                    cancel();
+                    double radians = ((time * 4) % 360) * MathUtil.DEGTORAD;
+                    Vector vector = RotationUtil.rotateVectorAroundVectorRotation(new Vector(Math.cos(radians), Math.sin(radians), 0), fireball.getVelocity());
+                    Location location = MathUtil.lerpVector(lastLocation.toVector(), fireball.getLocation().toVector(), i/6f).add(vector).toLocation(world);
+                    world.spawnParticle(Particle.REDSTONE, location, 1, new Particle.DustOptions(color, 2.5f));
+
+                    //TODO Alloyed_Barrier reflection here
+
+                    if (fireball.isDead())
+                        fireBallHit((Entity) null);
+
+                    time += 2;
+                }
+
+                lastLocation = fireball.getLocation();
             }
         }.runTaskTimer(plugin, 0, 1);
     }
 
     private void fireBallHit(@NotNull ProjectileHitEvent event) {
+        fireBallHit(event.getHitEntity());
+    }
+
+    private void fireBallHit(@Nullable Entity hitEntity) {
+        fireball.remove();
+        if (activeTask.isCancelled())
+            return;
         if (activeTask != null)
             activeTask.cancel();
 
-        Entity hitEntity = event.getHitEntity();
         if (hitEntity instanceof LivingEntity livingEntity && LivingEntityUtil.entityIsSpellAffectAble(livingEntity))
             LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 2.5, item);
 
