@@ -55,6 +55,39 @@ public class SpellHandler {
         listener.accept(event);
     }
 
+    /**
+     * Adds a projectileHitEventConsumer to the projectileHitEventConsumers map
+     *
+     * @param projectile The projectile to trigger for
+     * @param consumer The consumer to run
+     */
+    public static void addProjectileConsumer(@NotNull Projectile projectile, @NotNull Consumer<ProjectileHitEvent> consumer) {
+        projectileHitEventConsumers.put(projectile, consumer);
+    }
+
+    /**
+     * Removes a projectileHitEventConsumer from the projectileHitEventConsumers map
+     *
+     * @param projectile The projectile to not trigger for anymore
+     */
+    public static void removeProjectileConsumer(@NotNull Projectile projectile) {
+        projectileHitEventConsumers.remove(projectile);
+    }
+
+    /**
+     * Runs the projectileHitEventConsumer of the given projectile if present
+     *
+     * @param projectileHitEvent The projectileEvent to trigger for
+     */
+    public static void projectileHit(@NotNull ProjectileHitEvent projectileHitEvent) {
+        Consumer<ProjectileHitEvent> projectileConsumer = projectileHitEventConsumers.get(projectileHitEvent.getEntity());
+        if (projectileConsumer == null)
+            return;
+
+        projectileHitEvent.setCancelled(true);
+        projectileConsumer.accept(projectileHitEvent);
+    }
+
 
     /**
      * Adds a projectileHitEventConsumer to the projectileHitEventConsumers map
