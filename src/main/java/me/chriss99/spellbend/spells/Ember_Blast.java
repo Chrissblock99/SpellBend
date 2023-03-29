@@ -5,6 +5,7 @@ import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
+import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.RotationUtil;
@@ -20,6 +21,9 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ember_Blast extends Spell {
     private static final SpellBend plugin = SpellBend.getInstance();
 
@@ -28,7 +32,7 @@ public class Ember_Blast extends Spell {
     private BukkitTask activeTask;
 
     public Ember_Blast(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{2, 0, 0, 0}));
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.75f, 0, 5, 7}));
         windup();
     }
 
@@ -91,12 +95,20 @@ public class Ember_Blast extends Spell {
                     world.spawnParticle(Particle.REDSTONE, location, 1, new Particle.DustOptions(color, 2.5f));
 
                     //TODO Alloyed_Barrier reflection here
-
-                    if (fireball.isDead())
-                        fireBallHit((Entity) null);
+                    //loop-value is divisible by 9
+                    //  loop zombies in radius 5 of {_e} where [input's name contains "'s <##808080>&lShield"]:
+                    //    ({_c} ? 2 second ago) was more than 1 second ago
+                    //    set {_c} to now
+                    //    push {_e} direction from loop-value-2 to {_e} at speed 1.35
+                    //    draw 5 crit at loop-value-2 with extra 0
+                    //    draw 1 sweep attack 1.3 above loop-value-2
+                    //    play sound "entity.iron_golem.repair" and "enchant.thorns.hit" at volume 3 at pitch 0.8 at loop-value-2
 
                     time += 2;
                 }
+
+                if (fireball.isDead() || time/120f > 5f)
+                    fireBallHit();
 
                 lastLocation = fireball.getLocation();
             }
@@ -104,18 +116,22 @@ public class Ember_Blast extends Spell {
     }
 
     private void fireBallHit(@NotNull ProjectileHitEvent event) {
-        fireBallHit(event.getHitEntity());
+        fireBallHit();
     }
 
-    private void fireBallHit(@Nullable Entity hitEntity) {
+    private void fireBallHit() {
         fireball.remove();
-        if (activeTask.isCancelled())
-            return;
-        if (activeTask != null)
+        if (activeTask != null) {
+            if (activeTask.isCancelled())
+                return;
             activeTask.cancel();
+            coolDown.skipToStage(CoolDownStage.COOLDOWN);
+        }
 
-        if (hitEntity instanceof LivingEntity livingEntity && LivingEntityUtil.entityIsSpellAffectAble(livingEntity))
-            LivingEntitySessionData.getLivingEntitySession(livingEntity).getHealth().damageLivingEntity(caster, 2.5, item);
+        List<LivingEntity> hitEntities = new ArrayList<>(LivingEntityUtil.getSpellAffectAbleEntitiesNearLocation(fireball.getLocation(), 3).keySet());
+        hitEntities.remove(caster);
+        for (LivingEntity hitEntity : hitEntities)
+            LivingEntitySessionData.getLivingEntitySession(hitEntity).getHealth().damageLivingEntity(caster, 2.5, item);
 
         Location location = fireball.getLocation();
         Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
@@ -132,10 +148,18 @@ public class Ember_Blast extends Spell {
     }
 
     @Override
+    public void casterDeath(@Nullable LivingEntity killer) {
+        if (!coolDown.getCoolDownStage().equals(CoolDownStage.ACTIVE))
+            super.casterDeath(killer);
+    }
+
+    @Override
     public void cancelSpell() {
         if (windupTask != null)
             windupTask.cancel();
         if (activeTask != null)
             activeTask.cancel();
+        if (fireball != null)
+            fireball.remove();
     }
 }
