@@ -36,7 +36,7 @@ public class Flash extends Spell {
 
         var currentBest = new Object() {
             Location nearest = location;
-            double smallestDistanceSquared = 6*6;
+            double smallestDistanceSquared = distance*distance;
         };
 
         forEachRotatedCircleGrid(location, circleGridLocation -> {
