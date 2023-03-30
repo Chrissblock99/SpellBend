@@ -5,6 +5,7 @@ import me.chriss99.spellbend.util.math.RotationUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -33,33 +34,42 @@ public class Flash extends Spell {
         if (world.rayTraceBlocks(location, location.getDirection(), distance) == null)
             return bestCase;
 
-        Location nearest = location;
-        double smallestDistanceSquared = 6*6;
+        final Location[] nearest = {location};
+        final double[] smallestDistanceSquared = {6 * 6};
+
+        forEachRotatedCircleGrid(location, circleGridLocation -> {
+            RayTraceResult rayTraceResult = world.rayTraceBlocks(circleGridLocation, location.getDirection(), distance);
+            Location hit;
+            if (rayTraceResult != null)
+                hit = rayTraceResult.getHitPosition().toLocation(world);
+            else hit = circleGridLocation.clone().add(location.getDirection().clone().multiply(distance));
+
+            double distanceSquared = nearest[0].distanceSquared(hit);
+            if (distanceSquared < smallestDistanceSquared[0]) {
+                nearest[0] = hit;
+                smallestDistanceSquared[0] = distanceSquared;
+            }
+        });
+
+        return nearest[0];
+    }
+
+    private static void forEachRotatedCircleGrid(@NotNull Location source, @NotNull Consumer<Location> consumer) {
+        World world = source.getWorld();
+
         for (float x = -1; x < 1; x += 0.2) {
             for (float y = -1; y < 1; y += 0.2) {
                 if (x*x + y*y > 1)
                     continue;
 
                 Vector grid = new Vector(x, y, 0);
-                Vector rotatedCircleGrid = RotationUtil.rotateVectorAroundLocationRotation(grid, location);
-                Location circleGridLocation = location.clone().add(rotatedCircleGrid);
+                Vector rotatedCircleGrid = RotationUtil.rotateVectorAroundLocationRotation(grid, source);
+                Location circleGridLocation = source.clone().add(rotatedCircleGrid);
                 world.spawnParticle(Particle.DRIPPING_HONEY, circleGridLocation, 1, 0, 0, 0, 0);
 
-                RayTraceResult rayTraceResult = world.rayTraceBlocks(circleGridLocation, location.getDirection(), distance);
-                Location hit;
-                if (rayTraceResult != null)
-                    hit = rayTraceResult.getHitPosition().toLocation(world);
-                else hit = circleGridLocation.clone().add(location.getDirection().clone().multiply(distance));
-
-                double distanceSquared = nearest.distanceSquared(hit);
-                if (distanceSquared < smallestDistanceSquared) {
-                    nearest = hit;
-                    smallestDistanceSquared = distanceSquared;
-                }
+                consumer.accept(circleGridLocation);
             }
         }
-
-        return nearest;
     }
 
     @Override
