@@ -34,24 +34,25 @@ public class Flash extends Spell {
         if (world.rayTraceBlocks(location, location.getDirection(), distance) == null)
             return bestCase;
 
-        final Location[] nearest = {location};
-        final double[] smallestDistanceSquared = {6 * 6};
+        var currentBest = new Object() {
+            Location nearest = location;
+            double smallestDistanceSquared = 6*6;
+        };
 
         forEachRotatedCircleGrid(location, circleGridLocation -> {
             RayTraceResult rayTraceResult = world.rayTraceBlocks(circleGridLocation, location.getDirection(), distance);
-            Location hit;
-            if (rayTraceResult != null)
-                hit = rayTraceResult.getHitPosition().toLocation(world);
-            else hit = circleGridLocation.clone().add(location.getDirection().clone().multiply(distance));
+            Location hit = (rayTraceResult != null) ?
+                    rayTraceResult.getHitPosition().toLocation(world) :
+                    circleGridLocation.clone().add(location.getDirection().clone().multiply(distance));
 
-            double distanceSquared = nearest[0].distanceSquared(hit);
-            if (distanceSquared < smallestDistanceSquared[0]) {
-                nearest[0] = hit;
-                smallestDistanceSquared[0] = distanceSquared;
+            double distanceSquared = currentBest.nearest.distanceSquared(hit);
+            if (distanceSquared < currentBest.smallestDistanceSquared) {
+                currentBest.nearest = hit;
+                currentBest.smallestDistanceSquared = distanceSquared;
             }
         });
 
-        return nearest[0];
+        return currentBest.nearest;
     }
 
     private static void forEachRotatedCircleGrid(@NotNull Location source, @NotNull Consumer<Location> consumer) {
