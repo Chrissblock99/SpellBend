@@ -1,11 +1,13 @@
 package me.chriss99.spellbend.util.math;
 
 import me.chriss99.spellbend.util.ParticleUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,8 +36,8 @@ public class BoundingBoxUtil {
      * @param boundingBox The box to get inside
      * @return All boxes which Blocks overlap the bounding box
      */
-    public static List<BoundingBox> getBlockShapesOverlapping(@NotNull World world, @NotNull BoundingBox boundingBox) {
-        ParticleUtil.visualizeBoundingBoxInWorld(world, boundingBox, 5, Particle.FLAME, null);
+    public static @NotNull List<BoundingBox> getBlockShapesOverlapping(@NotNull World world, @NotNull BoundingBox boundingBox) {
+        //ParticleUtil.visualizeBoundingBoxInWorld(world, boundingBox, 5, Particle.FLAME, null);
         List<BoundingBox> offsetOverlappingBoxes = new LinkedList<>();
         int maxX = (int) Math.floor(boundingBox.getMaxX());
         int maxY = (int) Math.floor(boundingBox.getMaxY());
@@ -50,9 +52,32 @@ public class BoundingBoxUtil {
                             .peek(a -> a.shift(position)).toList());
                 }
 
-        for (BoundingBox box : offsetOverlappingBoxes)
-            ParticleUtil.visualizeBoundingBoxInWorld(world, box, 5, Particle.SOUL_FIRE_FLAME, null);
+        //for (BoundingBox box : offsetOverlappingBoxes)
+        //    ParticleUtil.visualizeBoundingBoxInWorld(world, box, 5, Particle.SOUL_FIRE_FLAME, null);
 
         return offsetOverlappingBoxes;
+    }
+
+    public static @Nullable BoundingBox boxCast(@NotNull BoundingBox cast, @NotNull BoundingBox onto, @NotNull Vector direction) {
+        direction = direction.clone().normalize();
+        //Vector castMinimum = cast.getMin(); because math is cool, this isn't needed
+        Vector castMaximum = cast.getMax();
+        Vector ontoMinimum = onto.getMin();
+        //Vector ontoMaximum = cast.getMax(); because math is cool, this isn't needed
+        World world = Bukkit.getPlayerExact("Chriss99").getWorld();
+        world.spawnParticle(Particle.SOUL_FIRE_FLAME, castMaximum.toLocation(world), 1, 0, 0, 0, 0);
+        world.spawnParticle(Particle.FLAME, ontoMinimum.toLocation(world), 1, 0, 0, 0, 0);
+
+        Vector tVector = ontoMinimum.clone().subtract(castMaximum).divide(direction);
+
+        Bukkit.getLogger().info(tVector.toString());
+        if (tVector.getX() != tVector.getY() || tVector.getY() != tVector.getZ() || tVector.getX() != tVector.getZ())
+            return null;
+        double t = tVector.getX() * tVector.getX();
+
+        if (t < 0 || t > cast.getCenter().distanceSquared(onto.getCenter()))
+            return null;
+
+        return cast.clone().shift(direction.clone().multiply(tVector.getX())); //not the squared one
     }
 }
