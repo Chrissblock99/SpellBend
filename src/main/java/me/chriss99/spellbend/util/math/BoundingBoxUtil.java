@@ -59,25 +59,105 @@ public class BoundingBoxUtil {
     }
 
     public static @Nullable BoundingBox boxCast(@NotNull BoundingBox cast, @NotNull BoundingBox onto, @NotNull Vector direction) {
-        direction = direction.clone().normalize();
-        //Vector castMinimum = cast.getMin(); because math is cool, this isn't needed
-        Vector castMaximum = cast.getMax();
-        Vector ontoMinimum = onto.getMin();
-        //Vector ontoMaximum = cast.getMax(); because math is cool, this isn't needed
-        World world = Bukkit.getPlayerExact("Chriss99").getWorld();
-        world.spawnParticle(Particle.SOUL_FIRE_FLAME, castMaximum.toLocation(world), 1, 0, 0, 0, 0);
-        world.spawnParticle(Particle.FLAME, ontoMinimum.toLocation(world), 1, 0, 0, 0, 0);
+        cast = cast.clone();
+        Box box = getMathIntersection(cast, onto);
+        Bukkit.getLogger().info(box.getLengthX() + " " + box.getLengthY() + " " + box.getLengthZ());
+        return box.toBoundingBox();
+        /*Solve:
+        0 = min(max1.x + d.x * t, max2.x) - max(min1.x + d.x * t, min2.x)
+        0 < min(max1.y + d.y * t, max2.y) - max(min1.y + d.y * t, min2.y)
+        0 < min(max1.z + d.z * t, max2.z) - max(min1.z + d.z * t, min2.z)
+        and
+        0 < min(max1.x + d.x * t, max2.x) - max(min1.x + d.x * t, min2.x)
+        0 = min(max1.y + d.y * t, max2.y) - max(min1.y + d.y * t, min2.y)
+        0 < min(max1.z + d.z * t, max2.z) - max(min1.z + d.z * t, min2.z)
+        and
+        0 < min(max1.x + d.x * t, max2.x) - max(min1.x + d.x * t, min2.x)
+        0 < min(max1.y + d.y * t, max2.y) - max(min1.y + d.y * t, min2.y)
+        0 = min(max1.z + d.z * t, max2.z) - max(min1.z + d.z * t, min2.z)
+        individually
 
-        Vector tVector = ontoMinimum.clone().subtract(castMaximum).divide(direction);
+        where:
+        t is as small as possible
+        0 <= t*/
+    }
 
-        Bukkit.getLogger().info(tVector.toString());
-        if (tVector.getX() != tVector.getY() || tVector.getY() != tVector.getZ() || tVector.getX() != tVector.getZ())
-            return null;
-        double t = tVector.getX() * tVector.getX();
+    /**
+     * Takes two bounding boxes and returns the bounding box on which both intersect <br>
+     * if they intersect all side lengths of the returned box will be positive <br>
+     * if their intersection is a plane segment one of the side lengths will be 0 and the others positive <br>
+     * if their intersection is a line segment two of the side lengths will be 0 and the others positive <br>
+     * if their intersection is a point all side lengths will be 0 <br>
+     * if they do not intersect the side lengths will be 0 with at least one being negative
+     *
+     * @param box1 The first bounding box
+     * @param box2 The second bounding box
+     * @return Their intersection
+     */
+    private static @NotNull Box getMathIntersection(@NotNull BoundingBox box1, @NotNull BoundingBox box2) {
+        return new Box(
+                Math.max(box1.getMinX(), box2.getMinX()),
+                Math.max(box1.getMinY(), box2.getMinY()),
+                Math.max(box1.getMinZ(), box2.getMinZ()),
 
-        if (t < 0 || t > cast.getCenter().distanceSquared(onto.getCenter()))
-            return null;
+                Math.min(box1.getMaxX(), box2.getMaxX()),
+                Math.min(box1.getMaxY(), box2.getMaxY()),
+                Math.min(box1.getMaxZ(), box2.getMaxZ())
+                );
+    }
 
-        return cast.clone().shift(direction.clone().multiply(tVector.getX())); //not the squared one
+    /**
+     * A bounding box representation with more mathematical meaning <br>
+     * used by <code>getMathInterSection()</code>
+     *
+     * @param min The minimum Vector
+     * @param max The maximum Vector
+     */
+    private record Box(@NotNull Vector min, @NotNull Vector max) {
+        public Box(double x1, double y1, double z1, double x2, double y2, double z2) {
+            this(new Vector(x1, y1, z1), new Vector(x2, y2, z2));
+        }
+
+        /**
+         * Represents this box as a bounding box
+         *
+         * @return This box as a bounding box
+         */
+        public @NotNull BoundingBox toBoundingBox() {
+            return new BoundingBox(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
+        }
+
+        /**
+         * zero if touching <br>
+         * positive if intersecting <br>
+         * negative if not touching
+         *
+         * @return The length on this axis
+         */
+        public double getLengthX() {
+            return max.getX() - min.getX();
+        }
+
+        /**
+         * zero if touching <br>
+         * positive if intersecting <br>
+         * negative if not touching
+         *
+         * @return The length on this axis
+         */
+        public double getLengthY() {
+            return max.getY() - min.getY();
+        }
+
+        /**
+         * zero if touching <br>
+         * positive if intersecting <br>
+         * negative if not touching
+         *
+         * @return The length on this axis
+         */
+        public double getLengthZ() {
+            return max.getZ() - min.getZ();
+        }
     }
 }

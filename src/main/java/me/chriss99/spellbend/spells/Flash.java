@@ -1,20 +1,26 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.util.ParticleUtil;
+import me.chriss99.spellbend.util.math.BoundingBoxUtil;
 import me.chriss99.spellbend.util.math.RotationUtil;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class Flash extends Spell {
     public Flash(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
         super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0, 0, 0, 5}));
 
-        Location location = findNearest(caster.getEyeLocation(), 6).add(0, -1.62, 0);
+        Location location = rayTraceBlocks(caster.getEyeLocation(), caster.getEyeLocation().getDirection(), 6, caster.getBoundingBox());
+        //Location location = findNearest(caster.getEyeLocation(), 6, caster.getBoundingBox()).add(0, -1.62, 0);
         //caster.teleport(location);
         //caster.setVelocity(caster.getVelocity().add(location.getDirection().multiply(0.5)));
 
@@ -27,7 +33,7 @@ public class Flash extends Spell {
         naturalSpellEnd();
     }
 
-    private static Location findNearest(@NotNull Location location, double distance) {
+    private static Location findNearest(@NotNull Location location, double distance, @NotNull BoundingBox rayShape) {
         Location bestCase = location.clone().add(location.getDirection().clone().multiply(distance));
         World world = location.getWorld();
 
@@ -36,14 +42,16 @@ public class Flash extends Spell {
 
         var currentBest = new Object() {
             Location nearest = location;
-            double smallestDistanceSquared = distance*distance;
+            double smallestDistanceSquared = Double.MAX_VALUE;
         };
 
         forEachRotatedCircleGrid(location, circleGridLocation -> {
-            RayTraceResult rayTraceResult = world.rayTraceBlocks(circleGridLocation, location.getDirection(), distance);
-            Location hit = (rayTraceResult != null) ?
-                    rayTraceResult.getHitPosition().toLocation(world) :
-                    circleGridLocation.clone().add(location.getDirection().clone().multiply(distance));
+            Location hit = rayTraceBlocks(circleGridLocation, location.getDirection(), 6, rayShape);
+            ParticleUtil.visualizeBoundingBoxInWorld(world,
+                    rayShape.clone()
+                            .shift(hit.clone()
+                                    .add(circleGridLocation.clone().multiply(-1))),
+                    5, Particle.DRIPPING_HONEY, null);
 
             double distanceSquared = currentBest.nearest.distanceSquared(hit);
             if (distanceSquared < currentBest.smallestDistanceSquared) {
@@ -71,6 +79,35 @@ public class Flash extends Spell {
                 consumer.accept(circleGridLocation);
             }
         }
+    }
+
+    private static Location rayTraceBlocks(@NotNull Location start, @NotNull Vector direction, double maxDistance, @NotNull BoundingBox rayShape) {
+        World world = start.getWorld();
+        Vector startVector = start.toVector();
+        Vector distanceVector = direction.clone().normalize().multiply(maxDistance);
+        Vector raySize = new Vector(rayShape.getWidthX()/2d, rayShape.getHeight()/2d, rayShape.getWidthZ()/2d);
+        BoundingBox tracingArea = BoundingBox.of(rayShape.getCenter(), rayShape.getCenter()).expandDirectional(distanceVector).expand(raySize);
+        List<BoundingBox> blockCollisionShapeBoxes = BoundingBoxUtil.getBlockShapesOverlapping(world, tracingArea);
+
+        Location nearestHitLocation = null;
+        double nearestDistanceSq = Double.MAX_VALUE;
+
+        for (BoundingBox boundingBox : blockCollisionShapeBoxes) {
+            BoundingBox hitResult = BoundingBoxUtil.boxCast(rayShape, boundingBox, direction);
+            if (hitResult == null)
+                continue;
+            ParticleUtil.visualizeBoundingBoxInWorld(world, hitResult, 5, Particle.DRIPPING_HONEY, null);
+
+            double distanceSquared = startVector.distanceSquared(hitResult.getCenter());
+            if (distanceSquared < nearestDistanceSq) {
+                nearestHitLocation = hitResult.getCenter().toLocation(world);
+                nearestDistanceSq = distanceSquared;
+            }
+        }
+
+        return (nearestHitLocation == null) ?
+                start.clone().add(distanceVector) :
+                nearestHitLocation;
     }
 
     @Override
