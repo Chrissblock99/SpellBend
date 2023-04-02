@@ -1,8 +1,6 @@
 package me.chriss99.spellbend.util.math;
 
-import me.chriss99.spellbend.util.ParticleUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -59,27 +57,95 @@ public class BoundingBoxUtil {
     }
 
     public static @Nullable BoundingBox boxCast(@NotNull BoundingBox cast, @NotNull BoundingBox onto, @NotNull Vector direction) {
-        cast = cast.clone();
-        Box box = getMathIntersection(cast, onto);
-        Bukkit.getLogger().info(box.getLengthX() + " " + box.getLengthY() + " " + box.getLengthZ());
-        return box.toBoundingBox();
-        /*Solve:
-        0 = min(max1.x + d.x * t, max2.x) - max(min1.x + d.x * t, min2.x)
-        0 < min(max1.y + d.y * t, max2.y) - max(min1.y + d.y * t, min2.y)
-        0 < min(max1.z + d.z * t, max2.z) - max(min1.z + d.z * t, min2.z)
-        and
-        0 < min(max1.x + d.x * t, max2.x) - max(min1.x + d.x * t, min2.x)
-        0 = min(max1.y + d.y * t, max2.y) - max(min1.y + d.y * t, min2.y)
-        0 < min(max1.z + d.z * t, max2.z) - max(min1.z + d.z * t, min2.z)
-        and
-        0 < min(max1.x + d.x * t, max2.x) - max(min1.x + d.x * t, min2.x)
-        0 < min(max1.y + d.y * t, max2.y) - max(min1.y + d.y * t, min2.y)
-        0 = min(max1.z + d.z * t, max2.z) - max(min1.z + d.z * t, min2.z)
-        individually
+        double smallestT = Double.MAX_VALUE;
+        Vector smallestOffset = null;
 
-        where:
-        t is as small as possible
-        0 <= t*/
+        Vector minO = onto.getMin().clone().subtract(cast.getMax());
+        Vector maxO = onto.getMax().clone().subtract(cast.getMin());
+        Bukkit.getLogger().info(minO + " " + maxO);
+
+        if (direction.getX() != 0) {
+            double t = minO.getX() / direction.getX();
+            if (t >= 0) {
+                Vector offset = new Vector(minO.getX(), direction.getY() * t, 0);
+                if (minO.getY() < offset.getY() && offset.getY() < maxO.getY()) {
+                    offset.setZ(direction.getZ() * t);
+                    if (minO.getZ() < offset.getZ() && offset.getZ() < maxO.getZ()) {
+                        smallestT = t;
+                        smallestOffset = offset;
+                    }
+                }
+            }
+
+            t = maxO.getX() / direction.getX();
+            if (t >= 0 && t < smallestT) {
+                Vector offset = new Vector(maxO.getX(), direction.getY() * t, 0);
+                if (minO.getY() < offset.getY() && offset.getY() < maxO.getY()) {
+                    offset.setZ(direction.getZ() * t);
+                    if (minO.getZ() < offset.getZ() && offset.getZ() < maxO.getZ()) {
+                        smallestT = t;
+                        smallestOffset = offset;
+                    }
+                }
+            }
+        }
+
+        if (direction.getY() != 0) {
+            double t = minO.getY() / direction.getY();
+            if (t >= 0 && t < smallestT) {
+                Vector offset = new Vector(direction.getX() * t, minO.getY(), 0);
+                if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
+                    offset.setZ(direction.getZ() * t);
+                    if (minO.getZ() < offset.getZ() && offset.getZ() < maxO.getZ()) {
+                        smallestT = t;
+                        smallestOffset = offset;
+                    }
+                }
+            }
+
+            t = maxO.getY() / direction.getY();
+            if (t >= 0 && t < smallestT) {
+                Vector offset = new Vector(direction.getX() * t, maxO.getY(), 0);
+                if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
+                    offset.setZ(direction.getZ() * t);
+                    if (minO.getZ() < offset.getZ() && offset.getZ() < maxO.getZ()) {
+                        smallestT = t;
+                        smallestOffset = offset;
+                    }
+                }
+            }
+        }
+
+        if (direction.getZ() != 0) {
+            double t = minO.getZ() / direction.getZ();
+            if (t >= 0 && t < smallestT) {
+                Vector offset = new Vector(direction.getX() * t, 0, minO.getZ());
+                if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
+                    offset.setY(direction.getY() * t);
+                    if (minO.getY() < offset.getY() && offset.getY() < maxO.getY()) {
+                        smallestT = t;
+                        smallestOffset = offset;
+                    }
+                }
+            }
+
+            t = maxO.getZ() / direction.getZ();
+            if (t >= 0 && t < smallestT) {
+                Vector offset = new Vector(direction.getX() * t, 0, maxO.getZ());
+                if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
+                    offset.setY(direction.getY() * t);
+                    if (minO.getY() < offset.getY() && offset.getY() < maxO.getY())// {
+                        //smallestT = t;
+                        smallestOffset = offset;
+                    //}
+                }
+            }
+        }
+
+        if (smallestOffset == null)
+            return null;
+
+        return cast.clone().shift(smallestOffset);
     }
 
     /**
