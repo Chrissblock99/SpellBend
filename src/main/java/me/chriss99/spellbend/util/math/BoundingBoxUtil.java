@@ -55,7 +55,10 @@ public class BoundingBoxUtil {
         return offsetOverlappingBoxes;
     }
 
-    public static @Nullable BoundingBox boxCast(@NotNull BoundingBox cast, @NotNull BoundingBox onto, @NotNull Vector direction) {
+    public static @Nullable BoxTraceResult boxTrace(@NotNull BoundingBox cast, @NotNull BoundingBox onto, @NotNull Vector direction) {
+        if (!direction.isNormalized())
+            direction = direction.clone().normalize();
+
         double smallestT = Double.MAX_VALUE;
         Vector smallestOffset = null;
 
@@ -132,10 +135,10 @@ public class BoundingBoxUtil {
                 Vector offset = new Vector(direction.getX() * t, 0, maxO.getZ());
                 if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
                     offset.setY(direction.getY() * t);
-                    if (minO.getY() < offset.getY() && offset.getY() < maxO.getY())// {
-                        //smallestT = t;
+                    if (minO.getY() < offset.getY() && offset.getY() < maxO.getY()) {
+                        smallestT = t;
                         smallestOffset = offset;
-                    //}
+                    }
                 }
             }
         }
@@ -143,7 +146,19 @@ public class BoundingBoxUtil {
         if (smallestOffset == null)
             return null;
 
-        return cast.clone().shift(smallestOffset);
+        return new BoxTraceResult(cast.clone().shift(smallestOffset), smallestT);
+    }
+
+    public record BoxTraceResult(@NotNull BoundingBox result, double offsetLength) {
+        public static @Nullable BoxTraceResult getSmallerOffsetOne(@Nullable BoxTraceResult one, @Nullable BoxTraceResult other) {
+            if (other == null)
+                return one;
+            if (one == null)
+                return other;
+
+            return (one.offsetLength < other.offsetLength) ?
+                    one : other;
+        }
     }
 
     /**
