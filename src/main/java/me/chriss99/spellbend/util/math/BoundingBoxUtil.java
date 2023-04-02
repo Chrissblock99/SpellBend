@@ -1,6 +1,5 @@
 package me.chriss99.spellbend.util.math;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -62,7 +61,6 @@ public class BoundingBoxUtil {
 
         Vector minO = onto.getMin().clone().subtract(cast.getMax());
         Vector maxO = onto.getMax().clone().subtract(cast.getMin());
-        Bukkit.getLogger().info(minO + " " + maxO);
 
         if (direction.getX() != 0) {
             double t = minO.getX() / direction.getX();
