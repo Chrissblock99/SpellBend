@@ -51,6 +51,15 @@ public class BoundingBoxUtil {
         return offsetOverlappingBoxes;
     }
 
+    /**
+     * Finds the furthest position a bounding bix can be moved in a given direction in a world
+     *
+     * @param world The world to check in
+     * @param box The box to check for
+     * @param direction The direction to check in
+     * @param maxDistance The maximum distance
+     * @return The furthest bounding box and the distance moved or null if nothing was hit
+     */
     public static @Nullable BoxTraceResult boxTraceWorldBlocks(@NotNull World world, @NotNull BoundingBox box, @NotNull Vector direction, double maxDistance) {
         if (!direction.isNormalized())
             direction = direction.clone().normalize();
@@ -71,15 +80,23 @@ public class BoundingBoxUtil {
         return smallestOffsetResult;
     }
 
-    public static @Nullable BoxTraceResult boxTrace(@NotNull BoundingBox cast, @NotNull BoundingBox onto, @NotNull Vector direction) {
+    /**
+     * ray tracing but with a given box as ray shape
+     *
+     * @param from The ray shape including position
+     * @param onto The box to trace onto including position
+     * @param direction The direction to trace in
+     * @return The bounding box in a touching state or null if there is none in that direction
+     */
+    public static @Nullable BoxTraceResult boxTrace(@NotNull BoundingBox from, @NotNull BoundingBox onto, @NotNull Vector direction) {
         if (!direction.isNormalized())
             direction = direction.clone().normalize();
 
         double smallestT = Double.MAX_VALUE;
         Vector smallestOffset = null;
 
-        Vector minO = onto.getMin().clone().subtract(cast.getMax());
-        Vector maxO = onto.getMax().clone().subtract(cast.getMin());
+        Vector minO = onto.getMin().clone().subtract(from.getMax());
+        Vector maxO = onto.getMax().clone().subtract(from.getMin());
 
         if (direction.getX() != 0) {
             double t = minO.getX() / direction.getX();
@@ -162,7 +179,7 @@ public class BoundingBoxUtil {
         if (smallestOffset == null)
             return null;
 
-        return new BoxTraceResult(cast.clone().shift(smallestOffset), smallestT);
+        return new BoxTraceResult(from.clone().shift(smallestOffset), smallestT);
     }
 
     public record BoxTraceResult(@NotNull BoundingBox result, double offsetLength) {
