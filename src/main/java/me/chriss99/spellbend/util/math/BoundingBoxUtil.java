@@ -34,7 +34,6 @@ public class BoundingBoxUtil {
      * @return All boxes which Blocks overlap the bounding box
      */
     public static @NotNull List<BoundingBox> getBlockShapesOverlapping(@NotNull World world, @NotNull BoundingBox boundingBox) {
-        //ParticleUtil.visualizeBoundingBoxInWorld(world, boundingBox, 5, Particle.FLAME, null);
         List<BoundingBox> offsetOverlappingBoxes = new LinkedList<>();
         int maxX = (int) Math.floor(boundingBox.getMaxX());
         int maxY = (int) Math.floor(boundingBox.getMaxY());
@@ -49,10 +48,27 @@ public class BoundingBoxUtil {
                             .peek(a -> a.shift(position)).toList());
                 }
 
-        //for (BoundingBox box : offsetOverlappingBoxes)
-        //    ParticleUtil.visualizeBoundingBoxInWorld(world, box, 5, Particle.SOUL_FIRE_FLAME, null);
-
         return offsetOverlappingBoxes;
+    }
+
+    public static @Nullable BoxTraceResult boxTraceWorldBlocks(@NotNull World world, @NotNull BoundingBox box, @NotNull Vector direction, double maxDistance) {
+        if (!direction.isNormalized())
+            direction = direction.clone().normalize();
+        Vector boxCenter = box.getCenter();
+        Vector otherEnd = direction.clone().multiply(maxDistance).add(boxCenter);
+        Vector halfBoxSize = new Vector(box.getWidthX(), box.getHeight(), box.getWidthZ()).multiply(0.5);
+        BoundingBox tracingArea = new BoundingBox(boxCenter.getX(), boxCenter.getY(), boxCenter.getZ(),
+                otherEnd.getX(), otherEnd.getY(), otherEnd.getZ())
+                .expand(halfBoxSize);
+        List<BoundingBox> blockCollisionShapeBoxes = BoundingBoxUtil.getBlockShapesOverlapping(world, tracingArea);
+
+        BoundingBoxUtil.BoxTraceResult smallestOffsetResult = null;
+        for (BoundingBox boundingBox : blockCollisionShapeBoxes) {
+            BoundingBoxUtil.BoxTraceResult hitResult = BoundingBoxUtil.boxTrace(box, boundingBox, direction);
+            smallestOffsetResult = BoundingBoxUtil.BoxTraceResult.getSmallerOffsetOne(smallestOffsetResult, hitResult);
+        }
+
+        return smallestOffsetResult;
     }
 
     public static @Nullable BoxTraceResult boxTrace(@NotNull BoundingBox cast, @NotNull BoundingBox onto, @NotNull Vector direction) {
