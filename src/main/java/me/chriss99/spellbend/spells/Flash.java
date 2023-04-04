@@ -17,12 +17,15 @@ public class Flash extends Spell {
     public Flash(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
         super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0, 0, 0, 5}));
 
-        Location location = bestResult(caster, 6);
-        //caster.teleport(location);
-        //caster.setVelocity(caster.getVelocity().add(location.getDirection().multiply(0.5)));
-
+        RayTraceResult result = caster.rayTraceBlocks(6);
         World world = caster.getWorld();
-        //eTrail(location 1.3 above player,{_l},2)
+        Location location = (result != null) ?
+                result.getHitPosition().toLocation(world, caster.getLocation().getYaw(), caster.getLocation().getPitch()) :
+                caster.getLocation().add(caster.getEyeLocation().getDirection().multiply(6));
+        //eTrail(caster.getLocation.clone().add(0, 1.3, 0), location.clone().add(0, 1.3, 0), 2);
+        caster.teleport(location);
+        caster.setVelocity(caster.getVelocity().add(location.getDirection().multiply(0.5)));
+
         world.playSound(location, Sound.ENTITY_ILLUSIONER_MIRROR_MOVE, 2f, 1.2f);
         world.playSound(location, Sound.ENTITY_ENDER_DRAGON_FLAP, 2f, 1.2f);
         world.spawnParticle(Particle.VILLAGER_ANGRY, location, 3);
