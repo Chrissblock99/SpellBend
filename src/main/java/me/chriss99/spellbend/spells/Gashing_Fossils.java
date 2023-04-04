@@ -4,6 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.data.SpellHandler;
+import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.manager.BlockManager;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
@@ -17,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -29,12 +31,13 @@ public class Gashing_Fossils extends Spell {
 
     private final PlayerSessionData sessionData;
     private final BukkitTask stunUndoTask;
+    private BukkitTask windupTask;
     private BukkitTask activeTask;
     private BukkitTask waitTask;
     private BukkitTask removeTask;
 
     public Gashing_Fossils(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.5f, 1.5f, 0.25f, 10}));
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{.5f, .2f, 2, 7}));
         sessionData = PlayerSessionData.getPlayerSession(caster);
         sessionData.getIsMovementStunned().displaceValue(1);
 
@@ -71,7 +74,7 @@ public class Gashing_Fossils extends Spell {
             return;
         }
 
-        new BukkitRunnable() {
+        windupTask = new BukkitRunnable() {
             @Override
             public void run() {
                 windupStep();
@@ -94,8 +97,8 @@ public class Gashing_Fossils extends Spell {
             generateFossilLayer(i);
         }
 
+        i = 3;
         activeTask = new BukkitRunnable() {
-            int i = 3;
             @Override
             public void run() {
                 generateFossilLayer(i);
@@ -103,6 +106,7 @@ public class Gashing_Fossils extends Spell {
                 if (i >= 6) {
                     activeTask.cancel();
                     waitThenEnd();
+                    return;
                 }
 
                 i++;
@@ -186,17 +190,41 @@ public class Gashing_Fossils extends Spell {
         }.runTaskTimer(plugin, 1, 3);
     }
 
+    public void casterDeath(@Nullable LivingEntity killer) {
+        coolDown.skipToStage(CoolDownStage.COOLDOWN);
+        naturalSpellEnd();
+    }
+
+    public void casterStun(int timeInTicks) {
+        coolDown.skipToStage(CoolDownStage.COOLDOWN);
+        naturalSpellEnd();
+    }
+
     @Override
     public void cancelSpell() {
         stunUndoTask.cancel();
         sessionData.getIsMovementStunned().displaceValue(-1);
 
-        if (activeTask != null)
+        if (windupTask != null)
+            windupTask.cancel();
+
+        if (activeTask != null && !activeTask.isCancelled()) {
             activeTask.cancel();
-        if (waitTask != null)
+            for (; i >= 1; i--)
+                removeFossilLayer(i);
+        }
+
+        if (waitTask != null && !waitTask.isCancelled()) {
             waitTask.cancel();
+            for (; i >= 1; i--)
+                removeFossilLayer(i);
+        }
+        fallingBlocks.clear();
         if (removeTask != null)
             removeTask.cancel();
+
+        for (FallingBlock boneBlock : fallingBlocks)
+            boneBlock.remove();
     }
 
 
