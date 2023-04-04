@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.math.BoundingBoxUtil;
 import me.chriss99.spellbend.util.math.RotationUtil;
@@ -23,6 +24,10 @@ public class Flash extends Spell {
                 result.getHitPosition().toLocation(world, caster.getLocation().getYaw(), caster.getLocation().getPitch()) :
                 caster.getLocation().add(caster.getEyeLocation().getDirection().multiply(6));
         //eTrail(caster.getLocation.clone().add(0, 1.3, 0), location.clone().add(0, 1.3, 0), 2);
+        //TODO this visual
+        ParticleUtil.drawLine(world, caster.getLocation().toVector().add(new Vector(0, 1.3, 0)),
+                location.toVector().add(new Vector(0, 1.3, 0)), 5,
+                        Particle.REDSTONE, new Particle.DustOptions(Colors.blue2, 1));
         caster.teleport(location);
         caster.setVelocity(caster.getVelocity().add(location.getDirection().multiply(0.5)));
 
