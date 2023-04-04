@@ -99,7 +99,9 @@ public class BoundingBoxUtil {
         Vector maxO = onto.getMax().clone().subtract(from.getMin());
 
         if (direction.getX() != 0) {
-            double t = minO.getX() / direction.getX();
+            double inverseDX = 1 / direction.getX();
+
+            double t = minO.getX() * inverseDX;
             if (t >= 0) {
                 Vector offset = new Vector(minO.getX(), direction.getY() * t, 0);
                 if (minO.getY() < offset.getY() && offset.getY() < maxO.getY()) {
@@ -111,7 +113,7 @@ public class BoundingBoxUtil {
                 }
             }
 
-            t = maxO.getX() / direction.getX();
+            t = maxO.getX() * inverseDX;
             if (t >= 0 && t < smallestT) {
                 Vector offset = new Vector(maxO.getX(), direction.getY() * t, 0);
                 if (minO.getY() < offset.getY() && offset.getY() < maxO.getY()) {
@@ -125,7 +127,9 @@ public class BoundingBoxUtil {
         }
 
         if (direction.getY() != 0) {
-            double t = minO.getY() / direction.getY();
+            double inverseDY = 1 / direction.getY();
+
+            double t = minO.getY() * inverseDY;
             if (t >= 0 && t < smallestT) {
                 Vector offset = new Vector(direction.getX() * t, minO.getY(), 0);
                 if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
@@ -137,7 +141,7 @@ public class BoundingBoxUtil {
                 }
             }
 
-            t = maxO.getY() / direction.getY();
+            t = maxO.getY() * inverseDY;
             if (t >= 0 && t < smallestT) {
                 Vector offset = new Vector(direction.getX() * t, maxO.getY(), 0);
                 if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
@@ -151,7 +155,9 @@ public class BoundingBoxUtil {
         }
 
         if (direction.getZ() != 0) {
-            double t = minO.getZ() / direction.getZ();
+            double inverseDZ = 1 / direction.getZ();
+
+            double t = minO.getZ() * inverseDZ;
             if (t >= 0 && t < smallestT) {
                 Vector offset = new Vector(direction.getX() * t, 0, minO.getZ());
                 if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
@@ -163,7 +169,7 @@ public class BoundingBoxUtil {
                 }
             }
 
-            t = maxO.getZ() / direction.getZ();
+            t = maxO.getZ() * inverseDZ;
             if (t >= 0 && t < smallestT) {
                 Vector offset = new Vector(direction.getX() * t, 0, maxO.getZ());
                 if (minO.getX() < offset.getX() && offset.getX() < maxO.getX()) {
