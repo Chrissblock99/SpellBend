@@ -17,9 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
@@ -33,14 +31,24 @@ public class Test extends ReflectiveCommandBase {
         super("test", "test command for testing test stuff", new ArrayList<>());
     }
 
+    @ReflectCommand(path = "stun")
+    public void stun(Player toStun, int timeInTicks) {
+        PlayerSessionData.getPlayerSession(toStun).stunEntity(timeInTicks);
+    }
+
     @ReflectCommand(path = "kill")
     public void kill(Player toKill, Player killer) {
         PlayerSessionData.getPlayerSession(toKill).getHealth().onPlayerDeath(killer, null);
     }
 
-    @ReflectCommand(path = "stun")
-    public void stun(Player toStun, int timeInTicks) {
-        PlayerSessionData.getPlayerSession(toStun).stunEntity(timeInTicks);
+    @ReflectCommand(path = "spellLeave")
+    public void spellLeave(Player toLeave) {
+        PlayerSessionData.getPlayerSession(toLeave).getSpellHandler().playerLeave();
+    }
+
+    @ReflectCommand(path = "endSpellActivity")
+    public void endSpellActivity(Player toEnd) {
+        PlayerSessionData.getPlayerSession(toEnd).getSpellHandler().endSpellActivity();
     }
 
     @ReflectCommand(path = "update sidebar")
@@ -58,6 +66,42 @@ public class Test extends ReflectiveCommandBase {
         }
         for (Spell spell : playerSpells)
             commandSender.sendMessage(miniMessage.deserialize(spell.getClass().getName()));
+    }
+
+    @ReflectCommand(path = "memory spell headless")
+    public void memory_spell_headless(CommandSender commandSender) {
+        commandSender.sendMessage(miniMessage.deserialize("Spells:"));
+        List<Spell> headlessSpellsView = SpellHandler.getHeadlessSpellsView();
+        if (headlessSpellsView.size() == 0) {
+            commandSender.sendMessage(miniMessage.deserialize("none"));
+            return;
+        }
+        for (Spell spell : headlessSpellsView)
+            commandSender.sendMessage(miniMessage.deserialize(spell.getClass().getName()));
+    }
+
+    @ReflectCommand(path = "memory spellHandler fallingBlock")
+    public void memory_spellHandler_fallingBlock(CommandSender commandSender) {
+        commandSender.sendMessage(miniMessage.deserialize("falling blocks listened for:"));
+        Set<FallingBlock> view = SpellHandler.getFallingBlockHitGroundEventListenersView().keySet();
+        if (view.size() == 0) {
+            commandSender.sendMessage(miniMessage.deserialize("none"));
+            return;
+        }
+        for (FallingBlock fallingBlock : view)
+            commandSender.sendMessage(miniMessage.deserialize(fallingBlock.toString()));
+    }
+
+    @ReflectCommand(path = "memory spellHandler projectile")
+    public void memory_spellHandler_projectile(CommandSender commandSender) {
+        commandSender.sendMessage(miniMessage.deserialize("projectiles listened for:"));
+        Set<Projectile> view = SpellHandler.getProjectileHitEventConsumersView().keySet();
+        if (view.size() == 0) {
+            commandSender.sendMessage(miniMessage.deserialize("none"));
+            return;
+        }
+        for (Projectile projectile : view)
+            commandSender.sendMessage(miniMessage.deserialize(projectile.toString()));
     }
 
     @ReflectCommand(path = "memory block")
