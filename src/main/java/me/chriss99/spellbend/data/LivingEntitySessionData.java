@@ -200,15 +200,27 @@ public class LivingEntitySessionData {
     }
 
     /**
-     * Saves the livingEntities sessionData and removes it from the sessionMap
+     * Saves the livingEntities sessionData and removes it from the sessionMap <br>
+     * passes pluginDisable as false
      */
     public void endSession() {
+        endSession(false);
+    }
+
+    /**
+     * Saves the livingEntities sessionData and removes it from the sessionMap
+     */
+    public void endSession(boolean pluginDisable) {
         saveSession();
         livingEntitySessions.remove(livingEntity);
     }
 
     public static void endAllSessions() {
+        endAllSessions(false);
+    }
+
+    public static void endAllSessions(boolean pluginDisable) {
         for (Map.Entry<LivingEntity, LivingEntitySessionData> livingEntityToSessionData : livingEntitySessions.entrySet())
-            livingEntityToSessionData.getValue().endSession();
+            livingEntityToSessionData.getValue().endSession(pluginDisable);
     }
 }

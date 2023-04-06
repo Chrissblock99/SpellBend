@@ -197,10 +197,13 @@ public class PlayerSessionData extends LivingEntitySessionData {
      * Saves the players sessionData and removes it from the sessionMap
      */
     @Override
-    public void endSession() {
-        spellHandler.playerLeave();
+    public void endSession(boolean pluginDisable) {
+        if (pluginDisable)
+            spellHandler.endSpellActivity();
+        else spellHandler.playerLeave();
+
         playerDataBoard.stopDisplayCooldown();
-        super.endSession();
+        super.endSession(pluginDisable);
         playerSessions.remove(player);
     }
 }
