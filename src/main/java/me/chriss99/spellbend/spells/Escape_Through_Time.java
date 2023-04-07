@@ -120,6 +120,7 @@ public class Escape_Through_Time extends Spell {
             sessionData.stunEntity(20);
 
             world.spawnParticle(Particle.FLASH, livingEntity.getLocation(), 1, 0, 0, 0, 0);
+            //TODO
             //player.moveUp(1);
             //player.moveAway(1);
         }
@@ -128,12 +129,6 @@ public class Escape_Through_Time extends Spell {
         world.spawnParticle(Particle.VILLAGER_ANGRY, armorStandOrigin.add(0, 0.8, 0), 1, 0, 0, 0, 0);
         world.playSound(armorStandOrigin, Sound.ENTITY_GENERIC_EXPLODE, 2f, 1f);
         armorStand.remove();
-    }
-
-    @Override
-    public void casterLeave() {
-        coolDown.skipToStage(CoolDownStage.COOLDOWN);
-        cancelSpell();
     }
 
     @Override
