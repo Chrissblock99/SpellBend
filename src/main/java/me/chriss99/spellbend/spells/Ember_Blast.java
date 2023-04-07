@@ -148,9 +148,21 @@ public class Ember_Blast extends Spell {
     }
 
     @Override
+    public void casterStun(int timeInTicks) {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP))
+            super.casterStun(timeInTicks);
+    }
+
+    @Override
     public void casterDeath(@Nullable LivingEntity killer) {
-        if (!coolDown.getCoolDownStage().equals(CoolDownStage.PASSIVE))
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP))
             super.casterDeath(killer);
+    }
+
+    @Override
+    public void casterLeave() {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP))
+            super.casterLeave();
     }
 
     @Override
