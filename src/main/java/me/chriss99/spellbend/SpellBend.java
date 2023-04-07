@@ -7,9 +7,7 @@ import com.google.gson.Gson;
 import me.chriss99.spellbend.commands.ReflectTest;
 import me.chriss99.spellbend.commands.Shop;
 import me.chriss99.spellbend.commands.Test;
-import me.chriss99.spellbend.data.ActionBarController;
-import me.chriss99.spellbend.data.PlayerDataBoard;
-import me.chriss99.spellbend.data.PlayerSessionData;
+import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.events.paper.*;
 //import me.chriss99.spellbend.events.protocollib.*;
 import me.chriss99.spellbend.manager.BlockManager;
@@ -34,6 +32,7 @@ public final class SpellBend extends JavaPlugin {
         registerAllPaperEvents();
         registerAllPacketListeners();
         registerAllCommands();
+
         PlayerDataBoard.startUpdater();
         ActionBarController.startUpdater();
         PlayerSessionData.startManaRegenerator();
@@ -43,7 +42,8 @@ public final class SpellBend extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        PlayerSessionData.endAllSessions();
+        SpellHandler.endHeadLessSpellActivity();
+        LivingEntitySessionData.endAllSessions(true);
         BlockManager.clearOverrides();
 
         Bukkit.getLogger().info("SpellBend disabled!");

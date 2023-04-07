@@ -27,6 +27,8 @@ public class SpellHandler {
     private static final Map<FallingBlock, Consumer<EntityChangeBlockEvent>> fallingBlockHitGroundEventListeners = new HashMap<>();
     private static final Map<Projectile, Consumer<ProjectileHitEvent>> projectileHitEventConsumers = new HashMap<>();
 
+    private static final Set<Spell> headlessSpells = new HashSet<>();
+
     private final Player player;
     private final Set<Spell> activeSpells = new HashSet<>();
     private final Map<ItemStack, Runnable> clickableSpellRunnables = new HashMap<>();
@@ -45,14 +47,27 @@ public class SpellHandler {
         fallingBlockHitGroundEventListeners.put(fallingBlock, listener);
     }
 
+    /**
+     * Removes a fallingBlockHitGroundEventListener from the map
+     *
+     * @param fallingBlock The falling block to not trigger for anymore
+     */
+    public static void removeFallingBlockHitGroundEventListener(@NotNull FallingBlock fallingBlock) {
+        fallingBlockHitGroundEventListeners.remove(fallingBlock);
+    }
+
     public static void fallingBlockHitGround(@NotNull EntityChangeBlockEvent event) {
-        FallingBlock fallingBlock = (FallingBlock) event.getEntity();
+        if (!(event.getEntity() instanceof FallingBlock fallingBlock))
+            return;
         Consumer<EntityChangeBlockEvent> listener = fallingBlockHitGroundEventListeners.get(fallingBlock);
         if (listener == null)
             return;
 
-        fallingBlockHitGroundEventListeners.remove(fallingBlock);
         listener.accept(event);
+    }
+
+    public static Map<FallingBlock, Consumer<EntityChangeBlockEvent>> getFallingBlockHitGroundEventListenersView() {
+        return new LinkedHashMap<>(fallingBlockHitGroundEventListeners);
     }
 
     /**
@@ -86,6 +101,24 @@ public class SpellHandler {
 
         projectileHitEvent.setCancelled(true);
         projectileConsumer.accept(projectileHitEvent);
+    }
+
+    public static Map<Projectile, Consumer<ProjectileHitEvent>> getProjectileHitEventConsumersView() {
+        return new LinkedHashMap<>(projectileHitEventConsumers);
+    }
+
+    public static void endHeadLessSpellActivity() {
+        for (Spell spell : headlessSpells)
+            spell.endSpellActivity();
+        headlessSpells.clear();
+    }
+
+    public static void removeHeadlessSpell(@NotNull Spell spell) {
+        headlessSpells.remove(spell);
+    }
+
+    public static List<Spell> getHeadlessSpellsView() {
+        return new LinkedList<>(headlessSpells);
     }
 
 
@@ -169,7 +202,7 @@ public class SpellHandler {
      * @param timeInTicks The time to stun for
      */
     public void stunPlayer(int timeInTicks) {
-        for (Spell spell : new HashSet<>(activeSpells))
+        for (Spell spell : activeSpells.stream().toList())
             spell.casterStun(timeInTicks);
     }
 
@@ -179,7 +212,7 @@ public class SpellHandler {
      * @param killer The Nullable entity which killed them
      */
     public void killPlayer(@Nullable LivingEntity killer) {
-        for (Spell spell : new HashSet<>(activeSpells))
+        for (Spell spell : activeSpells.stream().toList())
             spell.casterDeath(killer);
     }
 
@@ -188,8 +221,18 @@ public class SpellHandler {
      * <b>This is only intended to be used if the player leaves the server.</b>
      */
     public void playerLeave() {
-        for (Spell spell : activeSpells)
+        for (Spell spell : activeSpells.stream().toList())
             spell.casterLeave();
+        headlessSpells.addAll(activeSpells);
+
+        for (Spell spell : activeSpells)
+            spell.setHeadless(true);
+        activeSpells.clear();
+    }
+
+    public void endSpellActivity() {
+        for (Spell spell : activeSpells)
+            spell.endSpellActivity();
         activeSpells.clear();
     }
 

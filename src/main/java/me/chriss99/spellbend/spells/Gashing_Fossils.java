@@ -157,6 +157,7 @@ public class Gashing_Fossils extends Spell {
 
             SpellHandler.registerFallingBlockHitGroundEventListener(boneBlock, event -> {
                 FallingBlock fallingBlock = (FallingBlock) event.getEntity();
+                SpellHandler.removeFallingBlockHitGroundEventListener(fallingBlock);
                 fallingBlocks.remove(fallingBlock);
                 world.playSound(fallingBlock.getLocation(), Sound.BLOCK_STONE_BREAK, 0.5f, 0.8f);
                 world.spawnParticle(Particle.BLOCK_DUST, fallingBlock.getLocation(), 25, 0, 0, 0, 0, Material.BLACKSTONE.createBlockData());
@@ -170,16 +171,17 @@ public class Gashing_Fossils extends Spell {
             @Override
             public void run() {
                 for (int i = fallingBlocks.size()-1; i >= 0; i--) {
-                    FallingBlock boneBlock = fallingBlocks.get(i);
-                    if (boneBlock.isDead() || new Date().getTime() >= endTime) {
-                        boneBlock.remove();
-                        fallingBlocks.remove(boneBlock);
-                        world.playSound(boneBlock.getLocation(), Sound.BLOCK_STONE_BREAK, 0.5f, 0.8f);
-                        world.spawnParticle(Particle.BLOCK_DUST, boneBlock.getLocation(), 25, 0, 0, 0, 0, Material.BLACKSTONE.createBlockData());
+                    FallingBlock fallingBlock = fallingBlocks.get(i);
+                    if (fallingBlock.isDead() || new Date().getTime() >= endTime) {
+                        fallingBlock.remove();
+                        SpellHandler.removeFallingBlockHitGroundEventListener(fallingBlock);
+                        fallingBlocks.remove(fallingBlock);
+                        world.playSound(fallingBlock.getLocation(), Sound.BLOCK_STONE_BREAK, 0.5f, 0.8f);
+                        world.spawnParticle(Particle.BLOCK_DUST, fallingBlock.getLocation(), 25, 0, 0, 0, 0, Material.BLACKSTONE.createBlockData());
                         continue;
                     }
 
-                    world.spawnParticle(Particle.SMOKE_LARGE, boneBlock.getLocation(), 1, 0, 0, 0, 0.05);
+                    world.spawnParticle(Particle.SMOKE_LARGE, fallingBlock.getLocation(), 1, 0, 0, 0, 0.05);
                 }
 
                 if (fallingBlocks.isEmpty()) {
@@ -190,20 +192,39 @@ public class Gashing_Fossils extends Spell {
         }.runTaskTimer(plugin, 1, 3);
     }
 
-    public void casterDeath(@Nullable LivingEntity killer) {
-        coolDown.skipToStage(CoolDownStage.COOLDOWN);
-        naturalSpellEnd();
+    @Override
+    public void casterStun(int timeInTicks) {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP)) {
+            coolDown.skipToStage(CoolDownStage.COOLDOWN);
+            cancelSpell();
+            naturalSpellEnd();
+        }
     }
 
-    public void casterStun(int timeInTicks) {
-        coolDown.skipToStage(CoolDownStage.COOLDOWN);
-        naturalSpellEnd();
+    @Override
+    public void casterDeath(@Nullable LivingEntity killer) {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP)) {
+            coolDown.skipToStage(CoolDownStage.COOLDOWN);
+            cancelSpell();
+            naturalSpellEnd();
+        }
+    }
+
+    @Override
+    public void casterLeave() {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP)) {
+            cancelSpell();
+            naturalSpellEnd();
+        }
+        coolDown.transformToStage(CoolDownStage.COOLDOWN);
     }
 
     @Override
     public void cancelSpell() {
-        stunUndoTask.cancel();
-        sessionData.getIsMovementStunned().displaceValue(-1);
+        if (!stunUndoTask.isCancelled()) {
+            stunUndoTask.cancel();
+            sessionData.getIsMovementStunned().displaceValue(-1);
+        }
 
         if (windupTask != null)
             windupTask.cancel();
@@ -219,12 +240,15 @@ public class Gashing_Fossils extends Spell {
             for (; i >= 1; i--)
                 removeFossilLayer(i);
         }
-        fallingBlocks.clear();
+
         if (removeTask != null)
             removeTask.cancel();
 
-        for (FallingBlock boneBlock : fallingBlocks)
-            boneBlock.remove();
+        for (FallingBlock fallingBlock : fallingBlocks) {
+            SpellHandler.removeFallingBlockHitGroundEventListener(fallingBlock);
+            fallingBlock.remove();
+        }
+        fallingBlocks.clear();
     }
 
 

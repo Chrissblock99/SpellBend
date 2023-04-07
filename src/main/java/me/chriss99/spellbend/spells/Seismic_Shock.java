@@ -21,6 +21,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Seismic_Shock extends Spell {
@@ -45,9 +47,10 @@ public class Seismic_Shock extends Spell {
         sessionData.getIsMovementStunned().displaceValue(1);
 
         stunUndoTask = new BukkitRunnable(){
-             @Override
+            @Override
             public void run() {
                  sessionData.getIsMovementStunned().displaceValue(-1);
+                 stunUndoTask.cancel();
              }
         }.runTaskLater(SpellBend.getInstance(), 45);
 
@@ -101,6 +104,7 @@ public class Seismic_Shock extends Spell {
         }.runTaskTimer(SpellBend.getInstance(), 0, 1);
     }
 
+    private final List<BukkitTask> shockingTasks = new LinkedList<>();
     private void active(@NotNull Location center) {
         activeTask = new BukkitRunnable() {
             int time = 15;
@@ -138,7 +142,7 @@ public class Seismic_Shock extends Spell {
 
                     if (LivingEntityUtil.isOnGround(livingEntity))
                         livingEntity.setVelocity(livingEntity.getVelocity().add(new Vector(0, 0.5, 0)));
-                    shockLivingEntity(livingEntity, 1);
+                    shockingTasks.add(shockLivingEntity(livingEntity, 1));
 
                     LivingEntitySessionData victimSession = LivingEntitySessionData.getLivingEntitySession(livingEntity);
                     victimSession.getHealth().damageLivingEntity(caster, 2.5, item);
@@ -156,9 +160,14 @@ public class Seismic_Shock extends Spell {
     }
 
     @Override
+    public void casterStun(int timeInTicks) {}
+
+    @Override
     public void cancelSpell() {
-        stunUndoTask.cancel();
-        sessionData.getIsMovementStunned().displaceValue(-1);
+        if (!stunUndoTask.isCancelled()) {
+            stunUndoTask.cancel();
+            sessionData.getIsMovementStunned().displaceValue(-1);
+        }
 
         if (windupTask != null) {
             windupTask.cancel();
@@ -167,13 +176,16 @@ public class Seismic_Shock extends Spell {
         if (activeTask != null) {
             activeTask.cancel();
         }
+
+        for (BukkitTask bukkitTask : shockingTasks)
+            bukkitTask.cancel();
     }
 
-    public static void shockLivingEntity(@NotNull LivingEntity livingEntity, int timeIn2ticks) {
+    public static BukkitTask shockLivingEntity(@NotNull LivingEntity livingEntity, int timeIn2ticks) {
         World world = livingEntity.getWorld();
         int finalTimeIn2ticks = timeIn2ticks*2;
 
-        new BukkitRunnable(){
+        return new BukkitRunnable(){
             int time = 1;
 
             @Override
@@ -194,21 +206,21 @@ public class Seismic_Shock extends Spell {
         }.runTaskTimer(SpellBend.getInstance(), 0, 1);
     }
 
-    public static Vector[] createRing1() {
+    private static Vector[] createRing1() {
         Vector[] vectors = new Vector[12];
         for (int i = 0;i<12;i++)
             vectors[i] = new Vector(Math.cos(i*30*MathUtil.DEGTORAD+Math.PI/12)*2.5, 0.125, Math.sin(i*30* MathUtil.DEGTORAD+Math.PI/12)*2.5);
         return vectors;
     }
 
-    public static Vector[] createRing2() {
+    private static Vector[] createRing2() {
         Vector[] vectors = new Vector[12];
         for (int i = 0;i<12;i++)
             vectors[i] = new Vector(Math.cos(i*30*MathUtil.DEGTORAD-(Math.PI*2/3f)/6)*4.5, 0.125, Math.sin(i*30* MathUtil.DEGTORAD-(Math.PI*2/3f)/6)*4.5);
         return vectors;
     }
 
-    public static Vector[] createRing3() {
+    private static Vector[] createRing3() {
         Vector[] vectors = new Vector[12];
         for (int i = 0;i<12;i++)
             vectors[i] = new Vector(Math.cos(i*30*MathUtil.DEGTORAD)*6.5, 0.125, Math.sin(i*30* MathUtil.DEGTORAD)*6.5);
