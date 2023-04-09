@@ -209,6 +209,9 @@ public class Health {
             float health = (float) (5 * percentage);
 
             if (attacker instanceof Player uniqueAttacker) {
+                if (!uniqueAttacker.isOnline())
+                    continue;
+
                 float gold = (float) (10 * percentage);
                 float gems = (float) (3 * percentage);
 
@@ -216,6 +219,8 @@ public class Health {
                 PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(uniqueAttacker);
                 sessionData.getGold().addCurrency(gold);
                 sessionData.getGems().addCurrency(gems);
+                sessionData.getHealth().healLivingEntity(health);
+                continue;
             }
 
             LivingEntitySessionData.getLivingEntitySession(attacker).getHealth().healLivingEntity(health);
