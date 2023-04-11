@@ -11,6 +11,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -130,7 +131,10 @@ public class LivingEntityUtil {
      * @param entity The entity to check for
      * @return If the entity should be affected by spells
      */
-    public static boolean entityIsSpellAffectAble(@NotNull Entity entity) {
+    public static boolean entityIsSpellAffectAble(@Nullable Entity entity) {
+        if (!(entity instanceof LivingEntity))
+            return false;
+
         if (entity instanceof Player)
             return true;
         return entity.getPersistentDataContainer().has(PersistentDataKeys.SPELL_AFFECT_ABLE_KEY);
