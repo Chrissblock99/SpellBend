@@ -125,13 +125,13 @@ public class Fiery_Rage extends Spell {
 
     @Override
     public void cancelSpell() {
-        if (!windupTask.isCancelled()) {
+        if (windupTask != null && !windupTask.isCancelled()) {
             windupTask.cancel();
             caster.setGravity(true);
             return;
         }
 
-        if (!activeTask.isCancelled()) {
+        if (activeTask != null && !activeTask.isCancelled()) {
             sessionData.getDamageDealtModifiers().removeModifier(1.5f);
             sessionData.getWalkSpeedModifiers().removeModifier(1.2f);
 
