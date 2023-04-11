@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 public enum SpellEnum {
-    MAGMA_BURST(Material.GOLDEN_HOE, "Magma Burst", "red", "MULTI_PROJECTILE", 0, 20, Test_Spell::new,
+    MAGMA_BURST(Material.GOLDEN_HOE, "Magma Burst", "red", "MULTI_PROJECTILE", 0, 20, Magma_Burst::new,
             "<gold>User casts a <yellow>rapid burst",
             "<yellow>of magma <gold>that deals <yellow>low",
             "<yellow>damage."),
