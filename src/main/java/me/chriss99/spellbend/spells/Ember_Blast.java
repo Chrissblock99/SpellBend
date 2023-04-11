@@ -130,8 +130,11 @@ public class Ember_Blast extends Spell {
 
         List<LivingEntity> hitEntities = new ArrayList<>(LivingEntityUtil.getSpellAffectAbleEntitiesNearLocation(fireball.getLocation(), 3).keySet());
         hitEntities.remove(caster);
-        for (LivingEntity hitEntity : hitEntities)
-            LivingEntitySessionData.getLivingEntitySession(hitEntity).getHealth().damageLivingEntity(caster.isOnline() ? caster : null, 2.5, item);
+        Player onlineCasterOrNull = caster.isOnline() ? caster : null;
+        for (LivingEntity hitEntity : hitEntities) {
+            LivingEntitySessionData.getLivingEntitySession(hitEntity).getHealth().damageLivingEntity(onlineCasterOrNull, 3.5, item);
+            hitEntity.setFireTicks(6*20);
+        }
 
         Location location = fireball.getLocation();
         Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
