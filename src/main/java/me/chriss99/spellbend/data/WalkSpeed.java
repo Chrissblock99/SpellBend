@@ -46,7 +46,7 @@ public class WalkSpeed extends PercentageModifier {
         LivingEntity livingEntity = getLivingEntity();
 
         if (livingEntity instanceof Player player) {
-            player.setWalkSpeed(getModifier()*0.2f);
+            player.setWalkSpeed(Math.min(1, getModifier()*0.2f));
             return;
         }
 
