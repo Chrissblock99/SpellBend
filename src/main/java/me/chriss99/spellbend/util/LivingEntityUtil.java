@@ -102,19 +102,19 @@ public class LivingEntityUtil {
             new Vector(-1, 0, -1), new Vector(1, 0, -1), new Vector(-1, 0, 1), new Vector(1, 0, 1)};
 
     /**
-     * Gets the voxelShapes of the 9 blocks below the livingEntity and compares them to its boundingBox <br>
-     * Returns false if the livingEntity is inside a vehicle
+     * Gets the voxelShapes of the 9 blocks below the entity and compares them to its boundingBox <br>
+     * Returns false if the entity is inside a vehicle
      *
-     * @param livingEntity The livingEntity to check for
-     * @return If the livingEntity is on ground
+     * @param entity The entity to check for
+     * @return If the entity is on ground
      */
-    public static boolean isOnGround(@NotNull LivingEntity livingEntity) {
-        if (livingEntity.isInsideVehicle())
+    public static boolean isOnGround(@NotNull Entity entity) {
+        if (entity.isInsideVehicle())
             return false;
 
-        BoundingBox livingEntityBound = livingEntity.getBoundingBox().shift(0, -0.03, 0);
-        World world = livingEntity.getWorld();
-        Location belowLivingEntity = livingEntity.getLocation().add(0, -0.03, 0).toBlockLocation();
+        BoundingBox livingEntityBound = entity.getBoundingBox().shift(0, -0.03, 0);
+        World world = entity.getWorld();
+        Location belowLivingEntity = entity.getLocation().add(0, -0.03, 0).toBlockLocation();
 
         for (Vector offset : offset) {
             Location relativeLoc = belowLivingEntity.clone().add(offset);
