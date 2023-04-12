@@ -28,7 +28,7 @@ public class Blazing_Spin extends Spell {
     private BukkitTask activeTask;
 
     public Blazing_Spin(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.75f, 2, 0, 7}));
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.75f, 0.75f, 0, 7}));
         windup();
     }
 
