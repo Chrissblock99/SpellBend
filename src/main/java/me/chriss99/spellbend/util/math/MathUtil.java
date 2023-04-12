@@ -13,6 +13,10 @@ public class MathUtil {
         return Math.random() * (max-min) + min;
     }
 
+    public static int randomSign() {
+        return (int) Math.round(random(-1, 1));
+    }
+
     public static @NotNull Object randomEntry(@NotNull Object[] a) {
         return a[(int) Math.round(random(0, a.length-1))];
     }
