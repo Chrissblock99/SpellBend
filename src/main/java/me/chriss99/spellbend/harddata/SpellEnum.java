@@ -36,7 +36,7 @@ public enum SpellEnum {
             "<gold>User casts a <yellow>slow-moving",
             "<yellow>fireball <gold>that deals <yellow>high",
             "<yellow>damage <gold>in its radius."),
-    BLAZING_SPIN(Material.GOLDEN_SWORD, "Blazing Spin", "red", "SHIELD", 150, 35, Test_Spell::new,
+    BLAZING_SPIN(Material.GOLDEN_SWORD, "Blazing Spin", "red", "SHIELD", 150, 35, Blazing_Spin::new,
             "<gold>User raises a <yellow>fiery column",
             "<gold>at their cursor, dealing <yellow>medium",
             "<yellow>damage <gold>and <yellow>stunning <gold>enemies."),
