@@ -18,6 +18,15 @@ import java.util.function.Predicate;
 
 
 public class LivingEntityUtil {
+    public static void igniteLivingEntity(@NotNull LivingEntity livingEntity) {
+        igniteLivingEntity(livingEntity, 6*20);
+    }
+
+    public static void igniteLivingEntity(@NotNull LivingEntity livingEntity, int ticks) {
+        if (livingEntity.getFireTicks() < ticks)
+            livingEntity.setFireTicks(ticks);
+    }
+
     /**
      * Gets all livingEntities near the location and returns them with their distance^2
      *
