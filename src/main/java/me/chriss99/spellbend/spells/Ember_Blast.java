@@ -133,7 +133,7 @@ public class Ember_Blast extends Spell {
         Player onlineCasterOrNull = caster.isOnline() ? caster : null;
         for (LivingEntity hitEntity : hitEntities) {
             LivingEntitySessionData.getLivingEntitySession(hitEntity).getHealth().damageLivingEntity(onlineCasterOrNull, 3.5, item);
-            hitEntity.setFireTicks(6*20);
+            LivingEntityUtil.igniteLivingEntity(hitEntity);
         }
 
         Location location = fireball.getLocation();
