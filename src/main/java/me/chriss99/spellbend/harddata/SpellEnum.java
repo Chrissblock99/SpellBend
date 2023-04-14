@@ -40,7 +40,7 @@ public enum SpellEnum {
             "<gold>User <yellow>spins on their axis <gold>and",
             "<gold>deals <yellow>high damage",
             "<gold>in their radius."),
-    SCORCHING_COLUMN(Material.GOLDEN_SHOVEL, "Scorching Column", "red", "AREA_OF_EFFECT", 175, 25, Test_Spell::new,
+    SCORCHING_COLUMN(Material.GOLDEN_SHOVEL, "Scorching Column", "red", "AREA_OF_EFFECT", 175, 25, Scorching_Column::new,
             "<gold>User raises a <yellow>fiery column",
             "<gold>at their cursor, dealing <yellow>medium",
             "<yellow>damage <gold>and <yellow>stunning <gold>enemies."),
