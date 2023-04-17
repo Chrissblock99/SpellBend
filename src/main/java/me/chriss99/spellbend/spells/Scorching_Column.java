@@ -138,19 +138,27 @@ public class Scorching_Column extends Spell {
             public void run() {
                 for (int i = fallingFireBlocks.size()-1; i >= 0; i--) {
                     FallingBlock fallingFireBlock = fallingFireBlocks.get(i);
+                    Location fireLocation = fallingFireBlock.getLocation();
                     if (fallingFireBlock.isDead() || new Date().getTime() >= endTime) {
                         fallingFireBlock.remove();
                         SpellHandler.removeFallingBlockHitGroundEventListener(fallingFireBlock);
                         fallingFireBlocks.remove(fallingFireBlock);
                         if (MathUtil.randomChance(0.25)) {
-                            world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, fallingFireBlock.getLocation(), 1, 0, 0, 0, 0);
-                            world.playSound(fallingFireBlock.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2, 2);
+                            world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, fireLocation, 1, 0, 0, 0, 0);
+                            world.playSound(fireLocation, Sound.BLOCK_FIRE_EXTINGUISH, 2, 2);
                         }
                         continue;
                     }
 
-                    //TODO here
-                    world.spawnParticle(Particle.SMOKE_LARGE, fallingFireBlock.getLocation(), 1, 0, 0, 0, 0.05);
+                    if (MathUtil.randomChance(0.1))
+                        world.spawnParticle(Particle.LAVA, fireLocation, 1);
+                    if (MathUtil.randomChance(0.2)) {
+                        RayTraceResult rayTraceResult = world.rayTraceBlocks(fireLocation, new Vector(0, -1, 0),
+                                10, FluidCollisionMode.ALWAYS, true);
+                        float pitch = (rayTraceResult == null) ? 10 :
+                                (float) (fireLocation.getY() - rayTraceResult.getHitPosition().getY());
+                        world.playSound(fireLocation, Sound.BLOCK_LAVA_POP, 2f, pitch);
+                    }
                 }
 
                 if (fallingFireBlocks.isEmpty()) {
@@ -158,7 +166,7 @@ public class Scorching_Column extends Spell {
                     naturalSpellEnd();
                 }
             }
-        }.runTaskTimer(plugin, 1, 3);
+        }.runTaskTimer(plugin, 1, 1);
     }
 
     @Override
