@@ -31,7 +31,7 @@ public class Scorching_Column extends Spell {
     private BukkitTask removeTask;
 
     public Scorching_Column(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{2, 2, 2, 2}));
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.45f, 0, 0, 7}));
         Location location = findHitPosition(caster, 50);
         if (location == null) {
             Bukkit.getLogger().warning("Scorching Column could be activated by " + caster.getName() + " despite them having no suitable target Location!");
@@ -104,6 +104,8 @@ public class Scorching_Column extends Spell {
         Set<LivingEntity> hitEntities = LivingEntityUtil.getSpellAffectAbleEntitiesNearLocation(location, 3).keySet();
         hitEntities.remove(caster);
         for (LivingEntity hitEntity : hitEntities) {
+            if (!LivingEntityUtil.isOnGround(hitEntity))
+                continue;
             LivingEntitySessionData sessionData = LivingEntitySessionData.getLivingEntitySession(hitEntity);
 
             sessionData.getHealth().damageLivingEntity(caster, 6, item);
@@ -116,14 +118,7 @@ public class Scorching_Column extends Spell {
             FallingBlock fallingFireBlock = world.spawnFallingBlock(location.clone().add(fallingBlockOffset), Material.FIRE.createBlockData());
             fallingFireBlock.setVelocity(new Vector(0, 0.35, 0));
             fallingFireBlocks.add(fallingFireBlock);
-            SpellHandler.registerFallingBlockHitGroundEventListener(fallingFireBlock, event -> {
-                SpellHandler.removeFallingBlockHitGroundEventListener(fallingFireBlock);
-                fallingFireBlocks.remove(fallingFireBlock);
-                if (MathUtil.randomChance(0.25)) {
-                    world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, fallingFireBlock.getLocation(), 1, 0, 0, 0, 0);
-                    world.playSound(fallingFireBlock.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2, 2);
-                }
-            });
+            SpellHandler.registerFallingBlockHitGroundEventListener(fallingFireBlock, event -> removeFallingFireBlock(fallingFireBlock));
         }
 
         world.playSound(location, Sound.ENTITY_BLAZE_SHOOT, 3f, 0.8f);
@@ -140,13 +135,7 @@ public class Scorching_Column extends Spell {
                     FallingBlock fallingFireBlock = fallingFireBlocks.get(i);
                     Location fireLocation = fallingFireBlock.getLocation();
                     if (fallingFireBlock.isDead() || new Date().getTime() >= endTime) {
-                        fallingFireBlock.remove();
-                        SpellHandler.removeFallingBlockHitGroundEventListener(fallingFireBlock);
-                        fallingFireBlocks.remove(fallingFireBlock);
-                        if (MathUtil.randomChance(0.25)) {
-                            world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, fireLocation, 1, 0, 0, 0, 0);
-                            world.playSound(fireLocation, Sound.BLOCK_FIRE_EXTINGUISH, 2, 2);
-                        }
+                        removeFallingFireBlock(fallingFireBlock);
                         continue;
                     }
 
@@ -169,8 +158,55 @@ public class Scorching_Column extends Spell {
         }.runTaskTimer(plugin, 1, 1);
     }
 
+    private void removeFallingFireBlock(@NotNull FallingBlock fallingFireBlock) {
+        fallingFireBlock.remove();
+        SpellHandler.removeFallingBlockHitGroundEventListener(fallingFireBlock);
+        fallingFireBlocks.remove(fallingFireBlock);
+        if (MathUtil.randomChance(0.25)) {
+            Location fireLocation = fallingFireBlock.getLocation();
+            world.spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, fireLocation, 1, 0, 0, 0, 0);
+            world.playSound(fireLocation, Sound.BLOCK_FIRE_EXTINGUISH, 2, 2);
+        }
+    }
+
     @Override
-    public void cancelSpell() {} //TODO here
+    public void casterStun(int timeInTicks) {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP)) {
+            coolDown.skipToStage(CoolDownStage.COOLDOWN);
+            cancelSpell();
+            naturalSpellEnd();
+        }
+    }
+
+    @Override
+    public void casterDeath(@Nullable LivingEntity killer) {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP)) {
+            coolDown.skipToStage(CoolDownStage.COOLDOWN);
+            cancelSpell();
+            naturalSpellEnd();
+        }
+    }
+
+    @Override
+    public void casterLeave() {
+        if (coolDown.getCoolDownStage().equals(CoolDownStage.WINDUP)) {
+            cancelSpell();
+            naturalSpellEnd();
+        }
+        coolDown.transformToStage(CoolDownStage.COOLDOWN);
+    }
+
+    @Override
+    public void cancelSpell() {
+        if (windupTask != null)
+            windupTask.cancel();
+
+        if (removeTask != null) {
+            removeTask.cancel();
+            for (int i = fallingFireBlocks.size() - 1; i >= 0; i--)
+                removeFallingFireBlock(fallingFireBlocks.get(i));
+        }
+    }
 
 
     private static @NotNull Vector[] createFallingBlockOffsets() {
