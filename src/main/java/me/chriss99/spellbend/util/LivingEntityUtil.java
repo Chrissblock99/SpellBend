@@ -144,8 +144,8 @@ public class LivingEntityUtil {
         if (!(entity instanceof LivingEntity))
             return false;
 
-        if (entity instanceof Player)
-            return true;
+        if (entity instanceof Player player)
+            return player.getGameMode().equals(GameMode.ADVENTURE);
         return entity.getPersistentDataContainer().has(PersistentDataKeys.SPELL_AFFECT_ABLE_KEY);
     }
 
