@@ -177,8 +177,35 @@ public class Test extends ReflectiveCommandBase {
     public void memory_sessions(CommandSender commandSender) {
         commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Sessions:"));
         int printed = 0;
-        for (Map.Entry<Player, PlayerSessionData> entry : PlayerSessionData.getPlayerSessions().entrySet()) {
-            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(entry.getKey().getName()));
+        List<LivingEntity> livingEntities = new LinkedList<>(PlayerSessionData.getPlayerSessionsView().keySet().stream().map(p -> (LivingEntity) p).toList());
+        livingEntities.addAll(LivingEntitySessionData.getLivingEntitySessionsView().keySet());
+
+        for (LivingEntity livingEntity : livingEntities) {
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(livingEntity.getName()));
+            printed++;
+        }
+        if (printed == 0)
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
+    }
+
+    @ReflectCommand(path = "memory sessions player")
+    public void memory_sessions_player(CommandSender commandSender) {
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Player sessions:"));
+        int printed = 0;
+        for (Player player : PlayerSessionData.getPlayerSessionsView().keySet()) {
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(player.getName()));
+            printed++;
+        }
+        if (printed == 0)
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("none"));
+    }
+
+    @ReflectCommand(path = "memory sessions entity")
+    public void memory_sessions_entity(CommandSender commandSender) {
+        commandSender.sendMessage(SpellBend.getMiniMessage().deserialize("Entity Sessions:"));
+        int printed = 0;
+        for (LivingEntity livingEntity : LivingEntitySessionData.getLivingEntitySessionsView().keySet()) {
+            commandSender.sendMessage(SpellBend.getMiniMessage().deserialize(livingEntity.getName()));
             printed++;
         }
         if (printed == 0)

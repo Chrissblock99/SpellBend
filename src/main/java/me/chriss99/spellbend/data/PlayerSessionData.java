@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PlayerSessionData extends LivingEntitySessionData {
-    private static final Map<Player, PlayerSessionData> playerSessions = new HashMap<>();
+    private static final HashMap<Player, PlayerSessionData> playerSessions = new HashMap<>();
 
     private final Player player;
 
@@ -174,8 +174,9 @@ public class PlayerSessionData extends LivingEntitySessionData {
         return coolDowns;
     }
 
-    public static Map<Player, PlayerSessionData> getPlayerSessions() {
-        return playerSessions;
+    public static Map<Player, PlayerSessionData> getPlayerSessionsView() {
+        //noinspection unchecked
+        return (Map<Player, PlayerSessionData>) playerSessions.clone();
     }
 
     /**

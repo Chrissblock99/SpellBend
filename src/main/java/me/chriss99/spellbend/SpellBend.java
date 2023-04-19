@@ -62,6 +62,10 @@ public final class SpellBend extends JavaPlugin {
         new InventoryDrag();
         new ProjectileHit();
         new EntityDamageByEntity();
+        new EntitiesLoad();
+        new EntitiesUnload();
+        new EntityDeath();
+        new EntityTeleport();
     }
 
     private static void registerAllPacketListeners() {

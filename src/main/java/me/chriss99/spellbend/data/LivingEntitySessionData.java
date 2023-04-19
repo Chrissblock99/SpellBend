@@ -20,7 +20,7 @@ import java.util.Objects;
 public class LivingEntitySessionData {
     private static final SpellBend plugin = SpellBend.getInstance();
     protected static final Gson gson = SpellBend.getGson();
-    private static final Map<LivingEntity, LivingEntitySessionData> livingEntitySessions = new HashMap<>();
+    private static final HashMap<LivingEntity, LivingEntitySessionData> livingEntitySessions = new HashMap<>();
 
     private final LivingEntity livingEntity;
     private BukkitTask stunReverseTask = null;
@@ -183,6 +183,11 @@ public class LivingEntitySessionData {
 
     public ValueTracker getIsMovementStunned() {
         return isMovementStunned;
+    }
+
+    public static Map<LivingEntity, LivingEntitySessionData> getLivingEntitySessionsView() {
+        //noinspection unchecked
+        return (Map<LivingEntity, LivingEntitySessionData>) livingEntitySessions.clone();
     }
 
     /**
