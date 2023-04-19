@@ -24,7 +24,7 @@ public class ActionBarController {
         new BukkitRunnable(){
             @Override
             public void run() {
-                for (Map.Entry<Player, PlayerSessionData> entry : PlayerSessionData.getPlayerSessions().entrySet())
+                for (Map.Entry<Player, PlayerSessionData> entry : PlayerSessionData.getPlayerSessionsView().entrySet())
                     entry.getValue().getActionBarController().updateBar();
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 20);
