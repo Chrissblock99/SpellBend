@@ -8,6 +8,7 @@ import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
@@ -32,7 +33,7 @@ public class Scorching_Column extends Spell {
 
     public Scorching_Column(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
         super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.45f, 0, 0, 7}));
-        Location location = findHitPosition(caster, 50);
+        Location location = findHitPosition(caster, 35);
         if (location == null) {
             Bukkit.getLogger().warning("Scorching Column could be activated by " + caster.getName() + " despite them having no suitable target Location!");
             caster.sendMessage(SpellBend.getMiniMessage().deserialize("<red>No suitable target location, please notify a developer!</red>\n" +
@@ -243,5 +244,10 @@ public class Scorching_Column extends Spell {
                 new Vector(0, y, -2),
                 new Vector(-1, y, 1)
         }).toList();
+    }
+
+
+    public static @Nullable Component validatePlayerState(@NotNull Player player, double distance) {
+        return (findHitPosition(player, distance) == null) ? SpellBend.getMiniMessage().deserialize("<red><bold>Too far away!") : null;
     }
 }
