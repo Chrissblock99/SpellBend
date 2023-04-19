@@ -17,6 +17,10 @@ public class MathUtil {
         return (int) Math.round(random(-1, 1));
     }
 
+    public static int clamp(int num, int min, int max) {
+        return Math.min(Math.max(num, min), max);
+    }
+
     public static @NotNull Object randomEntry(@NotNull Object[] a) {
         return a[(int) Math.round(random(0, a.length-1))];
     }
