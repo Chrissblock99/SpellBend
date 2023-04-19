@@ -34,7 +34,7 @@ public class Blazing_Spin extends Spell {
 
     World world = caster.getWorld();
     private void windup() {
-        sessionData.getWalkSpeedModifiers().addModifier(0.55f);
+        sessionData.getWalkSpeedModifiers().addModifier(0.55);
         windupTask = new BukkitRunnable() {
             int time = 1;
             @Override
@@ -53,7 +53,7 @@ public class Blazing_Spin extends Spell {
 
                 if (time >= 5) {
                     windupTask.cancel();
-                    sessionData.getWalkSpeedModifiers().removeModifier(0.55f);
+                    sessionData.getWalkSpeedModifiers().removeModifier(0.55);
                     active();
                 }
 
@@ -113,7 +113,7 @@ public class Blazing_Spin extends Spell {
     public void cancelSpell() {
         if (windupTask != null && !windupTask.isCancelled()) {
             windupTask.cancel();
-            sessionData.getWalkSpeedModifiers().removeModifier(0.55f);
+            sessionData.getWalkSpeedModifiers().removeModifier(0.55);
         }
 
         if (activeTask != null && !activeTask.isCancelled()) {

@@ -238,7 +238,7 @@ public class Test extends ReflectiveCommandBase {
     }
 
     @ReflectCommand(path = "value modifier")
-    public void value_modifier(CommandSender commandSender, Action action, Modifier modifier, Player player, float number) {
+    public void value_modifier(CommandSender commandSender, Action action, Modifier modifier, Player player, double number) {
         PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(player);
         PercentageModifier percentageModifier = null;
         switch (modifier) {

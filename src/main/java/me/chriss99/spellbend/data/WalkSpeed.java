@@ -24,7 +24,7 @@ public class WalkSpeed extends PercentageModifier {
      * @param modifier The modifier not negative
      */
     @Override
-    public void addModifier(float modifier) {
+    public void addModifier(double modifier) {
         super.addModifier(modifier);
         updateWalkSpeed();
     }
@@ -38,7 +38,7 @@ public class WalkSpeed extends PercentageModifier {
      * @param modifier The modifier not negative
      */
     @Override
-    public void removeModifier(float modifier) {
+    public void removeModifier(double modifier) {
         super.removeModifier(modifier);
         updateWalkSpeed();
     }
@@ -47,7 +47,7 @@ public class WalkSpeed extends PercentageModifier {
         LivingEntity livingEntity = getLivingEntity();
 
         if (livingEntity instanceof Player player) {
-            player.setWalkSpeed(Math.min(1, getModifier()*0.2f));
+            player.setWalkSpeed((float) Math.min(1, getModifier()*0.2f));
             return;
         }
 
@@ -58,7 +58,7 @@ public class WalkSpeed extends PercentageModifier {
 
         livingEntity.setAI(true);
         livingEntity.removePotionEffect(PotionEffectType.SPEED);
-        livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, Math.round(getModifier()), //TODO //HACK find out how to balance this properly
+        livingEntity.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 999999, (int) Math.round(getModifier()), //TODO //HACK find out how to balance this properly
                 false, false, false));
     }
 }

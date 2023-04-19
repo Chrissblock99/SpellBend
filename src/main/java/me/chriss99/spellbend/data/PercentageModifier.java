@@ -15,7 +15,7 @@ public class PercentageModifier {
     private static final Gson gson = SpellBend.getGson();
 
     private final LivingEntity livingEntity;
-    private float modifier;
+    private double modifier;
     private int activeModifiers;
     private int isZero;
     private final NamespacedKey key;
@@ -47,7 +47,7 @@ public class PercentageModifier {
      *
      * @return The modifier
      */
-    public float getModifier() {
+    public double getModifier() {
         if (isZero > 0)
             return 0;
 
@@ -64,19 +64,19 @@ public class PercentageModifier {
      *
      * @param modifier The modifier not negative
      */
-    public void addModifier(float modifier) {
+    public void addModifier(double modifier) {
         if (modifier < 0)
             throw new IllegalArgumentException("Modifier cannot be negative!");
         if (modifier == 1)
             return;
 
-        activeModifiers++;
         if (modifier == 0) {
             isZero++;
             return;
         }
 
         this.modifier *= modifier;
+        activeModifiers++;
     }
 
     /**
@@ -87,15 +87,11 @@ public class PercentageModifier {
      *
      * @param modifier The modifier not negative
      */
-    public void removeModifier(float modifier) {
+    public void removeModifier(double modifier) {
         if (modifier < 0)
             throw new IllegalArgumentException("Modifier cannot be negative!");
         if (modifier == 1)
             return;
-
-        activeModifiers--;
-        if (activeModifiers == 0)
-            this.modifier = 1;
 
         if (modifier == 0) {
             isZero--;
@@ -103,6 +99,9 @@ public class PercentageModifier {
         }
 
         this.modifier /= modifier;
+        activeModifiers--;
+        if (activeModifiers == 0)
+            this.modifier = 1;
     }
 
     public LivingEntity getLivingEntity() {
@@ -121,13 +120,14 @@ public class PercentageModifier {
         return new Data(1, 0, 0);
     }
 
+    @SuppressWarnings("ClassCanBeRecord") //GSON will break otherwise
     private static class Data {
-        public final float modifier;
+        public final double modifier;
         public final int activeModifiers;
         public final int isZero;
 
-        public Data(float modifiers, int activeModifiers, int isZero) {
-            this.modifier = modifiers;
+        public Data(double modifier, int activeModifiers, int isZero) {
+            this.modifier = modifier;
             this.activeModifiers = activeModifiers;
             this.isZero = isZero;
         }
