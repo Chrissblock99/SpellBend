@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
 public class Health {
     private final static SpellBend plugin = SpellBend.getInstance();
@@ -35,11 +34,11 @@ public class Health {
 
         AttributeInstance attributeInstance = livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (attributeInstance != null) {
-            maxHealth = attributeInstance.getDefaultValue(); //TODO //HACK this does not account for the max health to change LOL!
+            maxHealth = attributeInstance.getBaseValue(); //TODO //HACK this does not account for the max health to change LOL!
             return;
         }
 
-        Bukkit.getLogger().log(Level.WARNING, "The livingEntity \"" + livingEntity + "\" did not have a GENERIC_MAX_HEALTH attribute! Setting to 20!");
+        Bukkit.getLogger().warning("The livingEntity \"" + livingEntity + "\" did not have a GENERIC_MAX_HEALTH attribute! Setting to 20!");
         maxHealth = 20;
     }
 
