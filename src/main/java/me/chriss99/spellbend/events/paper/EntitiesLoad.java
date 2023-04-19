@@ -3,7 +3,6 @@ package me.chriss99.spellbend.events.paper;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.util.LivingEntityUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -21,7 +20,6 @@ public class EntitiesLoad implements Listener {
             if (!LivingEntityUtil.entityIsSpellAffectAble(entity))
                 continue;
 
-            Bukkit.getLogger().info("load " + entity.getName());
             LivingEntitySessionData.loadLivingEntitySession((LivingEntity) entity);
         }
     }
