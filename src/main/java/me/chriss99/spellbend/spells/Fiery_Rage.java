@@ -73,8 +73,8 @@ public class Fiery_Rage extends Spell {
     }
 
     private void activate() {
-        sessionData.getDamageDealtModifiers().addModifier(1.5f);
-        sessionData.getWalkSpeedModifiers().addModifier(1.2f);
+        sessionData.getDamageDealtModifiers().addModifier(1.5);
+        sessionData.getWalkSpeedModifiers().addModifier(1.2);
 
         World world = caster.getWorld();
         Location location = caster.getLocation();
@@ -106,8 +106,8 @@ public class Fiery_Rage extends Spell {
                 }
 
                 if (time == 0) {
-                    sessionData.getDamageDealtModifiers().removeModifier(1.5f);
-                    sessionData.getWalkSpeedModifiers().removeModifier(1.2f);
+                    sessionData.getDamageDealtModifiers().removeModifier(1.5);
+                    sessionData.getWalkSpeedModifiers().removeModifier(1.2);
 
                     world.playSound(caster.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1.2f);
                     world.playSound(caster.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 2f, 1.5f);
@@ -125,15 +125,15 @@ public class Fiery_Rage extends Spell {
 
     @Override
     public void cancelSpell() {
-        if (!windupTask.isCancelled()) {
+        if (windupTask != null && !windupTask.isCancelled()) {
             windupTask.cancel();
             caster.setGravity(true);
             return;
         }
 
-        if (!activeTask.isCancelled()) {
-            sessionData.getDamageDealtModifiers().removeModifier(1.5f);
-            sessionData.getWalkSpeedModifiers().removeModifier(1.2f);
+        if (activeTask != null && !activeTask.isCancelled()) {
+            sessionData.getDamageDealtModifiers().removeModifier(1.5);
+            sessionData.getWalkSpeedModifiers().removeModifier(1.2);
 
             World world = caster.getWorld();
             Location location = caster.getLocation();

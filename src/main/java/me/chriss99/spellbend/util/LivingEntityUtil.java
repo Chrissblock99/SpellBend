@@ -11,12 +11,22 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
 
 
 public class LivingEntityUtil {
+    public static void igniteLivingEntity(@NotNull LivingEntity livingEntity) {
+        igniteLivingEntity(livingEntity, 6*20);
+    }
+
+    public static void igniteLivingEntity(@NotNull LivingEntity livingEntity, int ticks) {
+        if (livingEntity.getFireTicks() < ticks)
+            livingEntity.setFireTicks(ticks);
+    }
+
     /**
      * Gets all livingEntities near the location and returns them with their distance^2
      *
@@ -101,19 +111,19 @@ public class LivingEntityUtil {
             new Vector(-1, 0, -1), new Vector(1, 0, -1), new Vector(-1, 0, 1), new Vector(1, 0, 1)};
 
     /**
-     * Gets the voxelShapes of the 9 blocks below the livingEntity and compares them to its boundingBox <br>
-     * Returns false if the livingEntity is inside a vehicle
+     * Gets the voxelShapes of the 9 blocks below the entity and compares them to its boundingBox <br>
+     * Returns false if the entity is inside a vehicle
      *
-     * @param livingEntity The livingEntity to check for
-     * @return If the livingEntity is on ground
+     * @param entity The entity to check for
+     * @return If the entity is on ground
      */
-    public static boolean isOnGround(@NotNull LivingEntity livingEntity) {
-        if (livingEntity.isInsideVehicle())
+    public static boolean isOnGround(@NotNull Entity entity) {
+        if (entity.isInsideVehicle())
             return false;
 
-        BoundingBox livingEntityBound = livingEntity.getBoundingBox().shift(0, -0.03, 0);
-        World world = livingEntity.getWorld();
-        Location belowLivingEntity = livingEntity.getLocation().add(0, -0.03, 0).toBlockLocation();
+        BoundingBox livingEntityBound = entity.getBoundingBox().shift(0, -0.03, 0);
+        World world = entity.getWorld();
+        Location belowLivingEntity = entity.getLocation().add(0, -0.03, 0).toBlockLocation();
 
         for (Vector offset : offset) {
             Location relativeLoc = belowLivingEntity.clone().add(offset);
@@ -130,9 +140,12 @@ public class LivingEntityUtil {
      * @param entity The entity to check for
      * @return If the entity should be affected by spells
      */
-    public static boolean entityIsSpellAffectAble(@NotNull Entity entity) {
-        if (entity instanceof Player)
-            return true;
+    public static boolean entityIsSpellAffectAble(@Nullable Entity entity) {
+        if (!(entity instanceof LivingEntity))
+            return false;
+
+        if (entity instanceof Player player)
+            return player.getGameMode().equals(GameMode.ADVENTURE);
         return entity.getPersistentDataContainer().has(PersistentDataKeys.SPELL_AFFECT_ABLE_KEY);
     }
 

@@ -15,6 +15,10 @@ public class Colors {
         return (Color) MathUtil.randomEntry(new Color[]{orange1, orange2});
     }
 
+    public static Color getRandomOrange3or4() {
+        return (Color) MathUtil.randomEntry(new Color[]{orange3, orange4});
+    }
+
     public static Color getRandomOrange5or6() {
         return (Color) MathUtil.randomEntry(new Color[]{orange5, orange6});
     }

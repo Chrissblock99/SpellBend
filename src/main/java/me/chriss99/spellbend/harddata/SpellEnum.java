@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 public enum SpellEnum {
-    MAGMA_BURST(Material.GOLDEN_HOE, "Magma Burst", "red", "MULTI_PROJECTILE", 0, 20, Test_Spell::new,
+    MAGMA_BURST(Material.GOLDEN_HOE, "Magma Burst", "red", "MULTI_PROJECTILE", 0, 20, Magma_Burst::new,
             "<gold>User casts a <yellow>rapid burst",
             "<yellow>of magma <gold>that deals <yellow>low",
             "<yellow>damage."),
@@ -36,14 +36,14 @@ public enum SpellEnum {
             "<gold>User casts a <yellow>slow-moving",
             "<yellow>fireball <gold>that deals <yellow>high",
             "<yellow>damage <gold>in its radius."),
-    BLAZING_SPIN(Material.GOLDEN_SWORD, "Blazing Spin", "red", "SHIELD", 150, 35, Test_Spell::new,
-            "<gold>User raises a <yellow>fiery column",
-            "<gold>at their cursor, dealing <yellow>medium",
-            "<yellow>damage <gold>and <yellow>stunning <gold>enemies."),
-    SCORCHING_COLUMN(Material.GOLDEN_SHOVEL, "Scorching Column", "red", "AREA_OF_EFFECT", 175, 25, Test_Spell::new,
+    BLAZING_SPIN(Material.GOLDEN_SWORD, "Blazing Spin", "red", "SHIELD", 150, 35, Blazing_Spin::new,
             "<gold>User <yellow>spins on their axis <gold>and",
             "<gold>deals <yellow>high damage",
             "<gold>in their radius."),
+    SCORCHING_COLUMN(Material.GOLDEN_SHOVEL, "Scorching Column", "red", "AREA_OF_EFFECT", 175, 25, Scorching_Column::new,
+            "<gold>User raises a <yellow>fiery column",
+            "<gold>at their cursor, dealing <yellow>medium",
+            "<yellow>damage <gold>and <yellow>stunning <gold>enemies."),
     FIERY_RAGE(Material.CAMPFIRE, "Fiery Rage", "red", "AURA",200, 40, Fiery_Rage::new,
             "<gold>User <yellow>propels themselves",
             "<gold>into the air and harnesses",
