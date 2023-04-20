@@ -89,12 +89,7 @@ public class PlayerDataBoard {
      * Updates the player's scoreboard
      */
     public void updateBoard() {
-        String heldCoolDownedSpellType = null;
-        String heldSpellType = ItemData.getHeldSpellType(player);
-        if (PlayerSessionData.getPlayerSession(player).getCoolDowns().typeIsCooledDown(heldSpellType))
-            heldCoolDownedSpellType = heldSpellType;
-
-        updateBoard(heldCoolDownedSpellType);
+        updateBoard(true);
     }
 
     /**
