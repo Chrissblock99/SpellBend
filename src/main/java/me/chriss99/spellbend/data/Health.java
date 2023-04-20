@@ -214,7 +214,8 @@ public class Health {
                 float gold = (float) (10 * percentage);
                 float gems = (float) (3 * percentage);
 
-                uniqueAttacker.sendMessage(SpellBend.getMiniMessage().deserialize("<yellow>" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist") + "! <gold>+" + gold + " Gold <dark_grey>| <aqua>+" + gems + " Gems <dark_grey>| <red>+" + health + " Health"));
+                uniqueAttacker.sendMessage(SpellBend.getMiniMessage().deserialize("<yellow>" + ((killer != null && killer.equals(entry.getAttacker())) ? "Kill" : "Assist")
+                        + "! <gold>+" + gold + " Gold <dark_grey>| <aqua>+" + gems + " Gems <dark_grey>| <red>+" + health + " Health"));
                 PlayerSessionData sessionData = PlayerSessionData.getPlayerSession(uniqueAttacker);
                 sessionData.getGold().addCurrency(gold);
                 sessionData.getGems().addCurrency(gems);
