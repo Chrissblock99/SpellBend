@@ -53,15 +53,7 @@ public class CoolDowns {
     public boolean typeIsCooledDown(@Nullable String spellType) {
         if (spellType == null)
             return false;
-        CoolDownEntry coolDownEntry = getCoolDownEntry(spellType);
-        if (coolDownEntry == null)
-            return false;
-
-        if (coolDownEntry.isExpired()) {
-            removeCoolDown(spellType);
-            return false;
-        }
-        return true;
+        return getCoolDownEntry(spellType) != null;
     }
 
     /**
