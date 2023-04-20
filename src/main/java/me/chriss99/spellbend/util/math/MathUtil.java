@@ -21,6 +21,11 @@ public class MathUtil {
         return Math.min(Math.max(num, min), max);
     }
 
+    public static double roundToNDigits(double num, int digits) {
+        double offset = Math.pow(10, digits);
+        return Math.round(num*offset)/offset;
+    }
+
     public static @NotNull Object randomEntry(@NotNull Object[] a) {
         return a[(int) Math.round(random(0, a.length-1))];
     }

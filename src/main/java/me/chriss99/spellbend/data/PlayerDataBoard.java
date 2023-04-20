@@ -158,8 +158,8 @@ public class PlayerDataBoard {
                 stopDisplayCooldown();
             return;
         }
-        CoolDownEntry coolDownEntry = sessionData.getCoolDowns().getCoolDownEntry(heldCoolDownedSpellType);
 
+        CoolDownEntry coolDownEntry = sessionData.getCoolDowns().getCoolDownEntry(heldCoolDownedSpellType);
         if (coolDownEntry == null) {
             Bukkit.getLogger().warning("When updating " + player.getName() + "'s scoreboard, " + heldCoolDownedSpellType + " was given as the coolDowned spellType, however no such CoolDownEntry exists!");
 
@@ -172,34 +172,31 @@ public class PlayerDataBoard {
                 stopDisplayCooldown();
             return;
         }
-
         line = obj.getScore("§7" + TextUtil.standardCapitalize(heldCoolDownedSpellType) + " - " + coolDownEntry.getCoolDownStage().toString().toLowerCase()); line.setScore(1);
-        StringBuilder coolDownDisplay = new StringBuilder();
 
+        StringBuilder coolDownDisplay = null; //only needed so compiler doesn't complain
         switch (coolDownEntry.getCoolDownStage()) {
-            case WINDUP -> {
-                int filled = MathUtil.clamp(Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10), 0, 10);
-                coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                        .append("s §8▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§b");
-            }
-            case ACTIVE -> {
-                int filled = MathUtil.clamp(Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10), 0, 10);
-                coolDownDisplay.append("§e").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                        .append("s §8▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§a");
-            }
-            case PASSIVE -> {
-                int filled = MathUtil.clamp(Math.round((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10), 0, 10);
-                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                        .append("s §a▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
-            }
-            case COOLDOWN -> {
-                int filled = MathUtil.clamp(Math.round(10-(coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10), 0, 10);
-                coolDownDisplay.append("§b").append(Math.round(coolDownEntry.getRemainingCoolDownStageTimeInS()*10f)/10f)
-                        .append("s §b▌▌▌▌▌▌▌▌▌▌").insert(coolDownDisplay.length()-10+filled, "§8");
-            }
+            case WINDUP -> coolDownDisplay =
+                    buildTimeDisplay(coolDownEntry, 'e', '8', true, 'b');
+            case ACTIVE -> coolDownDisplay =
+                    buildTimeDisplay(coolDownEntry, 'e', '8', false, 'a');
+            case PASSIVE -> coolDownDisplay =
+                    buildTimeDisplay(coolDownEntry, 'b', 'a', false, '8');
+            case COOLDOWN -> coolDownDisplay =
+                    buildTimeDisplay(coolDownEntry, 'b', 'b', true, '8');
         }
         line = obj.getScore(coolDownDisplay.toString()); line.setScore(0);
 
         player.setScoreboard(board);
+    }
+
+    private static @NotNull StringBuilder buildTimeDisplay(@NotNull CoolDownEntry coolDownEntry, char numColor, char barColor1, boolean backwards, char barColor2) {
+        double forwards = (coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10;
+        int filled = (int) Math.round(backwards ? 10-forwards : forwards);
+
+        StringBuilder timeDisplay = new StringBuilder("§").append(numColor)
+                .append(MathUtil.roundToNDigits(coolDownEntry.getRemainingCoolDownStageTimeInS(), 1))
+                .append("s §").append(barColor1).append("▌▌▌▌▌▌▌▌▌▌");
+        return timeDisplay.insert(timeDisplay.length()-10 + filled, "§" + barColor2);
     }
 }
