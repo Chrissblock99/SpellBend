@@ -33,7 +33,7 @@ public class Scorching_Column extends Spell {
 
     public Scorching_Column(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
         super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{0.45f, 0, 0, 7}));
-        Location location = findHitPosition(caster, 35);
+        Location location = findHitPosition(caster, 32);
         if (location == null) {
             Bukkit.getLogger().warning("Scorching Column could be activated by " + caster.getName() + " despite them having no suitable target Location!");
             caster.sendMessage(SpellBend.getMiniMessage().deserialize("<red>No suitable target location, please notify a developer!</red>\n" +
