@@ -16,7 +16,6 @@ public class PercentageModifier {
 
     private final LivingEntity livingEntity;
     private double modifier;
-    private int activeModifiers;
     private int isZero;
     private final NamespacedKey key;
 
@@ -29,7 +28,6 @@ public class PercentageModifier {
         if (gsonString == null) {
             Bukkit.getLogger().warning(livingEntity.getName() + "'s " + name + " were not setup when loading, fixing now!");
             modifier = 1;
-            activeModifiers = 0;
             isZero = 0;
             livingEntity.getPersistentDataContainer().set(key, PersistentDataType.STRING, gson.toJson(getDefaultData()));
             return;
@@ -38,7 +36,9 @@ public class PercentageModifier {
         Type type = new TypeToken<Data>(){}.getType();
         Data data = gson.fromJson(gsonString, type);
         modifier = data.modifier;
-        activeModifiers = data.activeModifiers;
+        if (modifier == 0)
+            Bukkit.getLogger().warning("PercentageModifier for livingEntity " + livingEntity.getName() + " with key " + key.getKey() +
+                    " and name \"" + name + "\" loaded with a modifier of 0! This presents a problem as this value can never change!");
         isZero = data.isZero;
     }
 
@@ -50,6 +50,8 @@ public class PercentageModifier {
     public double getModifier() {
         if (isZero > 0)
             return 0;
+        else if (isZero < 0)
+            return modifier / 0;
 
         return modifier;
     }
@@ -70,13 +72,12 @@ public class PercentageModifier {
         if (modifier == 1)
             return;
 
-        if (modifier == 0) {
+        if (this.modifier * modifier == 0) {
             isZero++;
             return;
         }
 
         this.modifier *= modifier;
-        activeModifiers++;
     }
 
     /**
@@ -98,10 +99,12 @@ public class PercentageModifier {
             return;
         }
 
+        if (this.modifier / modifier == 0) {
+            isZero++;
+            return;
+        }
+
         this.modifier /= modifier;
-        activeModifiers--;
-        if (activeModifiers == 0)
-            this.modifier = 1;
     }
 
     public LivingEntity getLivingEntity() {
@@ -113,22 +116,20 @@ public class PercentageModifier {
      */
     public void saveModifiers() {
         livingEntity.getPersistentDataContainer().set(key, PersistentDataType.STRING,
-                gson.toJson(new Data(modifier, activeModifiers, isZero)));
+                gson.toJson(new Data(modifier, isZero)));
     }
 
     public static Data getDefaultData() {
-        return new Data(1, 0, 0);
+        return new Data(1, 0);
     }
 
     @SuppressWarnings("ClassCanBeRecord") //GSON will break otherwise
     private static class Data {
         public final double modifier;
-        public final int activeModifiers;
         public final int isZero;
 
-        public Data(double modifier, int activeModifiers, int isZero) {
+        public Data(double modifier, int isZero) {
             this.modifier = modifier;
-            this.activeModifiers = activeModifiers;
             this.isZero = isZero;
         }
     }
