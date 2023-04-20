@@ -21,6 +21,10 @@ public class MathUtil {
         return Math.min(Math.max(num, min), max);
     }
 
+    public static double clamp(double num, double min, double max) {
+        return Math.min(Math.max(num, min), max);
+    }
+
     public static double roundToNDigits(double num, int digits) {
         double offset = Math.pow(10, digits);
         return Math.round(num*offset)/offset;

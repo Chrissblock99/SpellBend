@@ -186,7 +186,7 @@ public class PlayerDataBoard {
     }
 
     private static @NotNull StringBuilder buildTimeDisplay(@NotNull CoolDownEntry coolDownEntry, char numColor, char barColor1, boolean backwards, char barColor2) {
-        double forwards = (coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10;
+        double forwards = MathUtil.clamp((coolDownEntry.getRemainingCoolDownStageTimeInS()/coolDownEntry.getStageTimeInS())*10, 0, 10);
         int filled = (int) Math.round(backwards ? 10-forwards : forwards);
 
         StringBuilder timeDisplay = new StringBuilder("§").append(numColor)
