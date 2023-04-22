@@ -8,6 +8,7 @@ import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
+import me.chriss99.spellbend.util.particle.circle.ParticleCircle;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -76,19 +77,17 @@ public class Scorching_Column extends Spell {
 
     World world = caster.getWorld();
     private void windup(@NotNull Location location) {
+        ParticleCircle particleCircle = ParticleCircle.XZParticleCircle(location.clone().add(0, 0.05, 0), 3, 2,
+                () -> new ParticleCircle.ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomOrange1or2(), 3)));
         windupTask = new BukkitRunnable() {
             int time = 0;
 
             @Override
             public void run() {
-                for (int i = 0; i < 10; i++) {
-                    double radians = time*4 * MathUtil.DEGTORAD;
-                    Vector circlePos = new Vector(Math.cos(radians) * 3, 0.05, Math.sin(radians) * 3);
-                    world.spawnParticle(Particle.REDSTONE, location.clone().add(circlePos), 1, 0, 0, 0, 0,
-                            new Particle.DustOptions(Colors.getRandomOrange1or2(), 3));
+                double start = time*4 * MathUtil.DEGTORAD;
+                time += 10;
+                particleCircle.drawRadianInterval(start, time*4 * MathUtil.DEGTORAD);
 
-                    time++;
-                }
                 world.playSound(location, Sound.BLOCK_NETHERRACK_BREAK, 3f, 0.5f + time/168f);
                 world.playSound(location, Sound.BLOCK_FIRE_EXTINGUISH, 2f, 1 + time/168f);
 
