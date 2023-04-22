@@ -10,65 +10,65 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 public class ParticleCircle {
-    public static @NotNull ParticleCircle XZParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new XZCircleVectorProvider(radius), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle XZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new XZCircleVectorProvider(radius), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle XYParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new XYCircleVectorProvider(radius), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle XYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new XYCircleVectorProvider(radius), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle rotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XZCircleVectorProvider(radius), yaw, pitch), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle rotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XZCircleVectorProvider(radius), yaw, pitch), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle rotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XYCircleVectorProvider(radius), yaw, pitch), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle rotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XYCircleVectorProvider(radius), yaw, pitch), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle minecraftRotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle minecraftRotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle minecraftRotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle minecraftRotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle locationRotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Location rotation, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle locationRotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Location rotation, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle locationRotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Location rotation, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle locationRotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Location rotation, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle vectorRotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Vector rotation, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle vectorRotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Vector rotation, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle vectorRotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Vector rotation, @NotNull Particle particle, @Nullable Object data)
-    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), countPerBlock, particle, data);}
+    public static @NotNull ParticleCircle vectorRotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Vector rotation, @NotNull Particle particle, @Nullable Object data)
+    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), particlesPerBlock, particle, data);}
 
-    public static @NotNull ParticleCircle XZParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new XZCircleVectorProvider(radius), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle XZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new XZCircleVectorProvider(radius), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle XYParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new XYCircleVectorProvider(radius), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle XYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new XYCircleVectorProvider(radius), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle rotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XZCircleVectorProvider(radius), yaw, pitch), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle rotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XZCircleVectorProvider(radius), yaw, pitch), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle rotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XYCircleVectorProvider(radius), yaw, pitch), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle rotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new RotatedCircleVectorProvider(new XYCircleVectorProvider(radius), yaw, pitch), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle minecraftRotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle minecraftRotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle minecraftRotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle minecraftRotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, double yaw, double pitch, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new CustomRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), RotationUtil::rotateVectorAroundMinecraftYawAndPitch, yaw, pitch), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle locationRotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Location rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle locationRotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Location rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle locationRotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Location rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle locationRotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Location rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new LocationRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle vectorRotatedXZParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Vector rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle vectorRotatedXZParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Vector rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XZCircleVectorProvider(radius), rotation), particlesPerBlock, particleWithDataSupplier);}
 
-    public static @NotNull ParticleCircle vectorRotatedXYParticleCircle(@NotNull Location center, double radius, int countPerBlock, @NotNull Vector rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
-    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), countPerBlock, particleWithDataSupplier);}
+    public static @NotNull ParticleCircle vectorRotatedXYParticleCircle(@NotNull Location center, double radius, double particlesPerBlock, @NotNull Vector rotation, @NotNull Supplier<ParticleWithData> particleWithDataSupplier)
+    {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), particlesPerBlock, particleWithDataSupplier);}
 
 
     private Location center;
@@ -77,16 +77,20 @@ public class ParticleCircle {
     private final double radianParticleLength;
     private final Supplier<ParticleWithData> particleWithDataSupplier;
 
-    private ParticleCircle(@NotNull Location center, @NotNull CircleVectorProvider circleVectorProvider, int countPerBlock, @NotNull Particle particle, @Nullable Object data) {
-        this(center, circleVectorProvider, countPerBlock, () -> new ParticleWithData(particle, data));
+    private ParticleCircle(@NotNull Location center, @NotNull CircleVectorProvider circleVectorProvider, double particlesPerBlock, @NotNull Particle particle, @Nullable Object data) {
+        this(center, circleVectorProvider, particlesPerBlock, () -> new ParticleWithData(particle, data));
     }
 
-    private ParticleCircle(@NotNull Location center, @NotNull CircleVectorProvider circleVectorProvider, int countPerBlock, @NotNull Supplier<ParticleWithData> particleWithDataSupplier) {
+    private ParticleCircle(@NotNull Location center, @NotNull CircleVectorProvider circleVectorProvider, double particlesPerBlock, @NotNull Supplier<ParticleWithData> particleWithDataSupplier) {
         this.center = center;
         this.circleVectorProvider = circleVectorProvider;
         this.circumference = circleVectorProvider.getCircumference();
-        this.radianParticleLength = (2*Math.PI) / Math.ceil(circumference * countPerBlock);
+        this.radianParticleLength = (2*Math.PI) / Math.ceil(circumference * particlesPerBlock);
         this.particleWithDataSupplier = particleWithDataSupplier;
+    }
+
+    public void drawEntireCircle() {
+        drawRadianInterval(0, 2*Math.PI);
     }
 
     public void drawCircumferencePart(double start, double length) {
