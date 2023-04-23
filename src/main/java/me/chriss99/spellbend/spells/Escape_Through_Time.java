@@ -8,6 +8,7 @@ import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
+import me.chriss99.spellbend.util.particle.circle.ParticleCircle;
 import net.kyori.adventure.sound.SoundStop;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
@@ -47,12 +48,16 @@ public class Escape_Through_Time extends Spell {
         world.playSound(armorStandOrigin, Sound.ENTITY_ENDERMAN_TELEPORT, 3f, 1.2f);
         world.playSound(armorStandOrigin, Sound.BLOCK_BEACON_ACTIVATE, 3f, 1.2f);
 
-        for (int i = 0; i < 360; i += 10) {
+        /*for (int i = 0; i < 360; i += 10) {
             Color color = Colors.getRandomYellow1or2();
-            armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, armorStand.getLocation().clone().add(Math.cos(i * MathUtil.DEGTORAD) * 1.5f, 0, Math.sin(i * MathUtil.DEGTORAD) * 1.5f),
+            armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION,
+                    armorStand.getLocation().clone().add(Math.cos(i * MathUtil.DEGTORAD) * 1.5f, 0, Math.sin(i * MathUtil.DEGTORAD) * 1.5f),
                     1, 0, 0, 0, 0,
                     new Particle.DustTransition(color, color, 2));
-    }
+        }*/
+        ParticleCircle.XZParticleCircle(armorStand.getLocation(), 1.5, 3.5,
+                        () -> new ParticleCircle.ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomYellow1or2(), 2)))
+                .drawEntireCircle();
 
         armorStandTask = new BukkitRunnable() {
             int time = 300;
