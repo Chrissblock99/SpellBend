@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -225,7 +226,7 @@ public class LivingEntitySessionData {
     }
 
     public static void endAllSessions(boolean pluginDisable) {
-        for (Map.Entry<LivingEntity, LivingEntitySessionData> livingEntityToSessionData : livingEntitySessions.entrySet())
+        for (Map.Entry<LivingEntity, LivingEntitySessionData> livingEntityToSessionData : new HashSet<>(livingEntitySessions.entrySet()))
             livingEntityToSessionData.getValue().endSession(pluginDisable);
     }
 }
