@@ -100,59 +100,59 @@ class PercentageTest {
 
     @Test
     void effectively0mulEffectivelyInfinityEqualsX() {
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(1, 1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(1, Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(1, Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(1, 1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(1, Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(1, Double.MAX_VALUE);
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MIN_VALUE, 1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MIN_VALUE, Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MIN_VALUE, Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MIN_VALUE, 1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MIN_VALUE, Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MIN_VALUE, Double.MAX_VALUE);
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MAX_VALUE, 1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MAX_VALUE, Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MAX_VALUE, Double.MAX_VALUE);
-
-
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-1, 1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-1, Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-1, Double.MAX_VALUE);
-
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MIN_VALUE, 1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MIN_VALUE, Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MIN_VALUE, Double.MAX_VALUE);
-
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, 1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MAX_VALUE, 1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MAX_VALUE, Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MAX_VALUE, Double.MAX_VALUE);
 
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(1, -1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(1, -Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(1, -Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-1, 1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-1, Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-1, Double.MAX_VALUE);
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MIN_VALUE, -1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MIN_VALUE, -Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MIN_VALUE, -Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MIN_VALUE, 1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MIN_VALUE, Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MIN_VALUE, Double.MAX_VALUE);
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MAX_VALUE, -1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MAX_VALUE, -Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(Double.MAX_VALUE, -Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MAX_VALUE, 1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MAX_VALUE, Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MAX_VALUE, Double.MAX_VALUE);
 
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-1, -1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-1, -Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-1, -Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(1, -1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(1, -Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(1, -Double.MAX_VALUE);
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MIN_VALUE, -1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MIN_VALUE, -Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MIN_VALUE, -Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MIN_VALUE, -1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MIN_VALUE, -Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MIN_VALUE, -Double.MAX_VALUE);
 
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, -1);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, -Double.MIN_VALUE);
-        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, -Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MAX_VALUE, -1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MAX_VALUE, -Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(Double.MAX_VALUE, -Double.MAX_VALUE);
+
+
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-1, -1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-1, -Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-1, -Double.MAX_VALUE);
+
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MIN_VALUE, -1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MIN_VALUE, -Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MIN_VALUE, -Double.MAX_VALUE);
+
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MAX_VALUE, -1);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MAX_VALUE, -Double.MIN_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(-Double.MAX_VALUE, -Double.MAX_VALUE);
     }
 
-    private static void assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(double a, double b) {
+    private static void assertAEffectivelyZeroMulBEffectivelyZeroEqualsAMulB(double a, double b) {
         var percentageA = new Percentage(a, 1);
         var percentageB = new Percentage(b, -1);
         percentageA.multiply(percentageB);
