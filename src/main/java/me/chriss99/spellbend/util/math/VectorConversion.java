@@ -10,9 +10,8 @@ public class VectorConversion {
     public static final double RAD_TO_DEG =  180 / PI;
 
     public static float getYaw(@NotNull Vector vector) {
-        if (((Double) vector.getX()).equals((double) 0) && ((Double) vector.getZ()).equals((double) 0)){
+        if (((Double) vector.getX()).equals((double) 0) && ((Double) vector.getZ()).equals((double) 0))
             return 0;
-        }
         return (float) (Math.atan2(vector.getZ(), vector.getX()) * RAD_TO_DEG);
     }
 
