@@ -4,6 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.CoolDownEntry;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.util.ItemData;
+import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
