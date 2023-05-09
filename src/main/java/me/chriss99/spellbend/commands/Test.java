@@ -53,7 +53,7 @@ public class Test extends ReflectiveCommandBase {
 
     @ReflectCommand(path = "update sidebar")
     public void update_sidebar(Player commandSender) {
-        PlayerSessionData.getPlayerSession(commandSender).getPlayerDataBoard().updateBoard();
+        PlayerSessionData.getPlayerSession(commandSender).getPlayerSideBar().updateBoard();
     }
 
     @ReflectCommand(path = "memory spell")

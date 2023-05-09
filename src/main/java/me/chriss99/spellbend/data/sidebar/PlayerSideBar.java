@@ -1,9 +1,9 @@
-package me.chriss99.spellbend.data;
+package me.chriss99.spellbend.data.sidebar;
 
 import me.chriss99.spellbend.SpellBend;
+import me.chriss99.spellbend.data.CoolDownEntry;
+import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.util.ItemData;
-import me.chriss99.spellbend.util.TextUtil;
-import me.chriss99.spellbend.util.math.MathUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Statistic;
@@ -16,13 +16,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerDataBoard {
+public class PlayerSideBar {
     private static final Map<Player, String> playersDisplayingCoolDown = new HashMap<>();
 
     private final Player player;
+    private final AbstractCoolDownTimeDisplayFactory coolDownTimeDisplayFactory;
 
-    public PlayerDataBoard(@NotNull Player player) {
+    public PlayerSideBar(@NotNull Player player) {
+        this(player, new CoolDownTimeDisplayFactoryImpl());
+    }
+
+    public PlayerSideBar(@NotNull Player player, @NotNull AbstractCoolDownTimeDisplayFactory coolDownTimeDisplayFactory) {
         this.player = player;
+        this.coolDownTimeDisplayFactory = coolDownTimeDisplayFactory;
     }
 
     /**
@@ -31,7 +37,7 @@ public class PlayerDataBoard {
     public static void startUpdater() {
         //creating boards for players already online
         for (Player player : Bukkit.getOnlinePlayers())
-            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
+            PlayerSessionData.getPlayerSession(player).getPlayerSideBar().updateBoard();
 
         new BukkitRunnable(){
             @Override
@@ -46,14 +52,14 @@ public class PlayerDataBoard {
                         return;
                     }
                     CoolDownEntry coolDownEntry = PlayerSessionData.getPlayerSession(player).getCoolDowns().getCoolDownEntry(spellType);
-                    PlayerDataBoard playerDataBoard = PlayerSessionData.getPlayerSession(player).getPlayerDataBoard();
+                    PlayerSideBar playerSideBar = PlayerSessionData.getPlayerSession(player).getPlayerSideBar();
 
                     if (coolDownEntry == null) {
-                        playerDataBoard.updateBoard(null);
+                        playerSideBar.updateBoard(null);
                         return;
                     }
 
-                    playerDataBoard.updateBoard(spellType);
+                    playerSideBar.updateBoard(spellType);
                 }
             }
         }.runTaskTimer(SpellBend.getInstance(), 0, 2);
@@ -167,20 +173,10 @@ public class PlayerDataBoard {
                 stopDisplayCooldown();
             return;
         }
-        line = obj.getScore("§7" + TextUtil.standardCapitalize(heldCoolDownedSpellType) + " - " + coolDownEntry.getCoolDownStage().toString().toLowerCase()); line.setScore(1);
 
-        StringBuilder coolDownDisplay = null; //only needed so compiler doesn't complain
-        switch (coolDownEntry.getCoolDownStage()) {
-            case WINDUP -> coolDownDisplay =
-                    buildTimeDisplay(coolDownEntry, 'e', '8', true, 'b');
-            case ACTIVE -> coolDownDisplay =
-                    buildTimeDisplay(coolDownEntry, 'e', '8', false, 'a');
-            case PASSIVE -> coolDownDisplay =
-                    buildTimeDisplay(coolDownEntry, 'b', 'a', false, '8');
-            case COOLDOWN -> coolDownDisplay =
-                    buildTimeDisplay(coolDownEntry, 'b', 'b', true, '8');
-        }
-        line = obj.getScore(coolDownDisplay.toString()); line.setScore(0);
+        CoolDownTimeDisplay coolDownTimeDisplay = coolDownTimeDisplayFactory.createCoolDownTimeDisplay(coolDownEntry);
+        line = obj.getScore(coolDownTimeDisplay.name()); line.setScore(1);
+        line = obj.getScore(coolDownTimeDisplay.time()); line.setScore(0);
 
         player.setScoreboard(board);
     }

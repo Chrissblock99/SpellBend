@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.data;
 
 import me.chriss99.spellbend.SpellBend;
+import me.chriss99.spellbend.data.sidebar.PlayerSideBar;
 import me.chriss99.spellbend.harddata.ElementEnum;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ public class PlayerSessionData extends LivingEntitySessionData {
     private final Player player;
 
     private final SpellHandler spellHandler;
-    private final PlayerDataBoard playerDataBoard;
+    private final PlayerSideBar playerSideBar;
     private final ActionBarController actionBarController;
 
     private final CurrencyTracker mana;
@@ -115,7 +116,7 @@ public class PlayerSessionData extends LivingEntitySessionData {
         this.player = player;
 
         spellHandler = new SpellHandler(player);
-        playerDataBoard = new PlayerDataBoard(player);
+        playerSideBar = new PlayerSideBar(player);
         actionBarController = new ActionBarController(player);
 
         mana = new CurrencyTracker(player, 100, false, true);
@@ -142,8 +143,8 @@ public class PlayerSessionData extends LivingEntitySessionData {
         return spellHandler;
     }
 
-    public PlayerDataBoard getPlayerDataBoard() {
-        return playerDataBoard;
+    public PlayerSideBar getPlayerSideBar() {
+        return playerSideBar;
     }
 
     public ActionBarController getActionBarController() {
@@ -203,7 +204,7 @@ public class PlayerSessionData extends LivingEntitySessionData {
             spellHandler.endSpellActivity();
         else spellHandler.playerLeave();
 
-        playerDataBoard.stopDisplayCooldown();
+        playerSideBar.stopDisplayCooldown();
         super.endSession(pluginDisable);
         playerSessions.remove(player);
     }

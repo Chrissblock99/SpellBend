@@ -8,6 +8,7 @@ import me.chriss99.spellbend.commands.ReflectTest;
 import me.chriss99.spellbend.commands.Shop;
 import me.chriss99.spellbend.commands.Test;
 import me.chriss99.spellbend.data.*;
+import me.chriss99.spellbend.data.sidebar.PlayerSideBar;
 import me.chriss99.spellbend.events.paper.*;
 //import me.chriss99.spellbend.events.protocollib.*;
 import me.chriss99.spellbend.manager.BlockManager;
@@ -33,7 +34,7 @@ public final class SpellBend extends JavaPlugin {
         registerAllPacketListeners();
         registerAllCommands();
 
-        PlayerDataBoard.startUpdater();
+        PlayerSideBar.startUpdater();
         ActionBarController.startUpdater();
         PlayerSessionData.startManaRegenerator();
 

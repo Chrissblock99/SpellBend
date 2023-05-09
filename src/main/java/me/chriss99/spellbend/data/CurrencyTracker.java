@@ -47,7 +47,7 @@ public class CurrencyTracker {
 
     private void updateDisplay() {
         if (updateBoard)
-            PlayerSessionData.getPlayerSession(player).getPlayerDataBoard().updateBoard();
+            PlayerSessionData.getPlayerSession(player).getPlayerSideBar().updateBoard();
         if (updateActionBar)
             PlayerSessionData.getPlayerSession(player).getActionBarController().updateBar();
     }

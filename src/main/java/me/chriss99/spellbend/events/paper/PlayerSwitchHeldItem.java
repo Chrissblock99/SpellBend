@@ -30,10 +30,10 @@ public class PlayerSwitchHeldItem implements Listener {
 
             if (sessionData.getCoolDowns().typeIsCooledDown(spellType))
                 //noinspection ConstantConditions because if it would be null, then the type cannot be cooled down, and it would not reach this statement
-                sessionData.getPlayerDataBoard().displayCooldown(spellType);
+                sessionData.getPlayerSideBar().displayCooldown(spellType);
                 //have to pass null here as the event isn't finished yet.
                 //therefore the item the player is currently holding is still the old one
-            else sessionData.getPlayerDataBoard().stopDisplayCooldown(null);
+            else sessionData.getPlayerSideBar().stopDisplayCooldown(null);
         }
     }
 }
