@@ -55,19 +55,26 @@ public class Percentage {
             return;
 
         double newRealPart = this.realPart * percentage;
-        if (newRealPart == 0) {
+        if (newRealPart == 0d) {
             isZeroInfinityOrReal++;
+            fixSign(percentage);
             return;
         }
 
         if (newRealPart == Double.POSITIVE_INFINITY || newRealPart == Double.NEGATIVE_INFINITY) {
-            if (newRealPart == Double.NEGATIVE_INFINITY)
-                realPart *= -1;
             isZeroInfinityOrReal--;
+            fixSign(percentage);
             return;
         }
 
         this.realPart = newRealPart;
+    }
+
+    private void fixSign(double percentage) {
+        double sign = Math.copySign(1, percentage);
+        if (String.valueOf(percentage).equals("-0.0"))
+            sign = -1;
+        realPart *= sign;
     }
 
     public void divide(@NotNull Percentage percentage) {
@@ -82,15 +89,15 @@ public class Percentage {
             return;
 
         double newRealPart = this.realPart / percentage;
-        if (newRealPart == 0) {
+        if (newRealPart == 0d) {
             isZeroInfinityOrReal++;
+            fixSign(percentage);
             return;
         }
 
         if (newRealPart == Double.POSITIVE_INFINITY || newRealPart == Double.NEGATIVE_INFINITY) {
-            if (newRealPart == Double.NEGATIVE_INFINITY)
-                realPart *= -1;
             isZeroInfinityOrReal--;
+            fixSign(percentage);
             return;
         }
 
