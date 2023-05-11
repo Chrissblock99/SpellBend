@@ -123,7 +123,7 @@ class PercentageTest {
 
         assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, 1);
         assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, Double.MIN_VALUE);
-        //assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, Double.MAX_VALUE);
+        assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(-Double.MAX_VALUE, Double.MAX_VALUE);
 
 
         assertAEffectivelyZeroMulBEffectivelyInfinityEqualsAMulB(1, -1);
