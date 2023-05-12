@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Rock_Body extends Spell {
     public Test_Spell(@NotNull Player caster, @NotNull String spellType, @NotNull ItemStack item) {
-        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{2.5, 0, , 2}));
+        super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{2.5, 0, 20, 25}));
         naturalSpellEnd();
     }
 
