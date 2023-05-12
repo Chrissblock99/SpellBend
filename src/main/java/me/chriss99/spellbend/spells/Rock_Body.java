@@ -11,7 +11,9 @@ public class Rock_Body extends Spell {
         naturalSpellEnd();
     }
     
-    private void windup()
+    private void windup() {
+        caster.getWorld()
+        MathUtil.DEGTORADcaster.getLocation().getYaw()+90
 
     @Override
     public void cancelSpell() {}
