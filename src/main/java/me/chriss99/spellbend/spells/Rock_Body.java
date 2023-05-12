@@ -10,6 +10,8 @@ public class Rock_Body extends Spell {
         super(caster, spellType, item, PlayerSessionData.getPlayerSession(caster).getCoolDowns().setCoolDown(spellType, new float[]{2.5, 0, 20, 25}));
         naturalSpellEnd();
     }
+    
+    private void windup()
 
     @Override
     public void cancelSpell() {}
