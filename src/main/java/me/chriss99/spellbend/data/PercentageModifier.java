@@ -1,7 +1,6 @@
 package me.chriss99.spellbend.data;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.util.math.Percentage;
 import org.bukkit.Bukkit;
@@ -9,8 +8,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Type;
 
 public class PercentageModifier {
     private static final Gson gson = SpellBend.getGson();
