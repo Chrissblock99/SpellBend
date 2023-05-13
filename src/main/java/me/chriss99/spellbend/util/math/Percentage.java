@@ -14,22 +14,22 @@ public class Percentage {
      * at positive values the percentage is 0 with the sign of the real number part <br>
      * at negative values it is infinity with the sign of the real number part
      */
-    private int isZeroInfinityOrReal;
+    private int indicator;
 
-    public Percentage(double realPart, int isZeroInfinityOrReal) {
+    public Percentage(double realPart, int indicator) {
         if (realPart == 0 ||
                 realPart == Double.POSITIVE_INFINITY || realPart == Double.NEGATIVE_INFINITY ||
                 Double.isNaN(realPart))
             throw new IllegalArgumentException("realNumberPercentage can not be " + realPart + "!");
         this.realPart = realPart;
-        this.isZeroInfinityOrReal = isZeroInfinityOrReal;
+        this.indicator = indicator;
     }
 
     public double getPercentage() {
-        if (isZeroInfinityOrReal == 0)
+        if (indicator == 0)
             return realPart;
 
-        if (isZeroInfinityOrReal > 0)
+        if (indicator > 0)
             return realPart * 0;
 
         return realPart / 0;
@@ -39,12 +39,12 @@ public class Percentage {
         return realPart;
     }
 
-    public int getIsZeroInfinityOrReal() {
-        return isZeroInfinityOrReal;
+    public int getIndicator() {
+        return indicator;
     }
 
     public void multiply(@NotNull Percentage percentage) {
-        isZeroInfinityOrReal += percentage.isZeroInfinityOrReal;
+        indicator += percentage.indicator;
         multiply(percentage.realPart);
     }
 
@@ -56,13 +56,13 @@ public class Percentage {
 
         double newRealPart = this.realPart * percentage;
         if (newRealPart == 0d) {
-            isZeroInfinityOrReal++;
+            indicator++;
             fixSign(percentage);
             return;
         }
 
         if (newRealPart == Double.POSITIVE_INFINITY || newRealPart == Double.NEGATIVE_INFINITY) {
-            isZeroInfinityOrReal--;
+            indicator--;
             fixSign(percentage);
             return;
         }
@@ -78,7 +78,7 @@ public class Percentage {
     }
 
     public void divide(@NotNull Percentage percentage) {
-        isZeroInfinityOrReal -= percentage.isZeroInfinityOrReal;
+        indicator -= percentage.indicator;
         divide(percentage.realPart);
     }
 
@@ -90,13 +90,13 @@ public class Percentage {
 
         double newRealPart = this.realPart / percentage;
         if (newRealPart == 0d) {
-            isZeroInfinityOrReal++;
+            indicator++;
             fixSign(percentage);
             return;
         }
 
         if (newRealPart == Double.POSITIVE_INFINITY || newRealPart == Double.NEGATIVE_INFINITY) {
-            isZeroInfinityOrReal--;
+            indicator--;
             fixSign(percentage);
             return;
         }
@@ -105,6 +105,6 @@ public class Percentage {
     }
 
     public @NotNull Percentage clone() {
-        return new Percentage(realPart, isZeroInfinityOrReal);
+        return new Percentage(realPart, indicator);
     }
 }
