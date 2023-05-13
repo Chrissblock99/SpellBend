@@ -26,13 +26,13 @@ public class Percentage {
     }
 
     public double getPercentage() {
-        if (indicator == 0)
+        if (indicator == 0d)
             return realPart;
 
-        if (indicator > 0)
-            return realPart * 0;
+        if (indicator > 0d)
+            return realPart * 0d;
 
-        return realPart / 0;
+        return realPart / 0d;
     }
 
     public double getRealPart() {
@@ -54,7 +54,24 @@ public class Percentage {
         if (percentage == 1)
             return;
 
-        double newRealPart = this.realPart * percentage;
+        changeRealPart(realPart * percentage, percentage);
+    }
+
+    public void divide(@NotNull Percentage percentage) {
+        indicator -= percentage.indicator;
+        divide(percentage.realPart);
+    }
+
+    public void divide(double percentage) {
+        if (Double.isNaN(percentage))
+            throw new IllegalArgumentException("percentage cannot be NaN!");
+        if (percentage == 1)
+            return;
+
+        changeRealPart(realPart / percentage, percentage);
+    }
+
+    private void changeRealPart(double newRealPart, double percentage) {
         if (newRealPart == 0d) {
             indicator++;
             fixSign(percentage);
@@ -75,33 +92,6 @@ public class Percentage {
         if (String.valueOf(percentage).equals("-0.0"))
             sign = -1;
         realPart *= sign;
-    }
-
-    public void divide(@NotNull Percentage percentage) {
-        indicator -= percentage.indicator;
-        divide(percentage.realPart);
-    }
-
-    public void divide(double percentage) {
-        if (Double.isNaN(percentage))
-            throw new IllegalArgumentException("percentage cannot be NaN!");
-        if (percentage == 1)
-            return;
-
-        double newRealPart = this.realPart / percentage;
-        if (newRealPart == 0d) {
-            indicator++;
-            fixSign(percentage);
-            return;
-        }
-
-        if (newRealPart == Double.POSITIVE_INFINITY || newRealPart == Double.NEGATIVE_INFINITY) {
-            indicator--;
-            fixSign(percentage);
-            return;
-        }
-
-        this.realPart = newRealPart;
     }
 
     public @NotNull Percentage clone() {
