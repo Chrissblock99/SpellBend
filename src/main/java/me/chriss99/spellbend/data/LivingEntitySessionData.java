@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.harddata.PersistentDataKeys;
 import me.chriss99.spellbend.util.LivingEntityUtil;
+import me.chriss99.spellbend.util.math.Percentage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -85,6 +86,7 @@ public class LivingEntitySessionData {
         return livingEntitySession;
     }
 
+    private static final Percentage defaultPercentage = new Percentage(1, 0);
     /**
      * Sets up all the PersistentData of the livingEntity
      *
@@ -96,9 +98,9 @@ public class LivingEntitySessionData {
         data.set(PersistentDataKeys.JUMP_EFFECT_KEY, PersistentDataType.INTEGER_ARRAY, new int[0]);
         data.set(PersistentDataKeys.IS_INVISIBLE_KEY, PersistentDataType.INTEGER, 0);
 
-        data.set(PersistentDataKeys.DAMAGE_DEALT_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
-        data.set(PersistentDataKeys.DAMAGE_TAKEN_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
-        data.set(PersistentDataKeys.WALK_SPEED_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(PercentageModifier.getDefaultData()));
+        data.set(PersistentDataKeys.DAMAGE_DEALT_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(defaultPercentage));
+        data.set(PersistentDataKeys.DAMAGE_TAKEN_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(defaultPercentage));
+        data.set(PersistentDataKeys.WALK_SPEED_MODIFIERS_KEY, PersistentDataType.STRING, gson.toJson(defaultPercentage));
 
         data.set(PersistentDataKeys.IS_MOVEMENT_STUNNED_KEY, PersistentDataType.INTEGER, 0);
     }
