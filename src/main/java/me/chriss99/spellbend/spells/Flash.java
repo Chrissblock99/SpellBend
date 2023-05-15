@@ -2,7 +2,7 @@ package me.chriss99.spellbend.spells;
 
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Colors;
-import me.chriss99.spellbend.util.particle.ParticleUtil;
+import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.math.BoundingBoxUtil;
 import me.chriss99.spellbend.util.math.RotationUtil;
 import org.bukkit.*;
