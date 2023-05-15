@@ -106,8 +106,8 @@ public class ParticleCircle {
     }
 
     public void drawRadianInterval(double start, double end) {
-        double nextMultiple = (Math.ceil(start / radianParticleLength)-1) * radianParticleLength;
-        //the -1 is there to make the while loop check the first case too
+        double nextMultiple = Math.ceil(start / radianParticleLength) * radianParticleLength - radianParticleLength;
+        //the "- radianParticleLength" is there to make the while loop check the first real case too
         while (true) {
             nextMultiple += radianParticleLength; //it is re-added here btw
             if (nextMultiple > end)
