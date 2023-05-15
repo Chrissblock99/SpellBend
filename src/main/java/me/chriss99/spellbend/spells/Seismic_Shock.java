@@ -4,7 +4,7 @@ import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Colors;
-import me.chriss99.spellbend.util.particle.ParticleUtil;
+import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 

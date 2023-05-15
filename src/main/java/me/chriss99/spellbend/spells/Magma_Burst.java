@@ -7,7 +7,7 @@ import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
-import me.chriss99.spellbend.util.particle.ParticleUtil;
+import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.RotationUtil;
 import org.bukkit.*;
