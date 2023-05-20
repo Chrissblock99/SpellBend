@@ -12,8 +12,11 @@ public class Rock_Body extends Spell {
     }
     
     private void windup() {
-        caster.getWorld()
+        World world = caster.getWorld()
         MathUtil.DEGTORADcaster.getLocation().getYaw()+90
+            for(int i=0, i<=20, i++);
+                  
+                
 
     @Override
     public void cancelSpell() {}
