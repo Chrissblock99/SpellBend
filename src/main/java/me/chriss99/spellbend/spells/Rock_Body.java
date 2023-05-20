@@ -37,7 +37,7 @@ public class Rock_Body extends Spell {
             FallingBlock lodestone = world.spawnFallingBlock(location,
         
         }                                                     
-                                                           
+    }                                                                                                                    
                   
                 
 
