@@ -34,7 +34,7 @@ public class Rock_Body extends Spell {
         World world = caster.getWorld()
         double vector = MathUtil.DEGTORAD(caster.getLocation().getYaw())+90
             for(int i=0, i<=20, i++);
-            FallingBlock lodestones = world.spawnFallingBlock(location,  
+                FallingBlock Lodestone = world.spawnFallingBlock(location,  
                   
                 
 
