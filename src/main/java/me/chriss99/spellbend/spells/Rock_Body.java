@@ -31,10 +31,13 @@ public class Rock_Body extends Spell {
     }
     
     private void windup() {
-        World world = caster.getWorld()
-        double vector = MathUtil.DEGTORAD(caster.getLocation().getYaw())+90
-            for(int i=0, i<=20, i++);
-                FallingBlock lodestone = world.spawnFallingBlock(location,  
+        World world = caster.getWorld();
+        double vector = MathUtil.DEGTORAD(caster.getLocation().getYaw())+90;
+        for(int i=0, i<=20, i++){
+            FallingBlock lodestone = world.spawnFallingBlock(location,
+        
+        }                                                     
+                                                           
                   
                 
 
