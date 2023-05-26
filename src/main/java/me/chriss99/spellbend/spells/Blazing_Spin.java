@@ -6,6 +6,7 @@ import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
+import me.chriss99.spellbend.util.particle.ParticleWithData;
 import me.chriss99.spellbend.util.particle.circle.CircleVectorProvider;
 import me.chriss99.spellbend.util.particle.circle.ParticleCircle;
 import me.chriss99.spellbend.util.particle.circle.XZCircleVectorProvider;
@@ -43,7 +44,7 @@ public class Blazing_Spin extends Spell {
             public void run() {
                 Location location = caster.getLocation().add(0, 1, 0);
                 ParticleCircle.XZParticleCircle(location, 0.5f + time*0.5f, 50d/time,
-                                () -> new ParticleCircle.ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomOrange3or4(),
+                                () -> new ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomOrange3or4(),
                                         (float) Math.sqrt(time/5d)*5 * 0.15f)))
                         .drawEntireCircle();
                 world.spawnParticle(Particle.FLAME, location, time, 0, 0, 0, 0.05);
@@ -82,7 +83,7 @@ public class Blazing_Spin extends Spell {
                 }
 
                 ParticleCircle.XZParticleCircle(caster.getLocation().add(0, 1, 0), sub * 1.2d, 10,
-                                () -> new ParticleCircle.ParticleWithData(Particle.REDSTONE,
+                                () -> new ParticleWithData(Particle.REDSTONE,
                                         new Particle.DustOptions((time%2 == 0) ? Colors.orange1 : Colors.orange2, 0.75f)))
                         .drawEntireCircle();
                 world.playSound(caster.getLocation(), Sound.ENTITY_BLAZE_SHOOT, 2, 1.2f + sub*0.1f);

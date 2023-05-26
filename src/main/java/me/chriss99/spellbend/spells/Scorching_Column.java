@@ -8,6 +8,7 @@ import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
+import me.chriss99.spellbend.util.particle.ParticleWithData;
 import me.chriss99.spellbend.util.particle.circle.ParticleCircle;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
@@ -78,7 +79,7 @@ public class Scorching_Column extends Spell {
     World world = caster.getWorld();
     private void windup(@NotNull Location location) {
         ParticleCircle particleCircle = ParticleCircle.XZParticleCircle(location.clone().add(0, 0.05, 0), 3, 2,
-                () -> new ParticleCircle.ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomOrange1or2(), 3)));
+                () -> new ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomOrange1or2(), 3)));
         windupTask = new BukkitRunnable() {
             int time = 0;
 

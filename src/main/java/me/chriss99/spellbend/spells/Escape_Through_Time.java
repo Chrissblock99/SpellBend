@@ -8,6 +8,7 @@ import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
+import me.chriss99.spellbend.util.particle.ParticleWithData;
 import me.chriss99.spellbend.util.particle.circle.ParticleCircle;
 import net.kyori.adventure.sound.SoundStop;
 import org.bukkit.*;
@@ -56,7 +57,7 @@ public class Escape_Through_Time extends Spell {
                     new Particle.DustTransition(color, color, 2));
         }*/
         ParticleCircle.XZParticleCircle(armorStand.getLocation(), 1.5, 3.5,
-                        () -> new ParticleCircle.ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomYellow1or2(), 2)))
+                        () -> new ParticleWithData(Particle.REDSTONE, new Particle.DustOptions(Colors.getRandomYellow1or2(), 2)))
                 .drawEntireCircle();
 
         armorStandTask = new BukkitRunnable() {

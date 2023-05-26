@@ -1,6 +1,7 @@
 package me.chriss99.spellbend.util.particle.circle;
 
 import me.chriss99.spellbend.util.math.RotationUtil;
+import me.chriss99.spellbend.util.particle.ParticleWithData;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.util.Vector;
@@ -71,7 +72,7 @@ public class ParticleCircle {
     {return new ParticleCircle(center, new VectorRotatedCircleVectorProvider(new XYCircleVectorProvider(radius), rotation), particlesPerBlock, particleWithDataSupplier);}
 
 
-    private Location center;
+    private final Location center;
     private final CircleVectorProvider circleVectorProvider;
     private final double circumference;
     private final double radianParticleLength;
@@ -114,26 +115,8 @@ public class ParticleCircle {
                 break;
 
             ParticleWithData particleWithData = particleWithDataSupplier.get();
-            center.getWorld().spawnParticle(particleWithData.particle, center.clone().add(circleVectorProvider.getVector(nextMultiple)),
-                    1, 0, 0, 0, 0, particleWithData.data);
+            center.getWorld().spawnParticle(particleWithData.particle(), center.clone().add(circleVectorProvider.getVector(nextMultiple)),
+                    1, 0, 0, 0, 0, particleWithData.data());
         }
     }
-
-    public void drawRadianIntervalToNewCenter(double start, double length, @NotNull Vector newCenter) {
-        Location newCenterLocation = newCenterFromOldData(newCenter);
-
-        //TODO interpolation stuff here
-
-        center = newCenterLocation;
-    }
-
-    public void setCenter(@NotNull Vector center) {
-        this.center = newCenterFromOldData(center);
-    }
-
-    private @NotNull Location newCenterFromOldData(@NotNull Vector newCenter) {
-        return new Location(this.center.getWorld(), center.getX(), center.getY(), center.getZ(), this.center.getYaw(), this.center.getPitch());
-    }
-
-    public record ParticleWithData(@NotNull Particle particle, @Nullable Object data) {}
 }
