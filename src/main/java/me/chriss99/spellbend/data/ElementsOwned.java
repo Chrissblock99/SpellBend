@@ -36,9 +36,7 @@ public class ElementsOwned {
         }
 
         Type type = new TypeToken<EnumMap<ElementEnum, EnumSet<SpellEnum>>>(){}.getType();
-        LinkedHashMap<ElementEnum, EnumSet<SpellEnum>> elementsOwned = gson.fromJson(gsonString, type);
-        this.elementsOwned = new EnumMap<>(ElementEnum.class);
-        this.elementsOwned.putAll(elementsOwned);
+        elementsOwned = gson.fromJson(gsonString, type);
     }
 
     public void setElementOwned(@NotNull ElementEnum elementEnum) {
