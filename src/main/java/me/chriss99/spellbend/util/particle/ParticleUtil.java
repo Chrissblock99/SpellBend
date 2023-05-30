@@ -1,4 +1,4 @@
-package me.chriss99.spellbend.util;
+package me.chriss99.spellbend.util.particle;
 
 import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Location;
