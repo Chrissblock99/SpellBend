@@ -1,6 +1,8 @@
 package me.chriss99.spellbend.commands;
 
 import me.chriss99.spellbend.SpellBend;
+import me.chriss99.spellbend.cosmetics.EndPortalFrameLootBox;
+import me.chriss99.spellbend.cosmetics.ShulkerLootBox;
 import me.chriss99.spellbend.data.*;
 import me.chriss99.spellbend.harddata.Action;
 import me.chriss99.spellbend.harddata.CoolDownStage;
@@ -14,10 +16,12 @@ import me.chriss99.spellbend.util.LivingEntityUtil;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
@@ -29,6 +33,42 @@ public class Test extends ReflectiveCommandBase {
 
     public Test() {
         super("test", "test command for testing test stuff", new ArrayList<>());
+    }
+
+    @ReflectCommand(path = "animation shulker")
+    public void animation_shulker(Player commandSender, int updateRate, double speed, int delayInTicks, int slowDownLengthInTicks, int itemCount) {
+        Block targetBlock = commandSender.getTargetBlockExact(4);
+        if (targetBlock == null) {
+            commandSender.sendMessage(miniMessage.deserialize("<red>Your not facing a block!"));
+            return;
+        }
+
+        ItemStack[] items = List.of(new ItemStack(Material.AMETHYST_SHARD), new ItemStack(Material.DIAMOND),
+                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.EMERALD), new ItemStack(Material.SPRUCE_DOOR),
+                new ItemStack(Material.GOLDEN_HELMET), new ItemStack(Material.NETHERITE_CHESTPLATE),
+                new ItemStack(Material.PRISMARINE_SHARD), new ItemStack(Material.RAW_GOLD_BLOCK),
+                new ItemStack(Material.SUNFLOWER), new ItemStack(Material.NETHER_WART), new ItemStack(Material.GOAT_HORN),
+                new ItemStack(Material.ECHO_SHARD), new ItemStack(Material.NETHER_STAR), new ItemStack(Material.GLASS_PANE)).toArray(new ItemStack[0]);
+
+        new ShulkerLootBox(targetBlock, Arrays.stream(Arrays.copyOfRange(items, 0 ,itemCount)).toList()).startAnimation(updateRate, speed, delayInTicks, slowDownLengthInTicks);
+    }
+
+    @ReflectCommand(path = "animation endPortalFrame")
+    public void animation_endPortalFrame(Player commandSender, int itemCount, Material shulkerBox) {
+        Block targetBlock = commandSender.getTargetBlockExact(4);
+        if (targetBlock == null) {
+            commandSender.sendMessage(miniMessage.deserialize("<red>Your not facing a block!"));
+            return;
+        }
+
+        ItemStack[] items = List.of(new ItemStack(Material.AMETHYST_SHARD), new ItemStack(Material.DIAMOND),
+                new ItemStack(Material.IRON_SWORD), new ItemStack(Material.EMERALD), new ItemStack(Material.SPRUCE_DOOR),
+                new ItemStack(Material.GOLDEN_HELMET), new ItemStack(Material.NETHERITE_CHESTPLATE),
+                new ItemStack(Material.PRISMARINE_SHARD), new ItemStack(Material.RAW_GOLD_BLOCK),
+                new ItemStack(Material.SUNFLOWER), new ItemStack(Material.NETHER_WART), new ItemStack(Material.GOAT_HORN),
+                new ItemStack(Material.ECHO_SHARD), new ItemStack(Material.NETHER_STAR), new ItemStack(Material.GLASS_PANE)).toArray(new ItemStack[0]);
+
+        new EndPortalFrameLootBox(targetBlock, shulkerBox, Arrays.stream(Arrays.copyOfRange(items, 0 ,itemCount)).toList());
     }
 
     @ReflectCommand(path = "stun")
@@ -124,7 +164,7 @@ public class Test extends ReflectiveCommandBase {
 
     @ReflectCommand(path = "memory block remove")
     public void memory_block_remove(Player commandSender) {
-        Block targetBlock = commandSender.getTargetBlock(4);
+        Block targetBlock = commandSender.getTargetBlockExact(4);
         if (targetBlock == null) {
             commandSender.sendMessage(miniMessage.deserialize("<red>Your not facing a block!"));
             return;
