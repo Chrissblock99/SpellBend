@@ -12,15 +12,15 @@ public class Colors {
     public static final Color orange6 = Color.fromRGB(255,128,0);
 
     public static Color getRandomOrange1or2() {
-        return (Color) MathUtil.randomEntry(new Color[]{orange1, orange2});
+        return MathUtil.randomEntry(new Color[]{orange1, orange2});
     }
 
     public static Color getRandomOrange3or4() {
-        return (Color) MathUtil.randomEntry(new Color[]{orange3, orange4});
+        return MathUtil.randomEntry(new Color[]{orange3, orange4});
     }
 
     public static Color getRandomOrange5or6() {
-        return (Color) MathUtil.randomEntry(new Color[]{orange5, orange6});
+        return MathUtil.randomEntry(new Color[]{orange5, orange6});
     }
 
     public static final Color yellow1 = Color.fromRGB(255,255,0);
@@ -28,7 +28,7 @@ public class Colors {
     public static final Color yellow3 = Color.fromRGB(130,191,35);
 
     public static Color getRandomYellow1or2() {
-        return (Color) MathUtil.randomEntry(new Color[]{yellow1, yellow2});
+        return MathUtil.randomEntry(new Color[]{yellow1, yellow2});
     }
 
     public static final Color blue1 = Color.fromRGB(0,255,255);
@@ -40,18 +40,18 @@ public class Colors {
     public static final Color gold2 = Color.fromRGB(220,180,0);
 
     public static Color getRandomBlue1to3() {
-        return (Color) MathUtil.randomEntry(new Color[]{blue1, blue2, blue3});
+        return MathUtil.randomEntry(new Color[]{blue1, blue2, blue3});
     }
 
     public static Color getRandomBlue3to5() {
-        return (Color) MathUtil.randomEntry(new Color[]{blue3, blue4, blue5});
+        return MathUtil.randomEntry(new Color[]{blue3, blue4, blue5});
     }
 
     public static Color getRandomBlue2to5() {
-        return (Color) MathUtil.randomEntry(new Color[]{blue2, blue3, blue4, blue5});
+        return MathUtil.randomEntry(new Color[]{blue2, blue3, blue4, blue5});
     }
 
     public static Color getRandomBlue4to5() {
-        return (Color) MathUtil.randomEntry(new Color[]{blue4, blue5});
+        return MathUtil.randomEntry(new Color[]{blue4, blue5});
     }
 }

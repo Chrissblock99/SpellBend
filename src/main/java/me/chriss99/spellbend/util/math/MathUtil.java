@@ -27,17 +27,17 @@ public class MathUtil {
         return Math.round(num*offset)/offset;
     }
 
-    public static @NotNull Object randomEntry(@NotNull Object[] a) {
+    public static <T> @NotNull T randomEntry(@NotNull T[] a) {
         return a[(int) Math.round(random(0, a.length-1))];
     }
 
-    public static @NotNull Object randomEntry(@NotNull List<?> a) {
+    public static <T> @NotNull T randomEntry(@NotNull List<T> a) {
         return a.get((int) Math.round(random(0, a.size()-1)));
     }
 
     public static boolean ALargerB(int[] a, int[] b) {
         try {
-            for (int i = 0;i<a.length;i++) {
+            for (int i = 0; i < a.length; i++) {
                 if (a[i]>b[i]) return true;
                 if (a[i]<b[i]) return false;
             }
@@ -84,20 +84,21 @@ public class MathUtil {
     }
 
     public static int additiveArrayValue(int[] a) {
-        for (int i = 1;i<a.length;i++) a[0] += a[i];
-        return a[0];
+        int sum = 0;
+        for (int i : a)
+            sum += i;
+        return sum;
     }
 
     public static boolean randomChance(double percentage) {
         return percentage >= Math.random();
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
     public static double lerp(double a, double b, double t) {
         return b + t * (a - b);
     }
 
     public static @NotNull Vector lerpVector(@NotNull Vector a, @NotNull Vector b, double t) {
-        return new Vector(b.getX() + t * (a.getX() - b.getX()), b.getY() + t * (a.getY() - b.getY()), b.getZ() + t * (a.getZ() - b.getZ()));
+        return new Vector(lerp(a.getX(), b.getX(), t), lerp(a.getY(), b.getY(), t), lerp(a.getZ(), b.getZ(), t));
     }
 }
