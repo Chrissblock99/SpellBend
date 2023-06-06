@@ -12,7 +12,7 @@ public class RotationUtil {
     }
 
     public static Vector rotateVectorAroundDegreeYawAndPitch(@NotNull Vector vector, double yaw, double pitch) {
-        return rotateVectorAroundRadianYawAndPitch(vector, yaw * MathUtil.DEGTORAD, pitch * MathUtil.DEGTORAD);
+        return rotateVectorAroundRadianYawAndPitch(vector, Math.toRadians(yaw), Math.toRadians(pitch));
     }
 
     public static Vector rotateVectorAroundMinecraftYawAndPitch(@NotNull Vector vector, double yaw, double pitch) {

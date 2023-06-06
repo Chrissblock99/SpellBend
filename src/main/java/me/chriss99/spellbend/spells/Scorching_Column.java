@@ -82,7 +82,7 @@ public class Scorching_Column extends Spell {
             @Override
             public void run() {
                 for (int i = 0; i < 10; i++) {
-                    double radians = time*4 * MathUtil.DEGTORAD;
+                    double radians = Math.toRadians(time*4);
                     Vector circlePos = new Vector(Math.cos(radians) * 3, 0.05, Math.sin(radians) * 3);
                     world.spawnParticle(Particle.REDSTONE, location.clone().add(circlePos), 1, 0, 0, 0, 0,
                             new Particle.DustOptions(Colors.getRandomOrange1or2(), 3));

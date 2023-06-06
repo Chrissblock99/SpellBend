@@ -39,12 +39,12 @@ public class Fiery_Rage extends Spell {
                 Color color = Colors.getRandomOrange5or6();
                 Particle.DustTransition dustOptions = new Particle.DustTransition(color, color, (float) MathUtil.random(1.3d, 2d));
                 World world = caster.getWorld();
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(1f/3f)),
-                        time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(1f/3f))), 1, dustOptions);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI),
-                        time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI)), 1, dustOptions);
-                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(5f/3f)),
-                        time/180f, Math.sin((time*(1f/3f))*MathUtil.DEGTORAD+Math.PI*(5f/3f))), 1, dustOptions);
+                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos(Math.toRadians(time*(1f/3f))+Math.PI*(1f/3f)),
+                        time/180f, Math.sin(Math.toRadians(time*(1f/3f))+Math.PI*(1f/3f))), 1, dustOptions);
+                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos(Math.toRadians(time*(1f/3f))+Math.PI),
+                        time/180f, Math.sin(Math.toRadians(time*(1f/3f))+Math.PI)), 1, dustOptions);
+                world.spawnParticle(Particle.DUST_COLOR_TRANSITION, caster.getLocation().add(Math.cos(Math.toRadians(time*(1f/3f))+Math.PI*(5f/3f)),
+                        time/180f, Math.sin(Math.toRadians(time*(1f/3f))+Math.PI*(5f/3f))), 1, dustOptions);
 
                 world.playSound(location, Sound.BLOCK_LAVA_POP, 2, 1+time/720f);
                 world.playSound(location, Sound.ENTITY_BLAZE_SHOOT, 2, 1+time/720f);

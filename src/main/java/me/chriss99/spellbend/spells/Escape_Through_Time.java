@@ -49,7 +49,8 @@ public class Escape_Through_Time extends Spell {
 
         for (int i = 0; i < 360; i += 10) {
             Color color = Colors.getRandomYellow1or2();
-            armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, armorStand.getLocation().clone().add(Math.cos(i * MathUtil.DEGTORAD) * 1.5f, 0, Math.sin(i * MathUtil.DEGTORAD) * 1.5f),
+            double radians = Math.toRadians(i);
+            armorStandOrigin.getWorld().spawnParticle(Particle.DUST_COLOR_TRANSITION, armorStand.getLocation().clone().add(Math.cos(radians) * 1.5f, 0, Math.sin(radians) * 1.5f),
                     1, 0, 0, 0, 0,
                     new Particle.DustTransition(color, color, 2));
     }

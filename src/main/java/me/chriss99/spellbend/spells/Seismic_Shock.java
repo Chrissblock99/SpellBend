@@ -209,21 +209,21 @@ public class Seismic_Shock extends Spell {
     private static Vector[] createRing1() {
         Vector[] vectors = new Vector[12];
         for (int i = 0;i<12;i++)
-            vectors[i] = new Vector(Math.cos(i*30*MathUtil.DEGTORAD+Math.PI/12)*2.5, 0.125, Math.sin(i*30* MathUtil.DEGTORAD+Math.PI/12)*2.5);
+            vectors[i] = new Vector(Math.cos(Math.toRadians(i*30)+Math.PI/12)*2.5, 0.125, Math.sin(Math.toRadians(i*30)+Math.PI/12)*2.5);
         return vectors;
     }
 
     private static Vector[] createRing2() {
         Vector[] vectors = new Vector[12];
         for (int i = 0;i<12;i++)
-            vectors[i] = new Vector(Math.cos(i*30*MathUtil.DEGTORAD-(Math.PI*2/3f)/6)*4.5, 0.125, Math.sin(i*30* MathUtil.DEGTORAD-(Math.PI*2/3f)/6)*4.5);
+            vectors[i] = new Vector(Math.cos(Math.toRadians(i*30)-(Math.PI*2/3f)/6)*4.5, 0.125, Math.sin(Math.toRadians(i*30)-(Math.PI*2/3f)/6)*4.5);
         return vectors;
     }
 
     private static Vector[] createRing3() {
         Vector[] vectors = new Vector[12];
         for (int i = 0;i<12;i++)
-            vectors[i] = new Vector(Math.cos(i*30*MathUtil.DEGTORAD)*6.5, 0.125, Math.sin(i*30* MathUtil.DEGTORAD)*6.5);
+            vectors[i] = new Vector(Math.cos(Math.toRadians(i*30))*6.5, 0.125, Math.sin(Math.toRadians(i*30))*6.5);
         return vectors;
     }
 }

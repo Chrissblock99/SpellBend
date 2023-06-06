@@ -44,7 +44,7 @@ public class Ember_Blast extends Spell {
             @Override
             public void run() {
                 for (int i = 0;i<48;i++) {
-                    double radians = -time * MathUtil.DEGTORAD;
+                    double radians = Math.toRadians(-time);
                     Location location = caster.getEyeLocation().clone();
 
                     location.add(RotationUtil.rotateVectorAroundLocationRotation(new Vector(Math.cos(radians) * -1.25, Math.sin(radians) * 1.25, 1), location));
@@ -89,7 +89,7 @@ public class Ember_Blast extends Spell {
                         color = Colors.orange3;
                     else color = Colors.orange4;
 
-                    double radians = ((time * 4) % 360) * MathUtil.DEGTORAD;
+                    double radians = Math.toRadians((time * 4) % 360);
                     Vector vector = RotationUtil.rotateVectorAroundVectorRotation(new Vector(Math.cos(radians), Math.sin(radians), 0), fireball.getVelocity());
                     Location location = MathUtil.lerpVector(lastLocation.toVector(), fireball.getLocation().toVector(), i/6f).add(vector).toLocation(world);
                     world.spawnParticle(Particle.REDSTONE, location, 1, new Particle.DustOptions(color, 2.5f));

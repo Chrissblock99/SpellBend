@@ -8,7 +8,6 @@ import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.util.LivingEntityUtil;
 import me.chriss99.spellbend.util.ParticleUtil;
-import me.chriss99.spellbend.util.math.MathUtil;
 import me.chriss99.spellbend.util.math.RotationUtil;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -45,7 +44,7 @@ public class Magma_Burst extends Spell {
             @Override
             public void run() {
                 for (int i = 0;i<72;i++) {
-                    double radians = -time * MathUtil.DEGTORAD;
+                    double radians = Math.toRadians(-time);
                     Location location = caster.getEyeLocation().clone();
 
                     location.add(RotationUtil.rotateVectorAroundLocationRotation(new Vector(Math.cos(radians) * -1, Math.sin(radians) * 1, 1), location));

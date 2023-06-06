@@ -5,7 +5,6 @@ import me.chriss99.spellbend.data.LivingEntitySessionData;
 import me.chriss99.spellbend.data.PlayerSessionData;
 import me.chriss99.spellbend.harddata.Colors;
 import me.chriss99.spellbend.util.LivingEntityUtil;
-import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -41,7 +40,7 @@ public class Blazing_Spin extends Spell {
             public void run() {
                 float radius = 0.5f + time*0.5f;
                 for (int i = 0; i < 360; i++) {
-                    double radians = i * MathUtil.DEGTORAD;
+                    double radians = Math.toRadians(i);
                     Vector circlePos = new Vector(Math.cos(radians) * radius, 1, Math.sin(radians) * radius);
                     world.spawnParticle(Particle.REDSTONE, caster.getLocation().add(circlePos), 1, 0, 0, 0, 0,
                             new Particle.DustOptions(Colors.getRandomOrange3or4(), time*0.15f));
@@ -84,7 +83,7 @@ public class Blazing_Spin extends Spell {
 
                 float radius = sub * 1.2f;
                 for (int i = 0; i < 360; i++) {
-                    double radians = i * MathUtil.DEGTORAD;
+                    double radians = Math.toRadians(i);
                     Vector circlePos = new Vector(Math.cos(radians) * radius, 1, Math.sin(radians) * radius);
                     world.spawnParticle(Particle.REDSTONE, caster.getLocation().add(circlePos), 1, 0, 0, 0, 0,
                             new Particle.DustOptions((time%2 == 0) ? Colors.orange1 : Colors.orange2, 0.75f));

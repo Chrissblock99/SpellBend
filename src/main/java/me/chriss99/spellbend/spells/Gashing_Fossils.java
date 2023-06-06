@@ -7,7 +7,6 @@ import me.chriss99.spellbend.data.SpellHandler;
 import me.chriss99.spellbend.harddata.CoolDownStage;
 import me.chriss99.spellbend.manager.BlockManager;
 import me.chriss99.spellbend.util.LivingEntityUtil;
-import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
@@ -62,7 +61,8 @@ public class Gashing_Fossils extends Spell {
 
     private void windupStep() {
         do {
-            world.spawnParticle(Particle.SOUL, center.clone().add(Math.cos(i*4* MathUtil.DEGTORAD)*4.25, 0.25, Math.sin(i*4* MathUtil.DEGTORAD)*4.25),
+            double radians = Math.toRadians(i*4);
+            world.spawnParticle(Particle.SOUL, center.clone().add(Math.cos(radians)*4.25, 0.25, Math.sin(radians)*4.25),
                     5, 0, 0, 0, 0);
             i++;
         } while (i%9 != 0);
@@ -256,8 +256,10 @@ public class Gashing_Fossils extends Spell {
         Vector[][] fossil = new Vector[6][6];
 
         for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 6; j++)
-                fossil[i][j] = new Vector(Math.cos(j*60* MathUtil.DEGTORAD)*(3+i/2f), i-3, Math.sin(j*60* MathUtil.DEGTORAD)*(3+i/2f));
+            for (int j = 0; j < 6; j++) {
+                double radians = Math.toRadians(j*60);
+                fossil[i][j] = new Vector(Math.cos(radians)*(3+i/2f), i-3, Math.sin(radians)*(3+i/2f));
+            }
 
         return fossil;
     }
