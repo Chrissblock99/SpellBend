@@ -36,7 +36,7 @@ public class Magma_Burst extends Spell {
         windup();
     }
 
-    World world = caster.getWorld();
+    final World world = caster.getWorld();
     private void windup() {
         windupTask = new BukkitRunnable() {
             int time = 1;

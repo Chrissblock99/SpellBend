@@ -74,7 +74,7 @@ public class Scorching_Column extends Spell {
         return rayTraceBlocksResult.getHitPosition().toLocation(world);
     }
 
-    World world = caster.getWorld();
+    final World world = caster.getWorld();
     private void windup(@NotNull Location location) {
         windupTask = new BukkitRunnable() {
             int time = 0;
@@ -100,7 +100,7 @@ public class Scorching_Column extends Spell {
         }.runTaskTimer(plugin, 0, 1);
     }
 
-    LinkedList<FallingBlock> fallingFireBlocks = new LinkedList<>();
+    final LinkedList<FallingBlock> fallingFireBlocks = new LinkedList<>();
     private void active(@NotNull Location location) {
         Set<LivingEntity> hitEntities = LivingEntityUtil.getSpellAffectAbleEntitiesNearLocation(location, 3).keySet();
         hitEntities.remove(caster);

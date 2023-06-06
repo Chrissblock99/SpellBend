@@ -31,7 +31,7 @@ public class Blazing_Spin extends Spell {
         windup();
     }
 
-    World world = caster.getWorld();
+    final World world = caster.getWorld();
     private void windup() {
         sessionData.getWalkSpeedModifiers().addModifier(0.55);
         windupTask = new BukkitRunnable() {
