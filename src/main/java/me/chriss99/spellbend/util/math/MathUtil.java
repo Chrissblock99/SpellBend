@@ -6,17 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class MathUtil {
-    /**
-     * @deprecated Use <code>Math.toRadians()</code>
-     */
-    @Deprecated
-    public static final double DEGTORAD = Math.toRadians(1);
-    /**
-     * @deprecated Use <code>Math.toDegrees()</code>
-     */
-    @Deprecated
-    public static final double RADTODEG = Math.toDegrees(1);
-
     public static double random(double min, double max) {
         return Math.random() * (max-min) + min;
     }
