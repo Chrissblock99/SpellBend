@@ -2,6 +2,7 @@ package me.chriss99.spellbend.cosmetics;
 
 import me.chriss99.spellbend.SpellBend;
 import me.chriss99.spellbend.util.BukkitTimer;
+import me.chriss99.spellbend.util.ParticleUtil;
 import me.chriss99.spellbend.util.math.MathUtil;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -114,7 +115,7 @@ public class EndPortalFrameLootBox {
                         world.playSound(endPortalFrame.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 1);
 
                         moveBackToCenter(ticks, updateRate, orbitingItemDisplays.get(0));
-                        break;
+                        return;
                     }
 
                     if (ticks >= 100 && MathUtil.randomChance(0.05 * Math.pow(ticks * oneOver100, 1.5)))
@@ -165,6 +166,7 @@ public class EndPortalFrameLootBox {
 
     final class OrbitingItemDisplay {
         private final @NotNull ItemDisplay display;
+        private final @NotNull ItemStack itemStack;
         private double t;
         private final double rotationOffset;
         private final double inverseOrbitYSpeed = Math.random();
@@ -174,6 +176,7 @@ public class EndPortalFrameLootBox {
 
         OrbitingItemDisplay(@NotNull ItemDisplay display, double t, double rotationOffset) {
             this.display = display;
+            itemStack = display.getItemStack();
             this.t = t;
             this.rotationOffset = rotationOffset;
         }
@@ -204,6 +207,7 @@ public class EndPortalFrameLootBox {
             display.setTransformation(transformation);
         }
 
+        final Vector lightningCenter = endPortalFrame.getLocation().clone().add(0.5, 1.3, 0.5).toVector();
         public void addDegradation(double degradation) {
             degradation *= 1d - Math.pow(Math.E, t * -0.012d);
             this.degradation += degradation;
@@ -212,19 +216,53 @@ public class EndPortalFrameLootBox {
             transformation.getScale().sub(new Vector3f(0.05f, 0.05f, 0.05f).mul((float) degradation));
             display.setTransformation(transformation);
 
-            Vector3f translation = transformation.getTranslation();
+            Particle.DustOptions particleData = new Particle.DustOptions(Color.fromRGB(240, 240, 225), 0.2f);
+
+            new BukkitRunnable() {
+                int ticks = 0;
+                Vector lastPos = lightningCenter;
+                
+                @Override
+                public void run() {
+                    Vector3f translation = display.getTransformation().getTranslation();
+                    Vector interpolated = MathUtil.lerpVector(lastPos, display.getLocation().add(translation.x, translation.y, translation.z).toVector(), ticks/10f);
+                    ParticleUtil.drawLine(world, lastPos, interpolated, 10, Particle.REDSTONE, particleData);
+
+                    if (ticks >= 10) {
+                        display.setItemStack(new ItemStack(Material.GLOW_LICHEN));
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                display.setItemStack(itemStack);
+                            }
+                        }.runTaskLater(plugin, 10);
+
+                        cancel();
+                        degradeEffect();
+                        return;
+                    }
+
+                    lastPos = interpolated;
+                    ticks += 2;
+                }
+            }.runTaskTimer(plugin, 0, 2);
+        }
+
+        private void degradeEffect() {
+            Vector3f translation = display.getTransformation().getTranslation();
             Location visualItemLocation = display.getLocation().add(translation.x, translation.y, translation.z);
 
             if (this.degradation >= 1) {
                 world.playSound(visualItemLocation, Sound.ENTITY_ITEM_BREAK, 0.7f, 1);
-                world.spawnParticle(Particle.ITEM_CRACK, visualItemLocation, 4, 0, 0, 0, 0.1, display.getItemStack());
+                world.spawnParticle(Particle.ITEM_CRACK, visualItemLocation, 4, 0, 0, 0, 0.1, itemStack);
 
                 display.remove();
                 orbitingItemDisplays.remove(this);
-            } else {
-                world.playSound(visualItemLocation, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, 0.3f, 2);
-                world.spawnParticle(Particle.ITEM_CRACK, visualItemLocation, (int) Math.round(degradation * 7), 0, 0, 0, 0.1, display.getItemStack());
+                return;
             }
+
+            world.playSound(visualItemLocation, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, 0.3f, 2);
+            world.spawnParticle(Particle.ITEM_CRACK, visualItemLocation, (int) Math.round(degradation * 7), 0, 0, 0, 0.1, display.getItemStack());
         }
 
 
