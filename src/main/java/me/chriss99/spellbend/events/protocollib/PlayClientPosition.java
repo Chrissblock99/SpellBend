@@ -17,6 +17,8 @@ import org.bukkit.util.Vector;
 import java.lang.reflect.InvocationTargetException;
 
 public class PlayClientPosition extends PacketAdapter {
+    private static final ProtocolManager manager = SpellBend.getProtocolManager();
+
     public PlayClientPosition() {
         super(SpellBend.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION);
         SpellBend.registerPacketListener(this);
@@ -37,7 +39,6 @@ public class PlayClientPosition extends PacketAdapter {
 
         event.setCancelled(true);
 
-        ProtocolManager manager = SpellBend.getProtocolManager();
         PacketContainer packet = manager.createPacket(PacketType.Play.Server.POSITION);
 
         packet.getDoubles().write(0, location.getX());
