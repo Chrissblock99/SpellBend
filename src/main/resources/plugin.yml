@@ -8,5 +8,13 @@ depend:
   - ProtocolLib
 commands:
   test:
+    permission: spellbend.test.all
   reflectTest:
+    permission: spellbend.test.all
   shop:
+    permission: spellbend.shop
+permissions:
+  spellbend.test.all:
+    default: op
+  spellbend.shop:
+    default: true
