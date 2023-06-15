@@ -1,7 +1,7 @@
 name: SpellBend
 version: '${project.version}'
 main: me.chriss99.spellbend.SpellBend
-api-version: 1.17
+api-version: 1.19
 authors: [Chriss99, TechnikJ, 577over408]
 description: remaking the skript game as a java plugin
 depend:
