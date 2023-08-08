@@ -13,6 +13,7 @@ import me.chriss99.spellbend.manager.BlockOverride;
 import me.chriss99.spellbend.spells.Spell;
 import me.chriss99.spellbend.util.ItemData;
 import me.chriss99.spellbend.util.LivingEntityUtil;
+import me.chriss99.spellbend.util.particle.ParticleEllipse;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -69,6 +70,11 @@ public class Test extends ReflectiveCommandBase {
                 new ItemStack(Material.ECHO_SHARD), new ItemStack(Material.NETHER_STAR), new ItemStack(Material.GLASS_PANE)).toArray(new ItemStack[0]);
 
         new EndPortalFrameLootBox(targetBlock, shulkerBox, Arrays.stream(Arrays.copyOfRange(items, 0 ,itemCount)).toList());
+    }
+
+    @ReflectCommand(path = "test")
+    public void test(int a) {
+        ParticleEllipse.test();
     }
 
     @ReflectCommand(path = "stun")
