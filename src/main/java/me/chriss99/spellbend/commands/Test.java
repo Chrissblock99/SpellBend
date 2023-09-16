@@ -50,7 +50,7 @@ public class Test extends ReflectiveCommandBase {
                 new ItemStack(Material.SUNFLOWER), new ItemStack(Material.NETHER_WART), new ItemStack(Material.GOAT_HORN),
                 new ItemStack(Material.ECHO_SHARD), new ItemStack(Material.NETHER_STAR), new ItemStack(Material.GLASS_PANE)).toArray(new ItemStack[0]);
 
-        new ShulkerLootBox(targetBlock, Arrays.stream(Arrays.copyOfRange(items, 0 ,itemCount)).toList()).startAnimation(updateRate, speed, delayInTicks, slowDownLengthInTicks);
+        new ShulkerLootBox(targetBlock, Arrays.stream(Arrays.copyOfRange(items, 0, itemCount)).toList()).startAnimation(updateRate, speed, delayInTicks, slowDownLengthInTicks);
     }
 
     @ReflectCommand(path = "animation endPortalFrame")
