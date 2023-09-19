@@ -81,8 +81,8 @@ public class ParticleEllipse {
     }
 
     public static void test() {
-        EllipseVectorProvider ellipseVectorProvider1 = new EllipseVectorProvider(new Vector3d(1, 0, 0), new Vector3d(0, 1, 0));
-        double length = ellipseSegmentLengthTest(0, Math.PI*2f, ellipseVectorProvider1);
+        EllipseVectorProvider testEllipseVectorProvider = new EllipseVectorProvider(new Vector3d(1, 0, 0), new Vector3d(0, 1, 0));
+        double length = ellipseSegmentLengthTest(0, Math.PI*2f, testEllipseVectorProvider);
         System.out.println(length);
     }
 
